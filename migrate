@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+
+<?php
+
+ini_set('memory_limit', -1);
+
+/**
+ * @file
+ * Application entrypoint for the migration framework.
+ */
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Migrate\Command\GenerateCommand;
+
+$application = new Application;
+
+$application->add(new GenerateCommand);
+
+$application->run();
