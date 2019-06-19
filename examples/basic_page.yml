@@ -1,0 +1,68 @@
+---
+domain: https://www.example.com
+
+urls:
+  - /about-us
+  - /about-us/news
+  # ... etc
+
+entity_type: basic_page
+mappings:
+  -
+    field: alias
+    type: alias
+  -
+    field: title
+    selector: h1
+    type: text
+    processors:
+      nl2br: { }
+  -
+    field: field_body
+    selector: div#main-content
+    type: long_text
+    processors:
+      nl2br: {}
+      - processor: remove_empty_tags
+      -
+        processor: media
+        type: image-basic_page
+        selector: img
+        file: src
+        name: alt
+      -
+        processor: strip_tags
+        allowed_tags: <h1><h2><h3><h4><h5><ul><ol><dl><dt><dd><li><p><a><strong><em><cite><blockquote><code><s><span><sup><sub><table><caption><tbody><thead><tfoot><th><td><tr><hr><pre><br>
+        remove_attr:
+          - class
+          - id
+          - style
+  -
+    field: field_downloads
+    selector: '//*[contains(@class, "download-item")]'
+    type: media
+    options:
+      file: ./a/@href
+      name: ./a/text()
+      type: documents-standard_page
+      xpath: true
+  -
+    field: field_metatags.basic.title
+    type: meta
+    options:
+      value: title
+  -
+    field: field_metatags.basic.description
+    type: meta
+    options:
+      value: description
+  -
+    field: field_metatags.basic.keywords
+    type: meta
+    options:
+      value: keywords
+  -
+    field: field_metatags.basic.modified
+    type: meta
+    options:
+      value: modified
