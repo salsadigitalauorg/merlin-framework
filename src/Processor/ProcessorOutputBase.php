@@ -12,14 +12,20 @@ use Symfony\Component\DomCrawler\Crawler;
  * and alter the output based on HTML structure. It also will have access to
  * $output so it can create additional files based on its parsing rules.
  */
-abstract class ProcessorOutputBase implements ProcessorInterface {
+abstract class ProcessorOutputBase implements ProcessorInterface
+{
 
-  /**
-   * Construct an instance of a processor with output.
-   */
-  public function __construct($config, Crawler $crawler,  OutputInterface $output) {
-    $this->config = $config;
-    $this->crawler = $crawler;
-    $this->output = $output;
-  }
-}
+
+    /**
+     * Construct an instance of a processor with output.
+     */
+    public function __construct($config, Crawler $crawler, OutputInterface $output)
+    {
+        $this->config  = $config;
+        $this->crawler = $crawler;
+        $this->output  = $output;
+
+    }//end __construct()
+
+
+}//end class

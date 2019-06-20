@@ -11,12 +11,18 @@ namespace Migrate\Processor;
  * @usage:
  *   remove_empty_tags: { }
  */
-class RemoveEmptyTags implements ProcessorInterface {
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    return preg_replace('#<([^ >]+)[^>]*>[[:space:]]*</\1>#', '', $value);
-  }
+class RemoveEmptyTags implements ProcessorInterface
+{
 
-}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        return preg_replace('#<([^ >]+)[^>]*>[[:space:]]*</\1>#', '', $value);
+
+    }//end process()
+
+
+}//end class

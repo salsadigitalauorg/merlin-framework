@@ -15,47 +15,59 @@ use Migrate\Utility\ProcessorOptionsTrait;
  *    value: keywords
  *    attr: property
  */
-class Meta extends TypeBase implements TypeInterface {
+class Meta extends TypeBase implements TypeInterface
+{
 
-  use ProcessorOptionsTrait;
+    use ProcessorOptionsTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getSupportedSelectors() {
-    return ['dom'];
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function options($xpath = FALSE) {
-    return [
-      'attr' => 'name',
-    ];
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function getSupportedSelectors()
+    {
+        return ['dom'];
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processDom() {
-    $value = $this->getOption('value');
+    }//end getSupportedSelectors()
 
-    if (empty($value)) {
-      throw new \Exception('Meta requries the value option.');
-    }
 
-    $metatags = $this->crawler->filter('meta');
-    $meta = null;
+    /**
+     * {@inheritdoc}
+     */
+    public function options($xpath=false)
+    {
+        return ['attr' => 'name'];
 
-    $metatags->each(function(Crawler $node) use ($value, &$meta) {
-      if ($node->attr($this->getOption('attr')) == $value) {
-        $meta = $node;
-      }
-    });
+    }//end options()
 
-    if ($meta) {
-      $this->addValueToRow($meta->attr('content'));
-    }
-  }
-}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processDom()
+    {
+        $value = $this->getOption('value');
+
+        if (empty($value)) {
+            throw new \Exception('Meta requries the value option.');
+        }
+
+        $metatags = $this->crawler->filter('meta');
+        $meta     = null;
+
+        $metatags->each(
+            function (Crawler $node) use ($value, &$meta) {
+                if ($node->attr($this->getOption('attr')) == $value) {
+                    $meta = $node;
+                }
+            }
+        );
+
+        if ($meta) {
+            $this->addValueToRow($meta->attr('content'));
+        }
+
+    }//end processDom()
+
+
+}//end class

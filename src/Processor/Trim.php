@@ -8,11 +8,18 @@ namespace Migrate\Processor;
  * @usage:
  *   trim: { }
  */
-class Trim implements ProcessorInterface {
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    return trim($value);
-  }
-}
+class Trim implements ProcessorInterface
+{
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        return trim($value);
+
+    }//end process()
+
+
+}//end class
