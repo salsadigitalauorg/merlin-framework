@@ -1,0 +1,32 @@
+{
+  "name": "salsadigital/migrate",
+  "description": "OpenSource migraiton tool for Drupal 8",
+  "authors": [
+    {
+      "name": "Stuart Rowlands",
+      "email": "stuart@firecannon.com"
+    },
+    {
+      "name": "Steve Worley",
+      "email": "steven.worley@salsadigital.com.au"
+    }
+  ],
+  "require": {
+    "symfony/yaml": "^4.2",
+    "mustangostang/spyc": "^0.6.2",
+    "chuyskywalker/rolling-curl": "^3.1",
+    "symfony/dom-crawler": "^4.2",
+    "symfony/css-selector": "^4.2",
+    "masterminds/html5": "^2.5",
+    "symfony/console": "^4.2",
+    "ramsey/uuid": "^3.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Migrate\\": "src/"
+    }
+  }
+}
