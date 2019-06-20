@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1996a285b1e13a4b14a9faf76b588727",
+    "content-hash": "3ef63065be41ae7cc28907f0b2ba1a2c",
     "packages": [
         {
             "name": "chuyskywalker/rolling-curl",
