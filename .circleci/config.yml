@@ -9,15 +9,6 @@ jobs:
       # Specify the version you desire here
       - image: circleci/php:7.3-stretch-node-browsers
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # Using the RAM variation mitigates I/O contention
-      # for database intensive operations.
-      # - image: circleci/mysql:5.7-ram
-      #
-      # - image: redis:3
-
     steps:
       - checkout
 
@@ -42,3 +33,54 @@ jobs:
             - vendor
 
       - run: ./vendor/bin/phpunit
+
+  deploy:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+    steps:
+      - checkout
+
+      - run: supt apt update
+      - run: sudo apt get install go
+      - run: sudo docker-php-ext-install zip
+
+      - run: composer install -n --no-dev --prefer-dist
+
+      - run: wget -O /tmp/phar-builder.phar https://github.com/MacFJA/PharBuilder/releases/download/0.2.8/phar-builder.phar
+
+      # Remove the examples dir.
+      - run: rm -rf examples
+
+      - run:
+          name: Build the artifact
+          command: |
+            php -d phar.readonly=0 \
+            /tmp/phar-builder.phar package ./composer.json \
+              --output-dir=/tmp \
+              --name=merlin-framework.phar \
+              --entry-point=migrate \
+              --gzip
+
+      - run: go get github.com/aktau/github-release
+
+      - run:
+          name: Bundle the phar when a tag is pushed.
+          command: |
+            github-release upload \
+              --user steveworley \
+              --repo merlin-framework \
+              --tag $CIRCLE_TAG \
+              --name merlin-framework \
+              --file /tmp/merlin-framework.phar
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build
+      - deploy:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
