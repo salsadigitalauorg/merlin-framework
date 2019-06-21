@@ -8,13 +8,18 @@ namespace Migrate\Processor;
  * @usage:
  *   html_entity_decode: { }
  */
-class HtmlEntityDecode implements ProcessorInterface {
+class HtmlEntityDecode implements ProcessorInterface
+{
 
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    return html_entity_decode($value);
-  }
 
-}
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        return html_entity_decode($value);
+
+    }//end process()
+
+
+}//end class

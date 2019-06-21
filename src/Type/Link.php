@@ -16,120 +16,145 @@ use Migrate\Utility\ElementTrait;
  *     link: href # Attribute to determine the URL
  *     text: a # Element that contains the text
  */
-class Link extends TypeBase implements TypeInterface {
+class Link extends TypeBase implements TypeInterface
+{
 
-  use ElementTrait;
+    use ElementTrait;
 
-  /**
-   * Get an option from the configuration with defaults.
-   *
-   * @param string $opt
-   *   The key to access.
-   *
-   * @return string
-   *   The option value.
-   */
-  public function getOption($opt, $xpath = FALSE) {
-    $defaults = [
-      'link' => $xpath ? './a/@href' : 'href',
-      'text' => $xpath ? './a/text()' : 'a',
-      'internal_identifier' => 'internal:',
-    ];
 
-    $options = !empty($this->config['options']) ? $this->config['options'] : [];
-    $options = array_merge($defaults, $options);
-    return array_key_exists($opt, $options) ? $options[$opt] : FALSE;
-  }
+    /**
+     * Get an option from the configuration with defaults.
+     *
+     * @param string $opt
+     *   The key to access.
+     *
+     * @return string
+     *   The option value.
+     */
+    public function getOption($opt, $xpath=false)
+    {
+        $defaults = [
+            'link'                => $xpath ? './a/@href' : 'href',
+            'text'                => $xpath ? './a/text()' : 'a',
+            'internal_identifier' => 'internal:',
+        ];
 
-  /**
-   * Determine if a given path is relative or absolute.
-   *
-   * @param string $uri
-   *   The uri to tet.
-   *
-   * @return bool
-   *   If the uri is relative or not.
-   */
-  public function isRelativeUri($uri = '') {
-    return substr($uri, 0, 1) === '/';
-  }
+        $options = !empty($this->config['options']) ? $this->config['options'] : [];
+        $options = array_merge($defaults, $options);
+        return array_key_exists($opt, $options) ? $options[$opt] : false;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processXpath() {
-    $results = [];
+    }//end getOption()
 
-    $this->crawler->each(function(Crawler $node) use (&$results) {
-      $text = $node->evaluate($this->getOption('text', 1));
-      $link = $node->evaluate($this->getOption('link', 1));
 
-      if (!$this->isValidElement($text) || !$this-> isValidElement($link)) {
-        return;
-      }
+    /**
+     * Determine if a given path is relative or absolute.
+     *
+     * @param string $uri
+     *   The uri to tet.
+     *
+     * @return bool
+     *   If the uri is relative or not.
+     */
+    public function isRelativeUri($uri='')
+    {
+        return substr($uri, 0, 1) === '/';
 
-      $text = $text->text();
-      $link = $link->text();
+    }//end isRelativeUri()
 
-      $text = $this->processValue($text);
-      $link = $this->processValue($link);
 
-      // Validate links - allow anchor links.
-      if (!parse_url($link) && (substr($link, 0, 1) != '#')) {
-        $this->output->mergeRow('error-unhandled', $link, ['Link value does not validate'], TRUE);
-        return;
-      }
+    /**
+     * {@inheritdoc}
+     */
+    public function processXpath()
+    {
+        $results = [];
 
-      if ($this->isRelativeUri($link)) {
-        $link = $this->getOption('internal_identifier') . $link;
-      }
+        $this->crawler->each(
+            function (Crawler $node) use (&$results) {
+                $text = $node->evaluate($this->getOption('text', 1));
+                $link = $node->evaluate($this->getOption('link', 1));
 
-      $results[] = ['link' => $link, 'text' => $text];
-    });
+                if (!$this->isValidElement($text) || !$this-> isValidElement($link)) {
+                    return;
+                }
 
-    $this->addValueToRow($results);
-  }
+                $text = $text->text();
+                $link = $link->text();
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processDom() {
-    $results = [];
+                $text = $this->processValue($text);
+                $link = $this->processValue($link);
 
-    $this->crawler->each(function(Crawler $node) use (&$results) {
+                // Validate links - allow anchor links.
+                if (!parse_url($link) && (substr($link, 0, 1) != '#')) {
+                    $this->output->mergeRow('error-unhandled', $link, ['Link value does not validate'], true);
+                    return;
+                }
 
-      $text = $node->filter($this->getOption('text'));
-      $link = $node->filter('a');
+                if ($this->isRelativeUri($link)) {
+                    $link = $this->getOption('internal_identifier').$link;
+                }
 
-      if (!$this->isValidElement($text) || !$this->isValidElement($link)) {
-        return;
-      }
+                $results[] = [
+                    'link' => $link,
+                    'text' => $text,
+                ];
+            }
+        );
 
-      $text = $text->text();
-      $link = $link->attr($this->getOption('link'));
+        $this->addValueToRow($results);
 
-      // Validate links - allow anchor links.
-      if (!parse_url($link) && (substr($link, 0, 1) != '#')) {
-        $this->output->mergeRow('error-unhandled', $link, ['Link value does not validate'], TRUE);
-        return;
-      }
+    }//end processXpath()
 
-      if ($this->isRelativeUri($link)) {
-        $link = $this->getOption('internal_identifier') . $link;
-      }
 
-      $results[] = ['link' => $link, 'text' => $text];
-    });
+    /**
+     * {@inheritdoc}
+     */
+    public function processDom()
+    {
+        $results = [];
 
-    if (empty($results)) {
-      throw new \Exception('Unable to find links');
-    }
+        $this->crawler->each(
+            function (Crawler $node) use (&$results) {
 
-    foreach ($results as &$result) {
-      $result['text'] = $this->processValue($result['text']);
-      $result['link'] = $this->processValue($result['link']);
-    }
+                $text = $node->filter($this->getOption('text'));
+                $link = $node->filter('a');
 
-    $this->addValueToRow($results);
-  }
-}
+                if (!$this->isValidElement($text) || !$this->isValidElement($link)) {
+                    return;
+                }
+
+                $text = $text->text();
+                $link = $link->attr($this->getOption('link'));
+
+                // Validate links - allow anchor links.
+                if (!parse_url($link) && (substr($link, 0, 1) != '#')) {
+                    $this->output->mergeRow('error-unhandled', $link, ['Link value does not validate'], true);
+                    return;
+                }
+
+                if ($this->isRelativeUri($link)) {
+                    $link = $this->getOption('internal_identifier').$link;
+                }
+
+                $results[] = [
+                    'link' => $link,
+                    'text' => $text,
+                ];
+            }
+        );
+
+        if (empty($results)) {
+            throw new \Exception('Unable to find links');
+        }
+
+        foreach ($results as &$result) {
+            $result['text'] = $this->processValue($result['text']);
+            $result['link'] = $this->processValue($result['link']);
+        }
+
+        $this->addValueToRow($results);
+
+    }//end processDom()
+
+
+}//end class

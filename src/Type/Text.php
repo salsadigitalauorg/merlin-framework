@@ -12,46 +12,58 @@ use Symfony\Component\DomCrawler\Crawler;
  *   selector: "#phbody_1_ctl01_h1Title"
  *   type: text
  */
-class Text extends TypeBase implements TypeInterface {
+class Text extends TypeBase implements TypeInterface
+{
 
-  /**
-   * Retrieve the value from the crawler.
-   */
-  public function getValues() {
-    $values = null;
 
-    if ($this->crawler->count() === 0) {
-      return '';
-    }
+    /**
+     * Retrieve the value from the crawler.
+     */
+    public function getValues()
+    {
+        $values = null;
 
-    if ($this->crawler->count() > 1) {
-      $values = $this->crawler->each(function (Crawler $node) {
-        return $node->text();
-      });
+        if ($this->crawler->count() === 0) {
+            return '';
+        }
 
-      foreach ($values as &$value) {
-        $value = $this->processValue($value);
-      }
-    }
-    else {
-      $values = $this->processValue($this->crawler->eq(0)->text());
-    }
+        if ($this->crawler->count() > 1) {
+            $values = $this->crawler->each(
+                function (Crawler $node) {
+                    return $node->text();
+                }
+            );
 
-    return $values;
-  }
+            foreach ($values as &$value) {
+                $value = $this->processValue($value);
+            }
+        } else {
+            $values = $this->processValue($this->crawler->eq(0)->text());
+        }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processXpath() {
-    $this->addValueToRow($this->getValues());
-  }
+        return $values;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processDom() {
-    $this->addValueToRow($this->getValues());
-  }
+    }//end getValues()
 
-}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processXpath()
+    {
+        $this->addValueToRow($this->getValues());
+
+    }//end processXpath()
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processDom()
+    {
+        $this->addValueToRow($this->getValues());
+
+    }//end processDom()
+
+
+}//end class

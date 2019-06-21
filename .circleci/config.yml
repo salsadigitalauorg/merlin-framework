@@ -42,3 +42,4 @@ jobs:
             - vendor
 
       - run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/phpcs ./

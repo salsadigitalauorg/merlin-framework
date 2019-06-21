@@ -12,12 +12,14 @@ use Migrate\Exception\ValidationException;
  */
 abstract class TypeBase implements TypeInterface {
 
+
   /**
    * The crawler object.
    *
    * @var Symfony\Component\DomCrawler\Crawler
    */
   protected $crawler;
+
 
   /**
    * The output object.
@@ -26,6 +28,7 @@ abstract class TypeBase implements TypeInterface {
    */
   protected $output;
 
+
   /**
    * The row.
    *
@@ -33,12 +36,14 @@ abstract class TypeBase implements TypeInterface {
    */
   protected $row;
 
+
   /**
    * The configuration array.
    *
    * @var array
    */
   protected $config;
+
 
   /**
    * Build a field type parser.
@@ -52,19 +57,23 @@ abstract class TypeBase implements TypeInterface {
    * @param array $config
    *   The configuration for the field.
    */
-  public function __construct(Crawler $crawler, OutputInterface $output, $row, array $config = []) {
+  public function __construct(Crawler $crawler, OutputInterface $output, $row, array $config=[])
+  {
     $this->crawler = $crawler;
     $this->output = $output;
     $this->row = $row;
     $this->config = $config;
-  }
+
+  }//end __construct()
+
 
   /**
    * Add the value to the row.
    *
    * @return this
    */
-  public function addValueToRow($value) {
+  public function addValueToRow($value)
+  {
     extract($this->config);
 
     if (empty($field)) {
@@ -74,7 +83,9 @@ abstract class TypeBase implements TypeInterface {
     $this->row->{$field} = $value;
 
     return $this;
-  }
+
+  }//end addValueToRow()
+
 
   /**
    * Get the processors.
@@ -82,7 +93,8 @@ abstract class TypeBase implements TypeInterface {
    * @return Migrate\Processor\ProcessorInterface[]
    *   A list of processors.
    */
-  public function getProcessors() {
+  public function getProcessors()
+  {
     if (empty($this->config['processors'])) {
       return [];
     }
@@ -97,10 +109,10 @@ abstract class TypeBase implements TypeInterface {
 
       $processor = str_replace('_', '', ucwords($processor, '_'));
 
-      $class = "Migrate\\Processor\\" . ucfirst($processor);
+      $class = "Migrate\\Processor\\".ucfirst($processor);
 
       if (!class_exists($class)) {
-        throw new \Exception('No handler for ' . $processor);
+        throw new \Exception('No handler for '.$processor);
         continue;
       }
 
@@ -108,7 +120,9 @@ abstract class TypeBase implements TypeInterface {
     }
 
     return $processors;
-  }
+
+  }//end getProcessors()
+
 
   /**
    * Handle processing the value.
@@ -119,38 +133,55 @@ abstract class TypeBase implements TypeInterface {
    * @return mixed
    *   The return value after processors have been applied.
    */
-  public function processValue($value) {
+  public function processValue($value)
+  {
     foreach ($this->getProcessors() as $processor) {
       $value = $processor->process($value);
     }
+
     return $value;
-  }
+
+  }//end processValue()
+
 
   /**
    * {@inheritdoc}
    */
-  public function getSupportedSelectors() {
-    return ['dom', 'xpath'];
-  }
+  public function getSupportedSelectors()
+  {
+    return [
+        'dom',
+        'xpath',
+    ];
+
+  }//end getSupportedSelectors()
+
 
   /**
    * {@inheritdoc}
    */
-  public function supports($type) {
+  public function supports($type)
+  {
     return in_array($type, $this->getSupportedSelectors());
-  }
+
+  }//end supports()
+
 
   /**
    * {@inheritdoc}
    */
-  public function nullValue() {
+  public function nullValue()
+  {
     return [];
-  }
+
+  }//end nullValue()
+
 
   /**
    * {@inheritdoc}
    */
-  public function process() {
+  public function process()
+  {
     $xpath = FALSE;
     $element = $this->crawler;
 
@@ -185,26 +216,35 @@ abstract class TypeBase implements TypeInterface {
       if (!empty($this->config['options']['allow_null'])) {
         $this->row->{$this->config['field']} = $this->nullValue();
       }
+
       throw new ElementNotFoundException($selector);
     }
 
     return $xpath ? $this->processXpath() : $this->processDom();
-  }
+
+  }//end process()
+
 
   /**
-   * {@inheritdoc}
+   * processXpath.
+   *
+   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
    */
-  public function processXpath() {
-    // Empty method that will be overriden by extending classes if xpath
-    // is supported.
-  }
+  public function processXpath()
+  {
+
+  }//end processXpath()
+
 
   /**
-   * {@inheritdoc}
+   * processDom.
+   *
+   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
    */
-  public function processDom() {
-    // Empty method that will be overriden by extending classes if dom
-    // is supported.
-  }
+  public function processDom()
+  {
 
-}
+  }//end processDom()
+
+
+}//end class

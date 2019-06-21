@@ -13,106 +13,119 @@ use Ramsey\Uuid\Uuid;
  * Type and Processor this trait abstracts out the common methods that we
  * would need to build a generic media reprensetation.
  */
-trait MediaTrait {
+trait MediaTrait
+{
 
-  /**
-   * Accessor for data attributes with default values.
-   */
-  public function getEmbededAttributes() {
-    $defaults = [
-      'data_embed_button' => 'tide_media',
-      'data_entity_embed_display' => 'view_mode:media.embedded',
-      'data_entity_type' => 'media',
-    ];
 
-    $attributes = isset($this->config['attributes']) ? $this->config['attributes'] : [];
-    return array_merge($defaults, $attributes);
-  }
+    /**
+     * Accessor for data attributes with default values.
+     */
+    public function getEmbededAttributes()
+    {
+        $defaults = [
+            'data_embed_button'         => 'tide_media',
+            'data_entity_embed_display' => 'view_mode:media.embedded',
+            'data_entity_type'          => 'media',
+        ];
 
-  /**
-   * Get a repeatable UUID for the media item.
-   *
-   * Attempts to match a UUID in the name or filename of the found media item.
-   * If a valid uuid is found it will be used otherwise one will be generated
-   * that can be repeated based on the file name.
-   *
-   * @param string $name
-   *   The media item name.
-   * @param string $filename
-   *   The media item filename.
-   *
-   * @return string
-   *   A valid Uuid3.
-   */
-  public function getUuid($name, $filename) {
-    $pattern = '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/';
+        $attributes = isset($this->config['attributes']) ? $this->config['attributes'] : [];
+        return array_merge($defaults, $attributes);
 
-    if (preg_match($pattern, $name, $matches) !== FALSE) {
-      $uuid = reset($matches);
-    }
+    }//end getEmbededAttributes()
 
-    if (preg_match($pattern, $filename, $matches) !== FALSE) {
-      $uuid = reset($matches);
-    }
 
-    return empty($uuid)
-      ? Uuid::uuid3(Uuid::NAMESPACE_DNS, $filename)
-      : $uuid;
-  }
+    /**
+     * Get a repeatable UUID for the media item.
+     *
+     * Attempts to match a UUID in the name or filename of the found media item.
+     * If a valid uuid is found it will be used otherwise one will be generated
+     * that can be repeated based on the file name.
+     *
+     * @param string $name
+     *   The media item name.
+     * @param string $filename
+     *   The media item filename.
+     *
+     * @return string
+     *   A valid Uuid3.
+     */
+    public function getUuid($name, $filename)
+    {
+        $pattern = '/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/';
 
-  /**
-   * Build the asset URL.
-   *
-   * @param string $uri
-   *   The media asset URI.
-   *
-   * @return string
-   *   The absolute asset URL.
-   */
-  protected function getFileUrl($uri) {
-    $host = parse_url($this->crawler->getUri());
-    $base = "{$host['scheme']}://{$host['host']}";
-    $parse_uri = parse_url($uri);
+        if (preg_match($pattern, $name, $matches) !== false) {
+            $uuid = reset($matches);
+        }
 
-    if (isset($parse_uri['host'])) {
-      // If the host is in the URI we have an absolute URL
-      // so we should return that.
-      return $uri;
-    }
+        if (preg_match($pattern, $filename, $matches) !== false) {
+            $uuid = reset($matches);
+        }
 
-    if (substr($uri, 0, 1) === '/') {
-      // If the first character is a / we have a relative URI so
-      // we can append the base domain to the URI.
-      return "{$base}{$uri}";
-    } else {
-      if (isset($this->config['extra']['filename_callback'])) {
-        $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
-        return $url;
-      }
-      return "{$base}/{$uri}";
-    }
+        return empty($uuid) ? Uuid::uuid3(Uuid::NAMESPACE_DNS, $filename) : $uuid;
 
-    throw new \Exception('Invalid file URL for media.');
-  }
+    }//end getUuid()
 
-  /**
-   * Get the Drupal entity embed markup string.
-   *
-   * @return string
-   *   A Drupal entity embed markup.
-   */
-  protected function getDrupalEntityEmbed($uuid) {
-    $data = '';
 
-    foreach ($this->getEmbededAttributes() as $attr => $value) {
-      $attr = strtolower(str_replace('_', '-', $attr));
-      $data .= " {$attr}=\"$value\"";
-    }
+    /**
+     * Build the asset URL.
+     *
+     * @param string $uri
+     *   The media asset URI.
+     *
+     * @return string
+     *   The absolute asset URL.
+     */
+    protected function getFileUrl($uri)
+    {
+        $host      = parse_url($this->crawler->getUri());
+        $base      = "{$host['scheme']}://{$host['host']}";
+        $parsedUri = parse_url($uri);
 
-    $data .= " data-entity-uuid=\"{$uuid}\"";
-    $data = trim($data);
+        if (isset($parsedUri['host'])) {
+            // If the host is in the URI we have an absolute URL
+            // so we should return that.
+            return $uri;
+        }
 
-    return "<drupal-entity {$data}></drupal-entity>";
-  }
+        if (substr($uri, 0, 1) === '/') {
+            // If the first character is a / we have a relative URI so
+            // we can append the base domain to the URI.
+            return "{$base}{$uri}";
+        } else {
+            if (isset($this->config['extra']['filename_callback'])) {
+                $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
+                return $url;
+            }
+
+            return "{$base}/{$uri}";
+        }
+
+        throw new \Exception('Invalid file URL for media.');
+
+    }//end getFileUrl()
+
+
+    /**
+     * Get the Drupal entity embed markup string.
+     *
+     * @return string
+     *   A Drupal entity embed markup.
+     */
+    protected function getDrupalEntityEmbed($uuid)
+    {
+        $data = '';
+
+        foreach ($this->getEmbededAttributes() as $attr => $value) {
+            $attr  = strtolower(str_replace('_', '-', $attr));
+            $data .= " {$attr}=\"$value\"";
+        }
+
+        $data .= " data-entity-uuid=\"{$uuid}\"";
+        $data  = trim($data);
+
+        return "<drupal-entity {$data}></drupal-entity>";
+
+    }//end getDrupalEntityEmbed()
+
 
 }
