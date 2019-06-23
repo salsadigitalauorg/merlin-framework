@@ -62,11 +62,10 @@ jobs:
               --entry-point=migrate \
               --gzip
               
-      - run: export GOPATH=/tmp/go
       - run: go get github.com/aktau/github-release
 
       - run:
-          name: Bundle the phar when a tag is pushed.
+          name: Update the github release.
           command: |
             /tmp/go/bin/github-release upload \
               --user salsadigitalauorg \
