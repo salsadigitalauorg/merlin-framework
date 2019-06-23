@@ -61,7 +61,8 @@ jobs:
               --name=merlin-framework.phar \
               --entry-point=migrate \
               --gzip
-
+              
+      - run: export ${GOPATH//://bin:}/bin
       - run: go get github.com/aktau/github-release
 
       - run:
