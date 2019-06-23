@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout
 
-      - run: supt apt update
+      - run: sudo apt update
       - run: sudo apt get install go
       - run: sudo docker-php-ext-install zip
 
