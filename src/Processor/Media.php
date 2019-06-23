@@ -27,187 +27,206 @@ use Migrate\ProcessController;
  *     name: alt
  *     xpath: false
  */
-class Media extends ProcessorOutputBase implements ProcessorInterface {
+class Media extends ProcessorOutputBase implements ProcessorInterface
+{
 
-  use MediaTrait;
+    use MediaTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $config, Crawler $crawler, OutputInterface $output) {
 
-    $this->type = isset($config['type']) ? $config['type'] : 'image';
-    $this->selector = isset($config['selector']) ? $config['selector'] : 'img';
-    $this->file = isset($config['file']) ? $config['file'] : 'src';
-    $this->name = isset($config['name']) ? $config['name'] : 'alt';
-    $this->alt = isset($config['alt']) ? $config['alt'] : 'alt';
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(array $config, Crawler $crawler, OutputInterface $output)
+    {
 
-    $this->xpath = !empty($config['xpath']);
+        $this->type     = isset($config['type']) ? $config['type'] : 'image';
+        $this->selector = isset($config['selector']) ? $config['selector'] : 'img';
+        $this->file     = isset($config['file']) ? $config['file'] : 'src';
+        $this->name     = isset($config['name']) ? $config['name'] : 'alt';
+        $this->alt      = isset($config['alt']) ? $config['alt'] : 'alt';
 
-    $this->config = [];
-    $this->config['attributes'] = [];
+        $this->xpath = !empty($config['xpath']);
 
-    $this->config['attributes']['data_embed_button'] = !empty($config['data_embed_button']) ? $config['data_embed_button'] : 'tide_media';
-    $this->config['attributes']['data_entity_embed_display'] =!empty($config['data_entity_embed_display']) ? $config['data_embed_button'] : 'view_mode:media.embedded';
-    $this->config['attributes']['data_entity_type'] = !empty($config['data_entity_type']) ? $config[ 'data_entity_type'] : 'media';
+        $this->config = [];
+        $this->config['attributes'] = [];
 
-    $this->config['extra'] = isset($config['extra']) ? $config['extra'] : [];
+        $this->config['attributes']['data_embed_button']         = !empty($config['data_embed_button']) ? $config['data_embed_button'] : 'tide_media';
+        $this->config['attributes']['data_entity_embed_display'] = !empty($config['data_entity_embed_display']) ? $config['data_embed_button'] : 'view_mode:media.embedded';
+        $this->config['attributes']['data_entity_type']          = !empty($config['data_entity_type']) ? $config['data_entity_type'] : 'media';
 
-    $this->entities = [];
+        $this->config['extra'] = isset($config['extra']) ? $config['extra'] : [];
 
-    $this->processors = isset($config['processors']) ? $config['processors'] : false;
-    $this->process_name = isset($config['process_name']) ? $config['process_name'] : FALSE;
-    $this->process_file = isset($config['process_file']) ? $config['process_file'] : FALSE;
+        $this->entities = [];
 
-    parent::__construct($config, $crawler, $output);
-  }
+        $this->processors   = isset($config['processors']) ? $config['processors'] : false;
+        $this->process_name = isset($config['process_name']) ? $config['process_name'] : false;
+        $this->process_file = isset($config['process_file']) ? $config['process_file'] : false;
 
-  /**
-   * Process media items that will be selected using Xpath selectors.
-   *
-   * @param string value
-   *   The value to search thorugh.
-   *
-   * @return string
-   *   The replaced string.
-   */
-  protected function processXpath(&$value) {
-    $media = $this->crawler->evaluate($this->selector);
+        parent::__construct($config, $crawler, $output);
 
-    if (is_array($media) || $media->count() == 0) {
-      // Ensure that we can find media that matches $this->selector.
-      return $value;
-    }
+    }//end __construct()
 
-    $media->each(function(Crawler $node) use (&$value) {
-      $name = $node->evaluate($this->name);
-      $file = $node->evaluate($this->file);
-      $alt = $node->evaluate($this->alt);
 
-      if (!method_exists($name, 'count') || !method_exists($file, 'count')) {
-        // Invalid xpath selector for the child elements.
-        return;
-      }
+    /**
+     * Process media items that will be selected using Xpath selectors.
+     *
+     * @param string value
+     *   The value to search thorugh.
+     *
+     * @return string
+     *   The replaced string.
+     */
+    protected function processXpath(&$value)
+    {
+        $media = $this->crawler->evaluate($this->selector);
 
-      if  ($name->count() == 0 || $file->count() == 0) {
-        // Valid xpath but doesn't match anything.
-        return;
-      }
-
-      $name = $name->text();
-      $file = $file->text();
-      $alt = $alt->text();
-      $uuid = $this->getUuid($name, $file);
-
-      if ($this->process_file) {
-        $file = ProcessController::apply($file, $this->process_file, $this->crawler, $this->output);
-      }
-
-      if ($this->process_name) {
-        $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
-      }
-
-      // @TODO: Process controller that can apply to
-      // types or processors recursively and manage this
-      // type of thing ongoing.
-      if ($this->processors) {
-        foreach ($this->processors as $processor => $config) {
-          if ($processor == 'replace') {
-            $p = new Replace($config);
-            $file = $p->process($file);
-          }
+        if (is_array($media) || $media->count() == 0) {
+            // Ensure that we can find media that matches $this->selector.
+            return $value;
         }
-      }
 
-      $this->entities[] = [
-        'name' => $name,
-        'file' => $this->getFileUrl($file),
-        'uuid' => $uuid,
-        'alt' => $alt,
-      ];
+        $media->each(
+            function (Crawler $node) use (&$value) {
+                $name = $node->evaluate($this->name);
+                $file = $node->evaluate($this->file);
+                $alt  = $node->evaluate($this->alt);
 
-      $parent = $node->getNode(0);
-      $outer_html = $parent->ownerDocument->saveHtml($parent);
-      $value = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
-    });
-  }
+                if (!method_exists($name, 'count') || !method_exists($file, 'count')) {
+                    // Invalid xpath selector for the child elements.
+                    return;
+                }
 
-  /**
-   * Process media items that will be selected using DOM selectors.
-   *
-   * @param string value
-   *   The value to search thorugh.
-   *
-   * @return string
-   *   The replaced string.
-   */
-  protected function processDom(&$value) {
-    $media = $this->crawler->filter($this->selector);
+                if ($name->count() == 0 || $file->count() == 0) {
+                    // Valid xpath but doesn't match anything.
+                    return;
+                }
 
-    if ($media->count() == 0) {
-      // Ensure that we can find media that matches $this->selector.
-      return $value;
-    }
+                $name = $name->text();
+                $file = $file->text();
+                $alt  = $alt->text();
+                $uuid = $this->getUuid($name, $file);
 
-    $media->each(function (Crawler $node) use (&$value) {
-      $name = $node->attr($this->name);
-      $file = $node->attr($this->file);
-      $alt = $node->attr($this->alt);
-      $uuid = $this->getUuid($name, $file);
+                if ($this->process_file) {
+                    $file = ProcessController::apply($file, $this->process_file, $this->crawler, $this->output);
+                }
 
-      if ($this->process_file) {
-        $file = ProcessController::apply($file, $this->process_file, $this->crawler, $this->output);
-      }
+                if ($this->process_name) {
+                    $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
+                }
 
-      if ($this->process_name) {
-        $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
-      }
+                // @TODO: Process controller that can apply to
+                // types or processors recursively and manage this
+                // type of thing ongoing.
+                if ($this->processors) {
+                    foreach ($this->processors as $processor => $config) {
+                        if ($processor == 'replace') {
+                              $p    = new Replace($config);
+                              $file = $p->process($file);
+                        }
+                    }
+                }
 
-      // @TODO: Process controller that can apply to
-      // types or processors recursively and manage this
-      // type of thing ongoing.
-      if ($this->processors) {
-        foreach ($this->processors as $processor => $config) {
-          if ($processor == 'replace') {
-            $p = new Replace($config);
-            $file = $p->process($file);
-          }
+                $this->entities[] = [
+                    'name' => $name,
+                    'file' => $this->getFileUrl($file),
+                    'uuid' => $uuid,
+                    'alt'  => $alt,
+                ];
+
+                $parent     = $node->getNode(0);
+                $outer_html = $parent->ownerDocument->saveHtml($parent);
+                $value      = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+            }
+        );
+
+    }//end processXpath()
+
+
+    /**
+     * Process media items that will be selected using DOM selectors.
+     *
+     * @param string value
+     *   The value to search thorugh.
+     *
+     * @return string
+     *   The replaced string.
+     */
+    protected function processDom(&$value)
+    {
+        $media = $this->crawler->filter($this->selector);
+
+        if ($media->count() == 0) {
+            // Ensure that we can find media that matches $this->selector.
+            return $value;
         }
-      }
 
-      $this->entities[] = [
-        'name' => $name,
-        'file' => $this->getFileUrl($file),
-        'uuid' => $uuid,
-        'alt' => $alt,
-      ];
+        $media->each(
+            function (Crawler $node) use (&$value) {
+                $name = $node->attr($this->name);
+                $file = $node->attr($this->file);
+                $alt  = $node->attr($this->alt);
+                $uuid = $this->getUuid($name, $file);
 
-      $parent = $node->getNode(0);
-      $outer_html = $parent->ownerDocument->saveHtml($parent);
-      $value = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
-    });
-  }
+                if ($this->process_file) {
+                    $file = ProcessController::apply($file, $this->process_file, $this->crawler, $this->output);
+                }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    $this->xpath ? $this->processXpath($value) : $this->processDom($value);
+                if ($this->process_name) {
+                    $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
+                }
 
-    if (count($this->entities) === 0) {
-      return $value;
-    }
+                // @TODO: Process controller that can apply to
+                // types or processors recursively and manage this
+                // type of thing ongoing.
+                if ($this->processors) {
+                    foreach ($this->processors as $processor => $config) {
+                        if ($processor == 'replace') {
+                              $p    = new Replace($config);
+                              $file = $p->process($file);
+                        }
+                    }
+                }
 
-    // Remove duplicate UUIDs.
-    $tmp = array_unique(array_column($this->entities, 'uuid'));
-    $this->entities = array_intersect_key($this->entities, $tmp);
+                $this->entities[] = [
+                    'name' => $name,
+                    'file' => $this->getFileUrl($file),
+                    'uuid' => $uuid,
+                    'alt'  => $alt,
+                ];
 
-    if (count($this->entities) > 0) {
-      // If we found entities to add - we'll create a new output file and add
-      // the entities directly.
-      $this->output->mergeRow("media-{$this->type}", 'data', $this->entities, TRUE);
-    }
-    return $value;
-  }
+                $parent     = $node->getNode(0);
+                $outer_html = $parent->ownerDocument->saveHtml($parent);
+                $value      = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+            }
+        );
 
-}
+    }//end processDom()
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        $this->xpath ? $this->processXpath($value) : $this->processDom($value);
+
+        if (count($this->entities) === 0) {
+            return $value;
+        }
+
+        // Remove duplicate UUIDs.
+        $tmp            = array_unique(array_column($this->entities, 'uuid'));
+        $this->entities = array_intersect_key($this->entities, $tmp);
+
+        if (count($this->entities) > 0) {
+            // If we found entities to add - we'll create a new output file and add
+            // the entities directly.
+            $this->output->mergeRow("media-{$this->type}", 'data', $this->entities, true);
+        }
+
+        return $value;
+
+    }//end process()
+
+
+}//end class

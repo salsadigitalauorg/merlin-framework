@@ -5,6 +5,7 @@ namespace Migrate\Exception;
 /**
  * Validation exception.
  */
-class ValidationException extends \Exception {
-  const FILE = 'error-validation';
-}
+class ValidationException extends \Exception
+{
+    const FILE = 'error-validation';
+}//end class

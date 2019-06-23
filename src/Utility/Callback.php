@@ -5,22 +5,28 @@ namespace Migrate\Utility;
 /**
  * Utility to allow callbacks to be passed from YML.
  */
-class Callback {
+class Callback
+{
 
-  /**
-   * Register a function string in the
-   */
-  public static function getResult($fn_string, ...$params) {
-    // Void function as the default.
-    $callback = function () {};
 
-    if (substr($fn_string, -1) !== ';') {
-      $fn_string .= ';';
-    }
+    /**
+     * Register a function string in the
+     */
+    public static function getResult($fnString, ...$params)
+    {
+        // Void function as the default.
+        $callback = function () {
+        };
 
-    // Register the callback.
-    eval('$callback = ' . $fn_string);
-    return call_user_func_array($callback, $params);
-  }
+        if (substr($fnString, -1) !== ';') {
+            $fnString .= ';';
+        }
 
-}
+        // Register the callback.
+        eval('$callback = '.$fnString);
+        return call_user_func_array($callback, $params);
+
+    }//end getResult()
+
+
+}//end class
