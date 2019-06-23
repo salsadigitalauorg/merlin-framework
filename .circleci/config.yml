@@ -43,6 +43,7 @@ jobs:
       - run: sudo apt update
       - run: sudo apt-get install golang-go
       - run: sudo docker-php-ext-install zip
+      - run: sudo docker-php-ext-install bcmath && sudo docker-php-ext-enable bcmath
 
       - run: composer install -n --no-dev --prefer-dist
 
