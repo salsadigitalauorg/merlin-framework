@@ -62,14 +62,14 @@ jobs:
               --entry-point=migrate \
               --gzip
               
-      - run: export ${GOPATH//://bin:}/bin
+      - run: export GOPATH=/tmp/go
       - run: go get github.com/aktau/github-release
 
       - run:
           name: Bundle the phar when a tag is pushed.
           command: |
-            github-release upload \
-              --user steveworley \
+            /tmp/go/bin/github-release upload \
+              --user salsadigitalauorg \
               --repo merlin-framework \
               --tag $CIRCLE_TAG \
               --name merlin-framework \
