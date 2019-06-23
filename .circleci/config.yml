@@ -41,7 +41,7 @@ jobs:
       - checkout
 
       - run: sudo apt update
-      - run: sudo apt-get install go
+      - run: sudo apt-get install golang-go
       - run: sudo docker-php-ext-install zip
 
       - run: composer install -n --no-dev --prefer-dist
