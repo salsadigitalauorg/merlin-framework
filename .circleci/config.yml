@@ -33,6 +33,7 @@ jobs:
             - vendor
 
       - run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/phpcs ./
 
   deploy:
     docker:
@@ -61,7 +62,7 @@ jobs:
               --name=merlin-framework.phar \
               --entry-point=migrate \
               --gzip
-              
+
       - run: go get github.com/aktau/github-release
 
       - run:

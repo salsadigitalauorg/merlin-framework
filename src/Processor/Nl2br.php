@@ -8,12 +8,19 @@ namespace Migrate\Processor;
  * @usage:
  *   nl2br: { }
  */
-class Nl2br implements ProcessorInterface {
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    $string = trim( $value);
-    return nl2br($string);
-  }
-}
+class Nl2br implements ProcessorInterface
+{
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        $string = trim($value);
+        return nl2br($string);
+
+    }//end process()
+
+
+}//end class

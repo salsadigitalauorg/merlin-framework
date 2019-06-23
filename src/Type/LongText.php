@@ -22,114 +22,132 @@ use Migrate\Utility\ElementTrait;
  *     nl2br: { }
  * ```
  */
-class LongText extends TypeBase implements TypeInterface {
+class LongText extends TypeBase implements TypeInterface
+{
 
-  use ElementTrait;
+    use ElementTrait;
 
-  /**
-   * Attempt to locate embedded downloadable documents.
-   *
-   * This will locate all references of a defined document embedded in the
-   * markup and will pull them out. It will generate a list of media entites
-   * which will be migrated seperately to the content and will replace the
-   * content with a drupal media embed link.
-   *
-   * Option values:
-   * - findDocuments: DOM Selector with which to find documents in the markup.
-   * - documentSelector: The selector with which to find documents.
-   * - documentName: Attribute to use to find the document title
-   * - documentFile: Attribute to use to find a link to the document
-   *
-   * @param string &$markup
-   *   The HTML output of the parent selector.
-   */
-  public function findDocumentAttachments(&$markup) {
-    $docs = $this->crawler->filter($this->config['options']['findDocuments']);
-    if ($docs->count() == 0) {
-      return;
-    }
 
-    $files = [];
-    $document_selector = isset($this->config['options']['documentSelector']) ? $this->config['options']['documentSelector'] : 'a' ;
-    $document_name = isset($this->config['options']['documentName']) ? $this->config['options']['documentName'] : 'data-tracker-label';
-    $document_file = isset($this->config['options'][ 'documentFile']) ? $this->config['options']['documentFile'] : 'href';
+    /**
+     * Attempt to locate embedded downloadable documents.
+     *
+     * This will locate all references of a defined document embedded in the
+     * markup and will pull them out. It will generate a list of media entites
+     * which will be migrated seperately to the content and will replace the
+     * content with a drupal media embed link.
+     *
+     * Option values:
+     * - findDocuments: DOM Selector with which to find documents in the markup.
+     * - documentSelector: The selector with which to find documents.
+     * - documentName: Attribute to use to find the document title
+     * - documentFile: Attribute to use to find a link to the document
+     *
+     * @param string &$markup
+     *   The HTML output of the parent selector.
+     */
+    public function findDocumentAttachments(&$markup)
+    {
+        $docs = $this->crawler->filter($this->config['options']['findDocuments']);
+        if ($docs->count() == 0) {
+            return;
+        }
 
-    $docs->each(function(Crawler $node) use (&$markup, &$files, $document_selector, $document_name, $document_file) {
-      $link = $node->filter($document_selector);
-      $url = parse_url($this->crawler->getUri());
-      if ($link->count() == 0) {
-        return;
-      }
+        $files = [];
+        $document_selector = isset($this->config['options']['documentSelector']) ? $this->config['options']['documentSelector'] : 'a' ;
+        $document_name     = isset($this->config['options']['documentName']) ? $this->config['options']['documentName'] : 'data-tracker-label';
+        $document_file     = isset($this->config['options']['documentFile']) ? $this->config['options']['documentFile'] : 'href';
 
-      // Sometimes a URL might have a UUID in the link, we should look to use that for the uuid
-      // of the media entity when migrating to Drupal for consistency.
-      $matches = [];
-      $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, $link->attr($document_name));
-      if (preg_match('/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/', $link->attr($document_file), $matches) !== FALSE) {
-        $uuid = reset($matches);
-      }
+        $docs->each(
+            function (Crawler $node) use (&$markup, &$files, $document_selector, $document_name, $document_file) {
+                $link = $node->filter($document_selector);
+                $url  = parse_url($this->crawler->getUri());
+                if ($link->count() == 0) {
+                    return;
+                }
 
-      $files[] = [
-        'file' => "{$url['scheme']}://{$url['host']}{$link->attr($document_file)}",
-        'name' => $link->attr($document_name),
-        'uuid' => $uuid,
-      ];
+                // Sometimes a URL might have a UUID in the link, we should look to use that for the uuid
+                // of the media entity when migrating to Drupal for consistency.
+                $matches = [];
+                $uuid    = Uuid::uuid3(Uuid::NAMESPACE_DNS, $link->attr($document_name));
+                if (preg_match('/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/', $link->attr($document_file), $matches) !== false) {
+                    $uuid = reset($matches);
+                }
 
-      $node = $link->getNode(0);
-      $outer_html = $node->ownerDocument->saveHtml($node);
+                $files[] = [
+                    'file' => "{$url['scheme']}://{$url['host']}{$link->attr($document_file)}",
+                    'name' => $link->attr($document_name),
+                    'uuid' => $uuid,
+                ];
 
-      $markup = str_replace($outer_html, '<drupal-entity data-embed-button="tide_media" data-entity-embed-display="view_mode:media.embedded" data-entity-type="media" data-entity-uuid="' . $uuid . '"></drupal-entity>', $markup);
-    });
+                $node       = $link->getNode(0);
+                $outer_html = $node->ownerDocument->saveHtml($node);
 
-    $this->output->mergeRow('media-documents', 'data', $files, TRUE);
-  }
+                $markup = str_replace($outer_html, '<drupal-entity data-embed-button="tide_media" data-entity-embed-display="view_mode:media.embedded" data-entity-type="media" data-entity-uuid="'.$uuid.'"></drupal-entity>', $markup);
+            }
+        );
 
-  public function processXpath() {
-    extract($this->config);
+        $this->output->mergeRow('media-documents', 'data', $files, true);
 
-    $markup = '';
+    }//end findDocumentAttachments()
 
-    $this->crawler->each(function (Crawler $node) use (&$markup) {
-      $markup .= $node->html();
-    });
 
-    if (!empty($options['findDocuments'])) {
-      $this->findDocumentAttachments($markup);
-    }
+    public function processXpath()
+    {
+        extract($this->config);
 
-    $results = [
-      'format' => isset($options['format']) ? $options['format'] : 'rich_text',
-      'value' => $this->processValue($markup),
-    ];
+        $markup = '';
 
-    $this->row->{$field} = $results;
-  }
+        $this->crawler->each(
+            function (Crawler $node) use (&$markup) {
+                $markup .= $node->html();
+            }
+        );
 
-  /**
-   * {@inheritdoc}
-   */
-  public function processDom() {
-    extract($this->config);
-    $markup = '';
+        if (!empty($options['findDocuments'])) {
+            $this->findDocumentAttachments($markup);
+        }
 
-    if (!$this->isValidElement($this->crawler)) {
-      $this->addValueToRow('');
-      return;
-    }
+        $results = [
+            'format' => isset($options['format']) ? $options['format'] : 'rich_text',
+            'value'  => $this->processValue($markup),
+        ];
 
-    $this->crawler->each(function(Crawler $node) use (&$markup) {
-      $markup .= $node->html();
-    });
+        $this->row->{$field} = $results;
 
-    if (!empty($options['findDocuments'])) {
-      $this->findDocumentAttachments($markup);
-    }
+    }//end processXpath()
 
-    $results[] = [
-      'format' => isset($options['format']) ? $options['format'] : 'rich_text',
-      'value' => $this->processValue($markup),
-    ];
 
-    $this->addValueToRow($results);
-  }
-}
+    /**
+     * {@inheritdoc}
+     */
+    public function processDom()
+    {
+        extract($this->config);
+        $markup = '';
+
+        if (!$this->isValidElement($this->crawler)) {
+            $this->addValueToRow('');
+            return;
+        }
+
+        $this->crawler->each(
+            function (Crawler $node) use (&$markup) {
+                $markup .= $node->html();
+            }
+        );
+
+        if (!empty($options['findDocuments'])) {
+            $this->findDocumentAttachments($markup);
+        }
+
+        $results[] = [
+            'format' => isset($options['format']) ? $options['format'] : 'rich_text',
+            'value'  => $this->processValue($markup),
+        ];
+
+        $this->addValueToRow($results);
+
+    }//end processDom()
+
+
+}//end class

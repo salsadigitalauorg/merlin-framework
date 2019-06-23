@@ -5,6 +5,7 @@ namespace Migrate\Exception;
 /**
  * The process
  */
-class ProcessException extends \Exception {
-  const FILE = 'error-process';
-}
+class ProcessException extends \Exception
+{
+    const FILE = 'error-process';
+}//end class
