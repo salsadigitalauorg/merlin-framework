@@ -135,12 +135,6 @@ abstract class OutputBase implements OutputInterface
             }
         }//end foreach
 
-        if (isset($data['data'])) {
-            $data['data'] = array_values($data['data']);
-        } else {
-            $data = array_values($data);
-        }
-
         return $data;
 
     }//end validate()
