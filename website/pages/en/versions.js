@@ -29,21 +29,19 @@ function Versions(props) {
             <h1>{siteConfig.title} Versions</h1>
           </header>
           <h3 id="latest">Current version (Stable)</h3>
-          <p>Latest version of Docusaurus.</p>
+          <p>Latest version of Merlin.</p>
           <table className="versions">
             <tbody>
               <tr>
                 <th>{latestVersion}</th>
                 <td>
                   <a
-                    href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/${
-                      props.language
-                      }/installation`}>
+                    href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/getting-started`}>
                     Documentation
                   </a>
                 </td>
                 <td>
-                  <a href={`${repoUrl}/releases/tag/v${latestVersion}`}>
+                  <a href={`${repoUrl}/releases/tag/${latestVersion}`}>
                     Release Notes
                   </a>
                 </td>
@@ -58,9 +56,7 @@ function Versions(props) {
                 <th>master</th>
                 <td>
                   <a
-                    href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/${
-                      props.language
-                      }/next/installation`}>
+                    href={`${siteConfig.baseUrl}${siteConfig.docsUrl}/getting-started`}>
                     Documentation
                   </a>
                 </td>
@@ -76,6 +72,7 @@ function Versions(props) {
           </p>
           <table className="versions">
             <tbody>
+              { versions }
               {versions.map(
                 version =>
                   version !== latestVersion && (
