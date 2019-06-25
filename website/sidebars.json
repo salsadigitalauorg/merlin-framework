@@ -1,10 +1,15 @@
 {
   "docs": {
-    "Docusaurus": ["doc1"],
-    "First Category": ["doc2"],
-    "Second Category": ["doc3"]
-  },
-  "docs-other": {
-    "First Category": ["doc4", "doc5"]
+    "Introduction": ["getting-started"],
+    "Types": [],
+    "Processors": [
+      "processors-replace",
+      "processors-nl2br",
+      "processors-html-entity-decode",
+      "processors-strip-tags",
+      "processors-remove-dom",
+      "processors-remove-empty-tags",
+      "processors-convert-encoding"
+    ]
   }
 }
