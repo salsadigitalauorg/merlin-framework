@@ -1,0 +1,53 @@
+#!/usr/local/bin/php
+
+<?php
+/**
+ * Create a historical representation of the documentation.
+ */
+
+$docs_dir = $argv[1];
+$new_version = $argv[2];
+
+if (!is_dir($docs_dir)) {
+  echo "Invalid documentation dir";
+  exit(1);
+}
+
+/**
+ * Add the new version.
+ *
+ * @param string $ver
+ *   The version to add.
+ * @param string $dir
+ *   The directory to update.
+ */
+function add_version($ver, $dir)
+{
+  // Add the previous version to the list of versioned documentation.
+  $vers = @json_decode(file_get_contents("$dir/website/versions.json"));
+  $vers[] = $ver;
+
+  // Docsaurus uses version[0] for current version.
+  $vers = array_reverse($vers);
+
+  file_put_contents("$dir/version", $ver);
+  file_put_contents("$dir/website/versions.json", json_encode($vers, JSON_PRETTY_PRINT));
+}
+
+if (!file_exists("$docs_dir/version")) {
+  file_put_contents("$docs_dir/version", $new_version);
+}
+
+$previous_version = file_get_contents("$docs_dir/version");
+
+if (!version_compare($new_version, $previous_version, 'gt')) {
+  echo "Skipping version increment." . PHP_EOL;
+  exit(0);
+}
+
+// Move the sidebar to the versioned_sidebars.
+copy("$docs_dir/website/sidebars.json", "{$docs_dir}/website/versioned_sidebars/version-{$previous_version}-sidebars.json");
+
+`npm run --prefix=$docs_dir/website version $previous_version`;
+
+add_version($new_version, $docs_dir);

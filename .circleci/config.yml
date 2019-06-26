@@ -1,0 +1,124 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # Specify the version you desire here
+      - image: circleci/php:7.3-stretch-node-browsers
+
+    steps:
+      - checkout
+
+      - run: sudo apt update
+      - run: sudo docker-php-ext-install zip
+
+      # Download and cache dependencies
+
+      # composer cache
+      - restore_cache:
+          keys:
+          # "composer.lock" can be used if it is committed to the repo
+          - v1-dependencies-{{ checksum "composer.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+
+      - run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/phpcs ./
+
+  deploy:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+    steps:
+      - checkout
+
+      - run: sudo apt update
+      - run: sudo apt-get install golang-go
+      - run: sudo docker-php-ext-install zip
+      - run: sudo docker-php-ext-install bcmath && sudo docker-php-ext-enable bcmath
+
+      - run: composer install -n --no-dev --prefer-dist
+
+      - run: wget -O /tmp/phar-builder.phar https://github.com/MacFJA/PharBuilder/releases/download/0.2.8/phar-builder.phar
+
+      # Remove the examples dir.
+      - run: rm -rf examples
+
+      - run:
+          name: Build the artifact
+          command: |
+            php -d phar.readonly=0 \
+            /tmp/phar-builder.phar package ./composer.json \
+              --output-dir=/tmp \
+              --name=merlin-framework.phar \
+              --entry-point=migrate \
+              --gzip
+
+      - run: go get github.com/aktau/github-release
+
+      - run:
+          name: Update the github release.
+          command: |
+            /tmp/go/bin/github-release upload \
+              --user salsadigitalauorg \
+              --repo merlin-framework \
+              --tag $CIRCLE_TAG \
+              --name merlin-framework \
+              --file /tmp/merlin-framework.phar
+  deploy_docs:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+    steps:
+      - checkout
+      - checkout:
+          path: /tmp/docs
+      - run:
+          name: "Deploy docs"
+          command: |
+            git config --global user.email "docusaurus-bot@users.noreply.github.com"
+            git config --global user.name "Website Deployment Script"
+
+            git -C /tmp/docs checkout --track origin/docs
+
+            npm --prefix=/tmp/docs/website install
+
+            ./.circleci/scripts/docs-version /tmp/docs $CIRCLE_TAG
+            ./.circleci/scripts/docs-sidebar /tmp/docs
+
+            cp ~/project/docs/* /tmp/docs/docs
+
+            git -C /tmp/docs commit -am "Updated documentation"
+            git -C /tmp/docs push origin docs -f
+
+            npm --prefix=/tmp/docs/website run publish-gh-pages
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - docs
+      - deploy:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - deploy_docs:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
