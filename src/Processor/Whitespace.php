@@ -8,13 +8,20 @@ namespace Migrate\Processor;
  * @usage:
  *   whitespace: { }
  */
-class Whitespace implements ProcessorInterface {
-  /**
-   * {@inheritdoc}
-   */
-  public function process($value) {
-    $value = preg_replace("/(\n|\t|\r)/", '', $value);
-    $value = preg_replace('/ {2,}/', '', $value);
-    return trim($value);
-  }
-}
+class Whitespace implements ProcessorInterface
+{
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process($value)
+    {
+        $value = preg_replace("/(\n|\t|\r)/", '', $value);
+        $value = preg_replace('/ {2,}/', '', $value);
+        return trim($value);
+
+    }//end process()
+
+
+}//end class

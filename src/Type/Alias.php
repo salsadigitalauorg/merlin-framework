@@ -9,11 +9,18 @@ namespace Migrate\Type;
  *   field: alias
  *   type: alias
  */
-class Alias extends TypeBase implements TypeInterface {
-  /**
-   * {@inheritdoc}
-   */
-  public function process() {
-    $this->addValueToRow(parse_url($this->crawler->getUri(), PHP_URL_PATH));
-  }
-}
+class Alias extends TypeBase implements TypeInterface
+{
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process()
+    {
+        $this->addValueToRow(parse_url($this->crawler->getUri(), PHP_URL_PATH));
+
+    }//end process()
+
+
+}//end class
