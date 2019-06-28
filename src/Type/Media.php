@@ -58,12 +58,16 @@ class Media extends TypeBase implements TypeInterface {
     $this->crawler->each(function (Crawler $node) use (&$uuids) {
       $name = $node->evaluate($this->config['options']['name'])->text();
       $file = $node->evaluate($this->config['options']['file'])->text();
-      $alt = $node->evaluate($this->getOption('alt'))->text();
+      if ($node->evaluate($this->getOption('alt'))->count() > 0) {
+        $alt = $node->evaluate($this->getOption('alt'))->text();
+      }
       $uuid = $this->getUuid($name, $file);
 
       if ($this->getOption('process_name')) {
         $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
       }
+
+      $file = $this->getFileUrl($file);
 
       if ($this->getOption('process_file')) {
         $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
@@ -71,7 +75,7 @@ class Media extends TypeBase implements TypeInterface {
 
       $this->entities[] = [
         'name' => $name,
-        'file' => $this->getFileUrl($file),
+        'file' => $file,
         'uuid' => $uuid,
         'alt' => $alt,
       ];
@@ -107,13 +111,15 @@ class Media extends TypeBase implements TypeInterface {
         $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
       }
 
+      $file = $this->getFileUrl($file);
+
       if ($this->getOption('process_file')) {
         $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
       }
 
       $this->entities[] = [
         'name' => $name,
-        'file' => $this->getFileUrl($file),
+        'file' => $file,
         'uuid' => $uuid,
         'alt' => $alt,
       ];

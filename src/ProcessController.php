@@ -32,7 +32,7 @@ class ProcessController {
     $class = "Migrate\\Processor\\" . ucfirst($processor);
 
     if (!class_exists($class)) {
-      throw new \Exception("No handler for {$processor}");
+      throw new \Exception("No handler for {$processor}: " . json_encode($config));
     }
 
     return new $class($config, $crawler, $output);
@@ -42,7 +42,7 @@ class ProcessController {
    * Get all processors from a configuration array.
    *
    * @param array $config
-   *   The config array for a procesor.
+   *   The config array for a processor.
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The DOM.
    * @param Migrate\Output\OutputInterface $output

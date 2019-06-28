@@ -100,7 +100,7 @@ abstract class TypeBase implements TypeInterface {
       $class = "Migrate\\Processor\\" . ucfirst($processor);
 
       if (!class_exists($class)) {
-        throw new \Exception('No handler for ' . $processor);
+        throw new \Exception('No handler for ' . $processor . ': ' . json_encode($config));
         continue;
       }
 

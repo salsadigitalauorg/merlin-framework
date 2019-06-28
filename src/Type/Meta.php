@@ -4,6 +4,7 @@ namespace Migrate\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Utility\ProcessorOptionsTrait;
+use Migrate\ProcessController;
 
 /**
  * Extract meta tags.
@@ -55,7 +56,18 @@ class Meta extends TypeBase implements TypeInterface {
     });
 
     if ($meta) {
-      $this->addValueToRow($meta->attr('content'));
+      $value = $meta->attr('content');
+
+      if (isset($this->config['processors'])) {
+        $value = ProcessController::apply(
+          $value,
+          $this->config['processors'],
+          $this->crawler,
+          $this->output
+        );
+      }
+
+      $this->addValueToRow($value);
     }
   }
 }

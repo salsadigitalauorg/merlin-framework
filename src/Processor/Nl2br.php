@@ -13,7 +13,7 @@ class Nl2br implements ProcessorInterface {
    * {@inheritdoc}
    */
   public function process($value) {
-    $string = trim( $value);
+    $string = trim($value);
     return nl2br($string);
   }
 }
