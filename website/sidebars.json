@@ -1,15 +1,36 @@
 {
-  "docs": {
-    "Introduction": ["getting-started"],
-    "Types": [],
-    "Processors": [
-      "processors-replace",
-      "processors-nl2br",
-      "processors-html-entity-decode",
-      "processors-strip-tags",
-      "processors-remove-dom",
-      "processors-remove-empty-tags",
-      "processors-convert-encoding"
-    ]
-  }
+    "docs": {
+        "Introduction": [
+            "getting-started",
+            "examples"
+        ],
+        "Types": [
+            "type-static-value",
+            "type-paragraph",
+            "type-alias",
+            "type-reusable-paragraph",
+            "type-long-text",
+            "type-taxonomy-term",
+            "type-uuid",
+            "type-ordered",
+            "type-text",
+            "type-accordion",
+            "type-menu-link",
+            "type-menu",
+            "type-link",
+            "type-taxonomy-filter",
+            "type-boolean",
+            "type-meta"
+        ],
+        "Processors": [
+            "processor-replace",
+            "processor-remove-dom",
+            "processor-whitespace",
+            "processor-convert-encoding",
+            "processor-html-entity-decode",
+            "processor-remove-empty-tags",
+            "processor-nl2br",
+            "processor-strip-tags"
+        ]
+    }
 }

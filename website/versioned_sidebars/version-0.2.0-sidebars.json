@@ -1,0 +1,36 @@
+{
+  "version-0.2.0-docs": {
+    "Introduction": [
+      "version-0.2.0-getting-started",
+      "version-0.2.0-examples"
+    ],
+    "Types": [
+      "version-0.2.0-type-static-value",
+      "version-0.2.0-type-paragraph",
+      "version-0.2.0-type-alias",
+      "version-0.2.0-type-reusable-paragraph",
+      "version-0.2.0-type-long-text",
+      "version-0.2.0-type-taxonomy-term",
+      "version-0.2.0-type-uuid",
+      "version-0.2.0-type-ordered",
+      "version-0.2.0-type-text",
+      "version-0.2.0-type-accordion",
+      "version-0.2.0-type-menu-link",
+      "version-0.2.0-type-menu",
+      "version-0.2.0-type-link",
+      "version-0.2.0-type-taxonomy-filter",
+      "version-0.2.0-type-boolean",
+      "version-0.2.0-type-meta"
+    ],
+    "Processors": [
+      "version-0.2.0-processor-replace",
+      "version-0.2.0-processor-remove-dom",
+      "version-0.2.0-processor-whitespace",
+      "version-0.2.0-processor-convert-encoding",
+      "version-0.2.0-processor-html-entity-decode",
+      "version-0.2.0-processor-remove-empty-tags",
+      "version-0.2.0-processor-nl2br",
+      "version-0.2.0-processor-strip-tags"
+    ]
+  }
+}
