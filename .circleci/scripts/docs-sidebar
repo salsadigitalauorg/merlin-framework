@@ -1,0 +1,68 @@
+#!/usr/local/bin/php
+
+<?php
+/**
+ *
+ */
+$docs_dir = $argv[1];
+
+if (!file_exists("$docs_dir/website/sidebars.json")) {
+  echo "Invalid documentation directory.";
+  exit(1);
+}
+
+$dir = new RecursiveDirectoryIterator(__DIR__ . "/../../docs");
+$iterator = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+
+$menu_configuration = [
+  "docs" => [
+    'Introduction' => [],
+    'Types' => [],
+    'Processors' => [],
+  ],
+];
+
+foreach ($iterator as $file) {
+  if ($file->isFile()) {
+    $contents = file_get_contents($file->getPathname());
+    $id = [];
+    preg_match("/id:\s([-\w]+)/", $contents, $id);
+    if (empty($id[1])) {
+      // Not a valid doc file.
+      continue;
+    }
+    preg_match("/weight:\s([-\d]+)/", $contents, $weight);
+    $weight = empty($weight[1]) ? 0 : $weight[1];
+    $menu_configuration['docs'][get_menu_key($id[1])][$id[1]] = $weight;
+  }
+}
+
+foreach ($menu_configuration['docs'] as $type => &$links) {
+  asort($links);
+  $links = array_keys($links);
+}
+
+echo "Updated sidebar!" . PHP_EOL;
+file_put_contents("$docs_dir/website/sidebars.json", json_encode($menu_configuration, JSON_PRETTY_PRINT));
+exit(0);
+
+/**
+ * Get the doctype for a file this will be used to write the sidebar menu.
+ *
+ * @return string
+ *   The menu key.
+ */
+function get_menu_key($id)
+{
+  $parts = explode('-', $id);
+  $type = reset($parts);
+
+  switch ($type) {
+    case 'processor':
+      return 'Processors';
+    case 'type':
+      return 'Types';
+    default:
+      return 'Introduction';
+  }
+}

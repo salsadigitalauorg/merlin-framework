@@ -74,13 +74,54 @@ jobs:
               --tag $CIRCLE_TAG \
               --name merlin-framework \
               --file /tmp/merlin-framework.phar
+  deploy_docs:
+    docker:
+      - image: circleci/php:7.3-stretch-node-browsers
+    steps:
+      - checkout
+      - checkout:
+          path: /tmp/docs
+      - run:
+          name: "Deploy docs"
+          command: |
+            git config --global user.email "docusaurus-bot@users.noreply.github.com"
+            git config --global user.name "Website Deployment Script"
+
+            git -C /tmp/docs checkout --track origin/docs
+
+            npm --prefix=/tmp/docs/website install
+
+            ./.circleci/scripts/docs-sidebar /tmp/docs
+
+            cp ~/project/docs/* /tmp/docs/docs
+
+            cd /tmp/docs/website
+            npm run version $CIRCLE_TAG
+
+            cd /tmp/docs
+            git add .
+            git commit -m "Automated documentation generation"
+            git push origin docs -f
+
+            cd /tmp/docs/website
+            CURRENT_BRANCH=docs npm run publish-gh-pages
 
 workflows:
   version: 2
   main:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore:
+                - docs
       - deploy:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - deploy_docs:
           filters:
             branches:
               ignore: /.*/
