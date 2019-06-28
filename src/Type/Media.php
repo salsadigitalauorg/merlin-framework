@@ -26,119 +26,122 @@ use Migrate\ProcessController;
  *       name: alt
  *       xpath: false
  */
-class Media extends TypeBase implements TypeInterface
-{
+class Media extends TypeBase implements TypeInterface {
 
-    use MediaTrait;
-    use ProcessorOptionsTrait;
+  use MediaTrait;
+  use ProcessorOptionsTrait;
 
 
-    /**
-     * {@inheritdoc}
-     */
-    public function options($xpath=false)
-    {
-        return [
-            'process_name' => false,
-            'process_file' => false,
-            'file'         => $xpath ? '@src' : 'src',
-            'name'         => $xpath ? '@alt' : 'alt',
-            'alt'          => $xpath ? '@alt' : 'alt',
+  /**
+   * {@inheritdoc}
+   */
+  public function options($xpath=FALSE) {
+    return [
+        'process_name' => FALSE,
+        'process_file' => FALSE,
+        'file'         => $xpath ? '@src' : 'src',
+        'name'         => $xpath ? '@alt' : 'alt',
+        'alt'          => $xpath ? '@alt' : 'alt',
+    ];
+
+  }//end options()
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processXpath() {
+    $uuids = [];
+    extract($this->config['options']);
+
+    if (empty($name) || empty($file)) {
+      throw new \Exception('Cannot parse media for '.$this->config['field']);
+    }
+
+    $this->crawler->each(
+        function (Crawler $node) use (&$uuids) {
+        $name = $node->evaluate($this->config['options']['name'])->text();
+        $file = $node->evaluate($this->config['options']['file'])->text();
+        if ($node->evaluate($this->getOption('alt'))->count() > 0) {
+        $alt = $node->evaluate($this->getOption('alt'))->text();
+        }
+
+        $uuid = $this->getUuid($name, $file);
+
+        if ($this->getOption('process_name')) {
+        $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
+        }
+
+        $file = $this->getFileUrl($file);
+
+        if ($this->getOption('process_file')) {
+        $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
+        }
+
+        $this->entities[] = [
+            'name' => $name,
+            'file' => $file,
+            'uuid' => $uuid,
+            'alt'  => $alt,
         ];
 
-    }//end options()
+        $uuids[] = $uuid;
+        }
+    );
+
+    if (count($this->entities) > 0) {
+      $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
+      $this->addValueToRow($uuids);
+    }
+
+  }//end processXpath()
 
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processXpath()
-    {
-        $uuids = [];
-        extract($this->config['options']);
+  /**
+   * {@inheritdoc}
+   */
+  public function processDom() {
+    $uuids = [];
+    extract($this->config['options']);
 
-        if (empty($name) || empty($file)) {
-            throw new \Exception('Cannot parse media for '.$this->config['field']);
+    if (empty($name) || empty($file)) {
+      throw new \Exception('Cannot parse media for '.$this->config['field']);
+    }
+
+    $this->crawler->each(
+        function (Crawler $node) use (&$uuids) {
+        $name = $node->attr($this->config['options']['name']);
+        $file = $node->attr($this->config['options']['file']);
+        $alt = $node->attr($this->getOption('alt'));
+        $uuid = $this->getUuid($name, $file);
+
+        if ($this->getOption('process_name')) {
+        $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
         }
 
-        $this->crawler->each(
-            function (Crawler $node) use (&$uuids) {
-                $name = $node->evaluate($this->config['options']['name'])->text();
-                $file = $node->evaluate($this->config['options']['file'])->text();
-                $alt  = $node->evaluate($this->getOption('alt'))->text();
-                $uuid = $this->getUuid($name, $file);
+        $file = $this->getFileUrl($file);
 
-                if ($this->getOption('process_name')) {
-                    $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
-                }
-
-                if ($this->getOption('process_file')) {
-                    $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
-                }
-
-                $this->entities[] = [
-                    'name' => $name,
-                    'file' => $this->getFileUrl($file),
-                    'uuid' => $uuid,
-                    'alt'  => $alt,
-                ];
-
-                $uuids[] = $uuid;
-            }
-        );
-
-        if (count($this->entities) > 0) {
-            $this->output->mergeRow("media-{$type}", 'data', $this->entities, true);
-            $this->addValueToRow($uuids);
+        if ($this->getOption('process_file')) {
+        $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
         }
 
-    }//end processXpath()
+        $this->entities[] = [
+            'name' => $name,
+            'file' => $file,
+            'uuid' => $uuid,
+            'alt'  => $alt,
+        ];
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function processDom()
-    {
-        $uuids = [];
-        extract($this->config['options']);
-
-        if (empty($name) || empty($file)) {
-            throw new \Exception('Cannot parse media for '.$this->config['field']);
+        $uuids[] = $uuid;
         }
+    );
 
-        $this->crawler->each(
-            function (Crawler $node) use (&$uuids) {
-                $name = $node->attr($this->config['options']['name']);
-                $file = $node->attr($this->config['options']['file']);
-                $alt  = $node->attr($this->getOption('alt'));
-                $uuid = $this->getUuid($name, $file);
+    if (count($this->entities) > 0) {
+      $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
+      $this->addValueToRow($uuids);
+    }
 
-                if ($this->getOption('process_name')) {
-                    $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
-                }
-
-                if ($this->getOption('process_file')) {
-                    $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
-                }
-
-                $this->entities[] = [
-                    'name' => $name,
-                    'file' => $this->getFileUrl($file),
-                    'uuid' => $uuid,
-                    'alt'  => $alt,
-                ];
-
-                $uuids[] = $uuid;
-            }
-        );
-
-        if (count($this->entities) > 0) {
-            $this->output->mergeRow("media-{$type}", 'data', $this->entities, true);
-            $this->addValueToRow($uuids);
-        }
-
-    }//end processDom()
+  }//end processDom()
 
 
 }//end class

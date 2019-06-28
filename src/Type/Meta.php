@@ -4,6 +4,7 @@ namespace Migrate\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Utility\ProcessorOptionsTrait;
+use Migrate\ProcessController;
 
 /**
  * Extract meta tags.
@@ -15,59 +16,66 @@ use Migrate\Utility\ProcessorOptionsTrait;
  *    value: keywords
  *    attr: property
  */
-class Meta extends TypeBase implements TypeInterface
-{
+class Meta extends TypeBase implements TypeInterface {
 
-    use ProcessorOptionsTrait;
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSupportedSelectors()
-    {
-        return ['dom'];
-
-    }//end getSupportedSelectors()
+  use ProcessorOptionsTrait;
 
 
-    /**
-     * {@inheritdoc}
-     */
-    public function options($xpath=false)
-    {
-        return ['attr' => 'name'];
+  /**
+   * {@inheritdoc}
+   */
+  public function getSupportedSelectors() {
+    return ['dom'];
 
-    }//end options()
+  }//end getSupportedSelectors()
 
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processDom()
-    {
-        $value = $this->getOption('value');
+  /**
+   * {@inheritdoc}
+   */
+  public function options($xpath=FALSE) {
+    return ['attr' => 'name'];
 
-        if (empty($value)) {
-            throw new \Exception('Meta requries the value option.');
+  }//end options()
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processDom() {
+    $value = $this->getOption('value');
+
+    if (empty($value)) {
+      throw new \Exception('Meta requries the value option.');
+    }
+
+    $metatags = $this->crawler->filter('meta');
+    $meta = null;
+
+    $metatags->each(
+        function(Crawler $node) use ($value, &$meta) {
+        if ($node->attr($this->getOption('attr')) == $value) {
+        $meta = $node;
         }
+        }
+    );
 
-        $metatags = $this->crawler->filter('meta');
-        $meta     = null;
+    if ($meta) {
+      $value = $meta->attr('content');
 
-        $metatags->each(
-            function (Crawler $node) use ($value, &$meta) {
-                if ($node->attr($this->getOption('attr')) == $value) {
-                    $meta = $node;
-                }
-            }
+      if (isset($this->config['processors'])) {
+        $value = ProcessController::apply(
+            $value,
+            $this->config['processors'],
+            $this->crawler,
+            $this->output
         );
+      }
 
-        if ($meta) {
-            $this->addValueToRow($meta->attr('content'));
-        }
+      $this->addValueToRow($value);
+    }
 
-    }//end processDom()
+  }//end processDom()
 
 
 }//end class
