@@ -20,21 +20,24 @@ class Meta extends TypeBase implements TypeInterface {
 
   use ProcessorOptionsTrait;
 
+
   /**
    * {@inheritdoc}
    */
   public function getSupportedSelectors() {
     return ['dom'];
-  }
+
+  }//end getSupportedSelectors()
+
 
   /**
    * {@inheritdoc}
    */
-  public function options($xpath = FALSE) {
-    return [
-      'attr' => 'name',
-    ];
-  }
+  public function options($xpath=FALSE) {
+    return ['attr' => 'name'];
+
+  }//end options()
+
 
   /**
    * {@inheritdoc}
@@ -49,25 +52,30 @@ class Meta extends TypeBase implements TypeInterface {
     $metatags = $this->crawler->filter('meta');
     $meta = null;
 
-    $metatags->each(function(Crawler $node) use ($value, &$meta) {
-      if ($node->attr($this->getOption('attr')) == $value) {
+    $metatags->each(
+        function(Crawler $node) use ($value, &$meta) {
+        if ($node->attr($this->getOption('attr')) == $value) {
         $meta = $node;
-      }
-    });
+        }
+        }
+    );
 
     if ($meta) {
       $value = $meta->attr('content');
 
       if (isset($this->config['processors'])) {
         $value = ProcessController::apply(
-          $value,
-          $this->config['processors'],
-          $this->crawler,
-          $this->output
+            $value,
+            $this->config['processors'],
+            $this->crawler,
+            $this->output
         );
       }
 
       $this->addValueToRow($value);
     }
-  }
-}
+
+  }//end processDom()
+
+
+}//end class

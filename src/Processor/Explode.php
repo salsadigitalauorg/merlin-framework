@@ -20,10 +20,13 @@ namespace Migrate\Processor;
 
 class Explode implements ProcessorInterface {
 
+
   public function __construct(array $config) {
     $this->delimiter = !empty($config['delimiter']) ? $config['delimiter'] : ',';
     $this->trim = !empty($config['trim']);
-  }
+
+  }//end __construct()
+
 
   /**
    * {@inheritdoc}
@@ -33,7 +36,10 @@ class Explode implements ProcessorInterface {
     if ($this->trim) {
       $value = array_map('trim', $value);
     }
-    return $value;
-  }
 
-}
+    return $value;
+
+  }//end process()
+
+
+}//end class

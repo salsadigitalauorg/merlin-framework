@@ -7,6 +7,7 @@ use Migrate\Output\OutputInterface;
 
 class ProcessController {
 
+
   /**
    * Get a processor.
    *
@@ -22,21 +23,23 @@ class ProcessController {
    * @return Migrate\Processor\ProcessorInterface
    *   An instantiated processor object.
    */
-  public static function get(array $config, Crawler $crawler, OutputInterface $output, $processor = NULL) {
+  public static function get(array $config, Crawler $crawler, OutputInterface $output, $processor=NULL) {
     if (empty($processor)) {
       $processor = $config['processor'];
       unset($config['processor']);
     }
 
     $processor = str_replace('_', '', ucwords($processor, '_'));
-    $class = "Migrate\\Processor\\" . ucfirst($processor);
+    $class = "Migrate\\Processor\\".ucfirst($processor);
 
     if (!class_exists($class)) {
-      throw new \Exception("No handler for {$processor}: " . json_encode($config));
+      throw new \Exception("No handler for {$processor}: ".json_encode($config));
     }
 
     return new $class($config, $crawler, $output);
-  }
+
+  }//end get()
+
 
   /**
    * Get all processors from a configuration array.
@@ -58,11 +61,14 @@ class ProcessController {
       if (!is_numeric($processor)) {
         $pconf['processor'] = $processor;
       }
+
       $processors[] = self::get($pconf, $crawler, $output);
     }
 
     return $processors;
-  }
+
+  }//end getAll()
+
 
   /**
    * Apply all processors from a configuration array.
@@ -85,6 +91,8 @@ class ProcessController {
     }
 
     return $value;
-  }
 
-}
+  }//end apply()
+
+
+}//end class

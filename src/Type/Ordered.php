@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class Ordered extends TypeBase implements TypeInterface {
 
+
   /**
    * Process the item rows of the ordered list.
    *
@@ -27,7 +28,9 @@ class Ordered extends TypeBase implements TypeInterface {
         // :(
       }
     }
-  }
+
+  }//end processItem()
+
 
   /**
    * {@inheritdoc}
@@ -43,17 +46,20 @@ class Ordered extends TypeBase implements TypeInterface {
       throw new \Exception('"available_items" key missing.');
     }
 
-    $this->crawler->each(function(Crawler $node) use ($list, &$results) {
-      foreach ($list as $item) {
+    $this->crawler->each(
+        function(Crawler $node) use ($list, &$results) {
+        foreach ($list as $item) {
         $attr = $node->attr($item['by']['attr']);
         if (strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
           continue;
         }
+
         $row = new \stdClass();
         $this->processItem($row, $node, $item);
         $results[] = $row;
-      }
-    });
+        }
+        }
+    );
 
     $flat_results = [];
     $hashed_results = [];
@@ -69,9 +75,11 @@ class Ordered extends TypeBase implements TypeInterface {
     }
 
     $this->row->{$this->config['field']} = [
-      'type' => 'container',
-      'children' => $flat_results,
+        'type'     => 'container',
+        'children' => $flat_results,
     ];
-  }
 
-}
+  }//end process()
+
+
+}//end class
