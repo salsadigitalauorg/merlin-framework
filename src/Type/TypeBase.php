@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Output\OutputInterface;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
+use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
 
 /**
  * Field type base.
@@ -191,6 +192,13 @@ abstract class TypeBase implements TypeInterface {
       $element = @$this->crawler->evaluate($selector);
       $xpath = TRUE;
 
+      if ($element instanceof Crawler && $element->count() == 0) {
+        // The DOMCrawler can return an empty DOMNode list or an array
+        // if the selector doesn't match something that xpath can evaluate.
+        $xpath = FALSE;
+        $element = $this->crawler;
+      }
+
       if (is_array($element)) {
         // If the evaluate method returns an array we don't have a valid xpath
         // selector so we reset these values and continue forward!
@@ -207,7 +215,13 @@ abstract class TypeBase implements TypeInterface {
 
     if (!$xpath && $selector) {
       // If we haven't found an element with xpath lets try the DOM.
-      $element = $this->crawler->filter($selector);
+      try {
+        $element = $this->crawler->filter($selector);
+      } catch (SyntaxErrorException $syntax) {
+        // If the domcrawler couldn't filter to the selector, default to an
+        // empty crawler.
+        $element = new Crawler();
+      }
     }
 
     $this->crawler = $element;
