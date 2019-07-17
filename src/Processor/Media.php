@@ -38,6 +38,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
      */
     public function __construct(array $config, Crawler $crawler, OutputInterface $output)
     {
+        parent::__construct($config, $crawler, $output);
 
         $this->type     = isset($config['type']) ? $config['type'] : 'image';
         $this->selector = isset($config['selector']) ? $config['selector'] : 'img';
@@ -51,7 +52,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $this->config['attributes'] = [];
 
         $this->config['attributes']['data_embed_button']         = !empty($config['data_embed_button']) ? $config['data_embed_button'] : 'tide_media';
-        $this->config['attributes']['data_entity_embed_display'] = !empty($config['data_entity_embed_display']) ? $config['data_embed_button'] : 'view_mode:media.embedded';
+        $this->config['attributes']['data_entity_embed_display'] = !empty($config['data_entity_embed_display']) ? $config['data_entity_embed_display'] : 'view_mode:media.embedded';
         $this->config['attributes']['data_entity_type']          = !empty($config['data_entity_type']) ? $config['data_entity_type'] : 'media';
 
         $this->config['extra'] = isset($config['extra']) ? $config['extra'] : [];
@@ -61,8 +62,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $this->processors   = isset($config['processors']) ? $config['processors'] : false;
         $this->process_name = isset($config['process_name']) ? $config['process_name'] : false;
         $this->process_file = isset($config['process_file']) ? $config['process_file'] : false;
-
-        parent::__construct($config, $crawler, $output);
 
     }//end __construct()
 

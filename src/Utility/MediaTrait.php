@@ -20,18 +20,18 @@ trait MediaTrait
     /**
      * Accessor for data attributes with default values.
      */
-    public function getEmbededAttributes()
+    public function getEmbeddedAttributes()
     {
         $defaults = [
             'data_embed_button'         => 'tide_media',
             'data_entity_embed_display' => 'view_mode:media.embedded',
             'data_entity_type'          => 'media',
         ];
-
         $attributes = isset($this->config['attributes']) ? $this->config['attributes'] : [];
+
         return array_merge($defaults, $attributes);
 
-    }//end getEmbededAttributes()
+    }//end getEmbeddedAttributes()
 
 
     /**
@@ -115,7 +115,7 @@ trait MediaTrait
     {
         $data = '';
 
-        foreach ($this->getEmbededAttributes() as $attr => $value) {
+        foreach ($this->getEmbeddedAttributes() as $attr => $value) {
             $attr  = strtolower(str_replace('_', '-', $attr));
             $data .= " {$attr}=\"$value\"";
         }
