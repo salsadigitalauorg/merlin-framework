@@ -57,6 +57,10 @@ abstract class ConfigBase implements ParserInterface
             throw new \Exception("Invalid source file: No mappings found in the source file");
         }
 
+        if (!is_array($data['urls'])) {
+            $data['urls'] = [$data['urls']];
+        }
+
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         return $this;
