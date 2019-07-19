@@ -71,24 +71,21 @@ class CrawlCommand extends Command
         $yaml    = new Yaml($io, $config);
 
         $clientOptions = [
-          RequestOptions::COOKIES => true,
-          RequestOptions::CONNECT_TIMEOUT => 10,
-          RequestOptions::TIMEOUT => 10,
-          RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
-          RequestOptions::VERIFY => false,
-          'headers' => [
-            'User-Agent' => 'Merlin'
-          ],
+            RequestOptions::COOKIES         => true,
+            RequestOptions::CONNECT_TIMEOUT => 10,
+            RequestOptions::TIMEOUT         => 10,
+            RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
+            RequestOptions::VERIFY          => false,
+            'headers'                       => ['User-Agent' => 'Merlin'],
         ];
 
         $baseUrl = $this->config['domain'];
 
         // Crawler agent header.
-        //$stack = new HandlerStack();
-        //$stack->setHandler(new CurlHandler());
-        //$stack->push($this->add_header('User-Agent', 'Merlin'));
-        //  $clientOptions['handler'] = $stack;
-
+        // $stack = new HandlerStack();
+        // $stack->setHandler(new CurlHandler());
+        // $stack->push($this->add_header('User-Agent', 'Merlin'));
+        // $clientOptions['handler'] = $stack;.
         $crawler = SpatieCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
@@ -131,6 +128,7 @@ class CrawlCommand extends Command
 
     }//end execute()
 
+
     private function add_header($header, $value)
     {
         return function (callable $handler) use ($header, $value) {
@@ -142,6 +140,8 @@ class CrawlCommand extends Command
                 return $handler($request, $options);
             };
         };
-    }
+
+    }//end add_header()
+
 
 }//end class

@@ -22,6 +22,7 @@ class Yaml extends OutputBase
     public function toString(array $data=[])
     {
         return \Spyc::YAMLDump($data,2,0);
+
     }//end toString()
 
 

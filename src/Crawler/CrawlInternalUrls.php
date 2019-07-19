@@ -8,9 +8,27 @@ use Spatie\Crawler\CrawlProfile;
 
 class CrawlInternalUrls extends CrawlProfile
 {
+    /**
+     * The base URL of the crawler.
+     *
+     * @var string
+     */
     protected $baseUrl;
+
+    /**
+     * Extensions to skip as part of the URL list.
+     *
+     * @var array
+     */
     protected $skipExtensions = [];
+
+    /**
+     * The crawler configuration array.
+     *
+     * @var array
+     */
     protected $config;
+
 
     public function __construct($config)
     {
@@ -25,26 +43,28 @@ class CrawlInternalUrls extends CrawlProfile
         $this->baseUrl = $baseUrl;
 
         $this->skipExtensions = [
-          'jpg',
-          'jpeg',
-          'png',
-          'gif',
-          'svg',
-          'doc',
-          'docx',
-          'ppt',
-          'pptx',
-          'xls',
-          'xlsx',
-          'pdf',
-          'mov',
-          'mp4',
-          'mpg',
-          'mpeg',
-          'zip',
-          'gz',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'svg',
+            'doc',
+            'docx',
+            'ppt',
+            'pptx',
+            'xls',
+            'xlsx',
+            'pdf',
+            'mov',
+            'mp4',
+            'mpg',
+            'mpeg',
+            'zip',
+            'gz',
         ];
-    }
+
+    }//end __construct()
+
 
     public function shouldCrawl(UriInterface $url): bool
     {
@@ -62,5 +82,8 @@ class CrawlInternalUrls extends CrawlProfile
 
         // Internal paths only.
         return $this->baseUrl->getHost() === $url->getHost();
-    }
-}
+
+    }//end shouldCrawl()
+
+
+}//end class

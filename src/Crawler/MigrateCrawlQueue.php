@@ -14,25 +14,32 @@ class MigrateCrawlQueue implements CrawlQueue
     /** @var \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection */
     protected $pendingUrls;
 
-    /** @var Array */
+    /** @var array */
     protected $config;
+
 
     public function __construct($config)
     {
         $this->urls = collect();
-        $this->config = $config; 
+        $this->config = $config;
         $this->pendingUrls = collect();
-    }
+
+    }//end __construct()
+
 
     public function getUrls()
     {
         return $this->urls;
-    }
+
+    }//end getUrls()
+
 
     public function getPendingUrls()
     {
         return $this->pendingUrls;
-    }
+
+    }//end getPendingUrls()
+
 
     public function add(CrawlUrl $url): CrawlQueue
     {
@@ -40,7 +47,7 @@ class MigrateCrawlQueue implements CrawlQueue
         // Standardise URL to consistent base domain.
         if ($this->config['options']['rewrite_domain']) {
           if (!preg_match("#^{$this->config['domain']}#", $url->url->__toString())) {
-            $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/') . $url->url->getPath());
+            $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/').$url->url->getPath());
           }
         }
 
@@ -54,12 +61,16 @@ class MigrateCrawlQueue implements CrawlQueue
         $this->pendingUrls->push($url);
 
         return $this;
-    }
+
+    }//end add()
+
 
     public function hasPendingUrls(): bool
     {
         return (bool) $this->pendingUrls->count();
-    }
+
+    }//end hasPendingUrls()
+
 
     /**
      * @param mixed $id
@@ -73,20 +84,28 @@ class MigrateCrawlQueue implements CrawlQueue
         }
 
         return $this->urls->values()[$id];
-    }
+
+    }//end getUrlById()
+
 
     public function hasAlreadyBeenProcessed(CrawlUrl $url): bool
     {
         return ! $this->contains($this->pendingUrls, $url) && $this->contains($this->urls, $url);
-    }
+
+    }//end hasAlreadyBeenProcessed()
+
 
     public function markAsProcessed(CrawlUrl $crawlUrl)
     {
         $this->pendingUrls = $this->pendingUrls
-            ->reject(function (CrawlUrl $crawlUrlItem) use ($crawlUrl) {
+            ->reject(
+                function (CrawlUrl $crawlUrlItem) use ($crawlUrl) {
                 return (string) $crawlUrlItem->url === (string) $crawlUrl->url;
-            });
-    }
+                }
+            );
+
+    }//end markAsProcessed()
+
 
     /**
      * @param CrawlUrl|\Psr\Http\Message\UriInterface $crawlUrl
@@ -104,13 +123,17 @@ class MigrateCrawlQueue implements CrawlQueue
         }
 
         return false;
-    }
+
+    }//end has()
+
 
     /** @return \Spatie\Crawler\CrawlUrl|null */
     public function getFirstPendingUrl()
     {
         return $this->pendingUrls->first();
-    }
+
+    }//end getFirstPendingUrl()
+
 
     /**
      * @param \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection $collection
@@ -127,5 +150,8 @@ class MigrateCrawlQueue implements CrawlQueue
         }
 
         return false;
-    }
-}
+
+    }//end contains()
+
+
+}//end class

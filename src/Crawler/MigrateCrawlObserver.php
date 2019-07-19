@@ -15,14 +15,17 @@ class MigrateCrawlObserver extends CrawlObserver
     /** @var Migrate\Output\Json */
     protected $json;
 
-    /** @var int */
+    /** @var integer */
     protected $count = 0;
+
 
     public function __construct($io, $json)
     {
         $this->io = $io;
         $this->json = $json;
-    }
+
+    }//end __construct()
+
 
     /**
      * Called when the crawler will crawl the url.
@@ -32,7 +35,9 @@ class MigrateCrawlObserver extends CrawlObserver
     public function willCrawl(UriInterface $url)
     {
         $this->count++;
-    }
+
+    }//end willCrawl()
+
 
     /**
      * Called when the crawler has crawled the given url.
@@ -44,20 +49,24 @@ class MigrateCrawlObserver extends CrawlObserver
     public function crawled(
         UriInterface $url,
         ResponseInterface $response,
-        ?UriInterface $foundOnUrl = null
+        ?UriInterface $foundOnUrl=null
     ) {
         $this->io->writeln($url);
         $this->json->mergeRow('crawled-urls', 'urls', [$url->__toString()], true);
-    }
+
+    }//end crawled()
+
 
     public function crawlFailed(
         UriInterface $url,
         RequestException $requestException,
-        ?UriInterface $foundOnUrl = null
+        ?UriInterface $foundOnUrl=null
     ) {
         $this->json->mergeRow('crawl-error', $url->__toString(), [$requestException->getMessage()], true);
         $this->io->error("Error: ${url} -- Found on url: ${foundOnUrl}");
-    }
+
+    }//end crawlFailed()
+
 
     /**
      * Called when the crawl has ended.
@@ -65,6 +74,9 @@ class MigrateCrawlObserver extends CrawlObserver
     public function finishedCrawling()
     {
       $this->io->success("Done!");
-      $this->io->success($this->count . " total URLs.");
-    }
-}
+      $this->io->success($this->count." total URLs.");
+
+    }//end finishedCrawling()
+
+
+}//end class

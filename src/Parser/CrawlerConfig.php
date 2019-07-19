@@ -12,6 +12,7 @@ use Migrate\Parser\WebConfig;
 class CrawlerConfig extends ConfigBase
 {
 
+
     /**
      * {@inheritdoc}
      */
@@ -19,12 +20,18 @@ class CrawlerConfig extends ConfigBase
     {
 
         $defaults = [
-          'follow_redirects' => true,   # Allow internal redirects.
-          'ignore_robotstxt' => false,  # Ignore robots.txt rules.
-          'concurrency' => 5,           # Crawler concurrency.
-          'rewrite_domain' => true,    # Standardise base domain (e.g protocol or www/non-www variation).
-          'delay' => 100,               # Delay between URL retrieval (ms).
-          'exclude' => []               # Regex options for crawl exclusion.
+            'follow_redirects' => true,
+// Allow internal redirects.
+            'ignore_robotstxt' => false,
+// Ignore robots.txt rules.
+            'concurrency'      => 5,
+// Crawler concurrency.
+            'rewrite_domain'   => true,
+// Standardise base domain (e.g protocol or www/non-www variation).
+            'delay'            => 100,
+// Delay between URL retrieval (ms).
+            'exclude'          => [],
+// Regex options for crawl exclusion.
         ];
 
         if (!file_exists($this->source)) {
@@ -50,12 +57,14 @@ class CrawlerConfig extends ConfigBase
 
     }//end parse()
 
+
     /**
      * Returns subclassed configuration.
      */
     public function getConfig()
     {
         return $this->data;
+
     }//end getConfig()
 
 
