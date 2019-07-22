@@ -19,7 +19,8 @@
     "symfony/css-selector": "^4.2",
     "masterminds/html5": "^2.5",
     "symfony/console": "^4.2",
-    "ramsey/uuid": "^3.8"
+    "ramsey/uuid": "^3.8",
+    "spatie/crawler": "^4.4"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5",
