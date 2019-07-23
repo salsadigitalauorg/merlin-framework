@@ -1,9 +1,9 @@
 ---
-domain: https://www.example.com
+domain: https://steveworley.github.io
 
 urls:
-  - /about-us
-  - /about-us/news
+  - /2018/02/22/css-security.html
+  - /2017/10/04/slow-query-tracking.html
   # ... etc
 
 entity_type: basic_page
@@ -19,7 +19,7 @@ mappings:
       nl2br: { }
   -
     field: field_body
-    selector: div#main-content
+    selector: section
     type: long_text
     processors:
       nl2br: {}
@@ -37,32 +37,3 @@ mappings:
           - class
           - id
           - style
-  -
-    field: field_downloads
-    selector: '//*[contains(@class, "download-item")]'
-    type: media
-    options:
-      file: ./a/@href
-      name: ./a/text()
-      type: documents-standard_page
-      xpath: true
-  -
-    field: field_metatags.basic.title
-    type: meta
-    options:
-      value: title
-  -
-    field: field_metatags.basic.description
-    type: meta
-    options:
-      value: description
-  -
-    field: field_metatags.basic.keywords
-    type: meta
-    options:
-      value: keywords
-  -
-    field: field_metatags.basic.modified
-    type: meta
-    options:
-      value: modified

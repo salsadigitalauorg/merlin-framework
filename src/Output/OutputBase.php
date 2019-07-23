@@ -5,6 +5,7 @@ namespace Migrate\Output;
 use Symfony\Component\Console\Output\OutputInterface as ConsoleOutput;
 use Symfony\Component\Console\Style\OutputStyle;
 use Migrate\Parser\ParserInterface;
+use Migrate\Utility\HashTrait;
 
 /**
  * The output base class.
@@ -12,10 +13,29 @@ use Migrate\Parser\ParserInterface;
 abstract class OutputBase implements OutputInterface
 {
 
+    use HashTrait;
+
+
+    /**
+     * The file directory.
+     *
+     * @var string
+     */
+    protected $directory;
+
     /**
      * @var Symfony\Component\Console\Output\OutputInterface;
      */
     protected $io;
+
+
+    /**
+     * The extension to use.
+     *
+     * @var string
+     */
+    protected $ext = 'txt';
+
 
     /**
      * An array of outputs from the runner.
@@ -23,6 +43,7 @@ abstract class OutputBase implements OutputInterface
      * @var array
      */
     protected $data;
+
 
     /**
      * The configuration object.
@@ -33,15 +54,141 @@ abstract class OutputBase implements OutputInterface
 
 
     /**
+     * An array of open handles.
+     *
+     * @var array
+     */
+    protected $resources;
+
+
+    /**
+     * An array of refrences to values added to the output files.
+     *
+     * @var array
+     */
+    protected $refs;
+
+
+    /**
      * Build an instance of the output object.
      */
-    public function __construct(ConsoleOutput $output, ParserInterface $config)
+    public function __construct(ConsoleOutput $output, ParserInterface $config, $directory = '/tmp')
     {
         $this->io     = $output;
         $this->config = $config;
+        $this->directory = $directory;
 
     }//end __construct()
 
+
+    protected function register()
+    {
+        // @TODO: Callbacks might be better than binding $output and $config.
+        // Separation of concerns.
+    }//end register()
+
+    /**
+     * Open the stream resource for the output file.
+     *
+     * @return resource
+     */
+    protected final function open($filename = '', $directory = '/tmp')
+    {
+        if ($this->resources[$filename]) {
+            return $this->resources[$filename];
+        }
+
+        $file = "$directory/$filename.{$this->ext}";
+        $this->resources[$filename] = fopen($file, 'w');
+
+        $this->afterOpen($this->resources[$filename]);
+
+        return $this->resources[$filename];
+    }//end open()
+
+    /**
+     * Close a resource.
+     *
+     * @return void
+     */
+    protected final function close($filename = NULL)
+    {
+
+        if (empty($this->resources[$filename])) {
+            throw new \Exception('Invalid file provided.');
+        }
+
+        $this->beforeClose($this->resources[$filename]);
+
+        fclose($this->resources[$filename]);
+    }//end close()
+
+    public function end()
+    {
+        foreach ($this->resources as $file => $fh) {
+            $this->close($file);
+        }
+    }
+
+    /**
+     * Add a row to the resource.
+     */
+    public function add($filename, $row)
+    {
+        $hash = $this->hash($row);
+
+        if (isset($this->refs[$hash]) && $this->refs[$hash] === $filename) {
+            throw new \Exception('Cannot add duplicates.');
+        }
+
+        $fh = $this->open($filename);
+
+        if (!$fh) {
+            throw new \Exception("Unable to open the file [$filename] for writing.");
+        }
+
+        $this->refs[$hash] = $filename;
+
+        $return = fwrite($fh, $this->serialize($row));
+
+        if ($return !== FALSE) {
+            $this->afterRow($fh);
+        }
+
+        return $return;
+    }
+
+    /**
+     *
+     */
+    protected function afterOpen($resource)
+    {
+        // Nothing.
+    }
+
+
+    protected function beforeClose($resource)
+    {
+        // Nothing.
+    }
+
+    protected function afterRow($resource)
+    {
+        // Nothing.
+    }
+
+    /**
+     * Handle serilaizing the row.
+     *
+     * @param array|stdClass $row
+     *   The row.
+     *
+     * @return string
+     */
+    public function serialize($row)
+    {
+        return implode(',', (array) $row);
+    }
 
     /**
      * {@inheritdoc}
