@@ -1,5 +1,5 @@
 ---
-domain: https://example.com
+domain: http://example.com.au
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
@@ -8,3 +8,28 @@ options:
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
+  path_only: true         # Return only the path from the crawled URL.
+
+  group_by:               # Group options to allow segmenting URLs basede on some business rules.
+    -
+      id: group-2016-2014
+      type: path
+      options:
+        pattern:
+          - /2016/*
+          - /2014/*
+    -
+      id: group-2017
+      type: path
+      options:
+        pattern: /2017/*
+    -
+      id: group-2018
+      type: path
+      options:
+        pattern: /2018/*
+    -
+      id: group-dom
+      type: element
+      options:
+        selector: h1

@@ -171,4 +171,16 @@ abstract class OutputBase implements OutputInterface
     }//end writeFiles()
 
 
+    /**
+     * Accessor for the config object.
+     *
+     * @return Migrate\Parser\ParserInterface
+     */
+    public function getConfig()
+    {
+        return $this->config;
+
+    }//end getConfig()
+
+
 }//end class
