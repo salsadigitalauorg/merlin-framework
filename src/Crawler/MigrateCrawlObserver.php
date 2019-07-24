@@ -51,8 +51,46 @@ class MigrateCrawlObserver extends CrawlObserver
         ResponseInterface $response,
         ?UriInterface $foundOnUrl=null
     ) {
+        $url_string = $url->__toString();
+        $return_url = $url_string;
+
+        if (!empty($this->json->getConfig()->get('options')['path_only'])) {
+          $query = parse_url($url_string, PHP_URL_QUERY);
+          $return_url = !empty($query) ? parse_url($url_string, PHP_URL_PATH)."?{$query}" : parse_url($url_string, PHP_URL_PATH);
+        }
+
+        if (empty($return_url)) {
+            $return_url = '/';
+        }
+
         $this->io->writeln($url);
-        $this->json->mergeRow('crawled-urls', 'urls', [$url->__toString()], true);
+
+        $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
+
+        foreach ($groups as $config) {
+            if (empty($config['type'])) {
+                // Invalid group definition.
+                continue;
+            }
+
+            $class_name = str_replace('_', '', ucwords($config['type'], '_'));
+            $class = "\\Migrate\\Crawler\\Group\\".ucfirst($class_name);
+
+            if (!class_exists($class)) {
+                // An unknown type.
+                continue;
+            }
+
+            $type = new $class($config);
+
+            if ($type->match($url_string, $response)) {
+                // Only match on the first option.
+                return $this->json->mergeRow("crawled-urls-{$type->getId()}", $type->getId(), [$return_url], true);
+            }
+        }//end foreach
+
+        // Add this to the default group if it doesn't match.
+        $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
 
     }//end crawled()
 

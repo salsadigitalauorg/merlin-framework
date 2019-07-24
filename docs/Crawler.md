@@ -7,6 +7,49 @@ title: URL Crawler
 
 Merlin comes with a URL crawler to help generate URL lists prior to a migration.
 
+## URL Grouping
+
+Merlin can assist in grouping URLs by specifying grouping options in the crawler config. This is useful to crawl an entire website and generate separate lists of URLs based on a set of criteria (either regex, or selectors in the DOM).
+
+All groupings should have an `id` key as this will be used to key the result set.
+
+### Available types
+
+#### Path
+
+Group URLs based on their path. This grouping method allows you to specify wildcard path patterns to match certain groups. You can use one or more patterns when defining this rule. The matching method allows wildcard (`*`) in the URL, this can be used to match the whole path or parts in the path.
+
+```
+type: path
+options:
+  pattern: /single-pattern
+  # pattern:
+  #    - /multiple-patterns/*
+  #    - /works/*/with/wildcards/*/in/pattern
+```
+
+#### Element
+
+Group URLs by the existence of a DOM element. The selector option can be a valid CSS selector or Xpath selector.
+
+```
+type: element
+options:
+  selector: //*/h1
+```
+
+#### Value
+
+Group URLs by the value of a given element or attribute. If the `attribute` key is not present it will use the text value of DOM node when doing the comparison. Pattern can be a simple string or a valid regular expression.
+
+```
+type: element
+options:
+  selector: //*/h1
+  pattern: /\w+{4}/
+  attribute: data-type
+```
+
 ## Configuration example
 ```
 ---
@@ -20,6 +63,8 @@ options:
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
+  path_only: true         # Return only the path from the crawled URL.
+  group_by: []            # Group options to allow segmenting URLs basede on some business rules.
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:
