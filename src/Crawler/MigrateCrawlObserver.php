@@ -56,7 +56,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
         if (!empty($this->json->getConfig()->get('options')['path_only'])) {
           $query = parse_url($url_string, PHP_URL_QUERY);
-          $return_url = !empty($query) ? parse_url($url_string, PHP_URL_PATH) . "?{$query}" : parse_url($url_string, PHP_URL_PATH);
+          $return_url = !empty($query) ? parse_url($url_string, PHP_URL_PATH)."?{$query}" : parse_url($url_string, PHP_URL_PATH);
         }
 
         if (empty($return_url)) {
