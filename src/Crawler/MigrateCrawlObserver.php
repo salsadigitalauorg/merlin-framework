@@ -52,7 +52,12 @@ class MigrateCrawlObserver extends CrawlObserver
         ?UriInterface $foundOnUrl=null
     ) {
         $url_string = $url->__toString();
-        $return_url = !empty($this->json->getConfig()->get('options')['path_only']) ? $return_url = parse_url($url_string, PHP_URL_PATH) : $url_string;
+        $return_url = $url_string;
+
+        if (!empty($this->json->getConfig()->get('options')['path_only'])) {
+          $query = parse_url($url_string, PHP_URL_QUERY);
+          $return_url = !empty($query) ? parse_url($url_string, PHP_URL_PATH) . "?{$query}" : parse_url($url_string, PHP_URL_PATH);
+        }
 
         if (empty($return_url)) {
             $return_url = '/';
@@ -80,12 +85,12 @@ class MigrateCrawlObserver extends CrawlObserver
 
             if ($type->match($url_string, $response)) {
                 // Only match on the first option.
-                return $this->json->mergeRow('crawled-urls', $type->getId(), [$return_url], true);
+                return $this->json->mergeRow("crawled-urls-{$type->getId()}", $type->getId(), [$return_url], true);
             }
         }//end foreach
 
         // Add this to the default group if it doesn't match.
-        $this->json->mergeRow('crawled-urls', 'default', [$return_url], true);
+        $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
 
     }//end crawled()
 
