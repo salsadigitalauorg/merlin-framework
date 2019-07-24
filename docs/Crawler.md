@@ -9,7 +9,7 @@ Merlin comes with a URL crawler to help generate URL lists prior to a migration.
 
 ## URL Grouping
 
-Merlin expects are list of URLs with defined content structures by specifying grouping options to the crawler, we can prepare a list of URLs ready to use with a Merlin configuraiton file.
+Merlin can assist in grouping URLs by specifying grouping options in the crawler config. This is useful to crawl an entire website and generate separate lists of URLs based on a set of criteria (either regex, or selectors in the DOM).
 
 All groupings should have an `id` key as this will be used to key the result set.
 
@@ -17,7 +17,7 @@ All groupings should have an `id` key as this will be used to key the result set
 
 #### Path
 
-Group URLs based on their path. This grouping method allows you to specify wildcard path patterns to match certain groups. You can use one or morep atterns when defining this rule. The matching method allows wildcard (`*`) in the URL, this can be used to match the whole path or parts in the path.
+Group URLs based on their path. This grouping method allows you to specify wildcard path patterns to match certain groups. You can use one or more patterns when defining this rule. The matching method allows wildcard (`*`) in the URL, this can be used to match the whole path or parts in the path.
 
 ```
 type: path
