@@ -13,7 +13,7 @@ use Migrate\ProcessController;
  * A media processor.
  *
  * This processor can be added to any text value and can be used to replace
- * links in-tezt with Drupal media embedded entities.
+ * links in-text with Drupal media embedded entities.
  *
  * This processor can use XPath selectors to access information in the current
  * DOM fragment to determine if we have valid media. To enable xpath you will
@@ -32,6 +32,18 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
     use MediaTrait;
 
+    // @TODO: I guess these are all supposed to be public?
+    public $type;
+    public $selector;
+    public $file;
+    public $name;
+    public $alt;
+    public $xpath;
+    public $entities;
+    public $processors;
+    public $process_name;
+    public $process_file;
+
 
     /**
      * {@inheritdoc}
@@ -40,13 +52,21 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
     {
         parent::__construct($config, $crawler, $output);
 
+        $xpath = !empty($config['xpath']);
+        $this->xpath = $xpath;
+
+        // Default attribute selectors
+        $file = $xpath ? './@src' : 'src';
+        $name = $xpath ? './@alt' : 'alt';
+        $alt  = $xpath ? './@alt' : 'alt';
+
         $this->type     = isset($config['type']) ? $config['type'] : 'image';
         $this->selector = isset($config['selector']) ? $config['selector'] : 'img';
-        $this->file     = isset($config['file']) ? $config['file'] : 'src';
-        $this->name     = isset($config['name']) ? $config['name'] : 'alt';
-        $this->alt      = isset($config['alt']) ? $config['alt'] : 'alt';
+        $this->file     = isset($config['file']) ? $config['file'] : $file;
+        $this->name     = isset($config['name']) ? $config['name'] : $name;
+        $this->alt      = isset($config['alt']) ? $config['alt'] : $alt;
 
-        $this->xpath = !empty($config['xpath']);
+
 
         $this->config = [];
         $this->config['attributes'] = [];
@@ -70,7 +90,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
      * Process media items that will be selected using Xpath selectors.
      *
      * @param string value
-     *   The value to search thorugh.
+     *   The value to search through.
      *
      * @return string
      *   The replaced string.
@@ -102,7 +122,9 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
                 $name = $name->text();
                 $file = $file->text();
-                $alt  = $alt->text();
+                $alt = ($alt->count() > 0) ? $alt->text() : null;
+
+
                 $uuid = $this->getUuid($name, $file);
 
                 if ($this->process_file) {
@@ -145,7 +167,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
      * Process media items that will be selected using DOM selectors.
      *
      * @param string value
-     *   The value to search thorugh.
+     *   The value to search through.
      *
      * @return string
      *   The replaced string.

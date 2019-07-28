@@ -63,19 +63,22 @@ class Media extends TypeBase implements TypeInterface {
         $name = $node->evaluate($this->config['options']['name'])->text();
         $file = $node->evaluate($this->config['options']['file'])->text();
         if ($node->evaluate($this->getOption('alt'))->count() > 0) {
-        $alt = $node->evaluate($this->getOption('alt'))->text();
+            $alt = $node->evaluate($this->getOption('alt'))->text();
+        }
+        else {
+            $alt = null;
         }
 
         $uuid = $this->getUuid($name, $file);
 
         if ($this->getOption('process_name')) {
-        $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
+            $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
         }
 
         $file = $this->getFileUrl($file);
 
         if ($this->getOption('process_file')) {
-        $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
+            $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
         }
 
         $this->entities[] = [
