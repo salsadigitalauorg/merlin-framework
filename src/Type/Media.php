@@ -64,8 +64,7 @@ class Media extends TypeBase implements TypeInterface {
         $file = $node->evaluate($this->config['options']['file'])->text();
         if ($node->evaluate($this->getOption('alt'))->count() > 0) {
             $alt = $node->evaluate($this->getOption('alt'))->text();
-        }
-        else {
+        } else {
             $alt = null;
         }
 

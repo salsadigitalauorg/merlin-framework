@@ -15,8 +15,13 @@ use Symfony\Component\DomCrawler\Crawler;
 abstract class ProcessorOutputBase implements ProcessorInterface
 {
 
+    /** @var array */
     public $config;
+
+    /** @var \Migrate\Output\OutputInterface  */
     public $output;
+
+    /** @var \Symfony\Component\DomCrawler\Crawler  */
     public $crawler;
 
 

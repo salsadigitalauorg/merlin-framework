@@ -33,15 +33,35 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
     use MediaTrait;
 
     // @TODO: I guess these are all supposed to be public?
+
+    /** @var mixed|string  */
     public $type;
+
+    /** @var mixed|string  */
     public $selector;
+
+    /** @var mixed|string  */
     public $file;
+
+    /** @var mixed|string  */
     public $name;
+
+    /** @var mixed|string  */
     public $alt;
+
+    /** @var boolean  */
     public $xpath;
+
+    /** @var array  */
     public $entities;
+
+    /** @var boolean|mixed  */
     public $processors;
+
+    /** @var boolean|mixed  */
     public $process_name;
+
+    /** @var boolean|mixed  */
     public $process_file;
 
 
@@ -55,7 +75,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $xpath = !empty($config['xpath']);
         $this->xpath = $xpath;
 
-        // Default attribute selectors
+        // Default attribute selectors.
         $file = $xpath ? './@src' : 'src';
         $name = $xpath ? './@alt' : 'alt';
         $alt  = $xpath ? './@alt' : 'alt';
@@ -65,8 +85,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $this->file     = isset($config['file']) ? $config['file'] : $file;
         $this->name     = isset($config['name']) ? $config['name'] : $name;
         $this->alt      = isset($config['alt']) ? $config['alt'] : $alt;
-
-
 
         $this->config = [];
         $this->config['attributes'] = [];
@@ -123,7 +141,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                 $name = $name->text();
                 $file = $file->text();
                 $alt = ($alt->count() > 0) ? $alt->text() : null;
-
 
                 $uuid = $this->getUuid($name, $file);
 
