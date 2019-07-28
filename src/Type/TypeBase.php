@@ -237,7 +237,6 @@ abstract class TypeBase implements TypeInterface {
       }
 
       throw new ElementNotFoundException($selector);
-
     }
 
     return $xpath ? $this->processXpath() : $this->processDom();
@@ -279,14 +278,13 @@ abstract class TypeBase implements TypeInterface {
 
       if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
           $value = Callback::getResult($this->config['default']['function'], $this->crawler);
-      }
-      else {
+      } else {
           $value = $this->config['default'];
       }
 
       $this->addValueToRow($value);
-  }//end processDefault()
 
+  }//end processDefault()
 
 
 }//end class
