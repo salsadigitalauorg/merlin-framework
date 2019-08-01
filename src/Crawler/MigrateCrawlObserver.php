@@ -2,10 +2,12 @@
 
 namespace Migrate\Crawler;
 
+use Consolidation\Comments\Comments;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
+
 
 class MigrateCrawlObserver extends CrawlObserver
 {
@@ -195,7 +197,14 @@ class MigrateCrawlObserver extends CrawlObserver
 
                     $yaml = \Spyc::YAMLDump($srcConfig, 2, 0);
 
-                    $bytes = file_put_contents($dstConfigFile, $yaml);
+                    // Attempt to pull in comments from original.
+                    // @TODO: This currently does not seem to bring in comments at the end of the line.
+                    $commentManager = new Comments();
+                    $commentManager->collect(explode("\n", file_get_contents($srcConfigFile)));
+                    $yamlWithComments = $commentManager->inject(explode("\n", $yaml));
+                    $yamlWithComments = implode("\n", $yamlWithComments);
+
+                    $bytes = file_put_contents($dstConfigFile, $yamlWithComments);
                     if ($bytes !== false) {
                         $this->io->writeln("Merging urls into $dstConfigFile <info>Done!</info>");
                     } else {
