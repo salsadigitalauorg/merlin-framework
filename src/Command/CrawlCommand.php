@@ -66,20 +66,6 @@ class CrawlCommand extends Command
 
         $config       = new CrawlerConfig($input->getOption('config'));
         $this->config = $config->getConfig();
-
-
-
-//        echo $config->getSource();
-        //readfile($config->getSource());
-
-//        var_dump($config->getConfig());
-
-        //var_dump($this->config);
-        //echo getcwd();
-        //die;
-
-
-
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 

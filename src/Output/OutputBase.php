@@ -195,6 +195,4 @@ abstract class OutputBase implements OutputInterface
     }//end getData()
 
 
-
-
 }//end class

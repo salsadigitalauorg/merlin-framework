@@ -84,7 +84,6 @@ class MigrateCrawlObserver extends CrawlObserver
             $type = new $class($config);
 
             if ($type->match($url_string, $response)) {
-
                 // Only match on the first option.
                 return $this->json->mergeRow("crawled-urls-{$type->getId()}", $type->getId(), [$return_url], true);
             }
@@ -129,7 +128,7 @@ class MigrateCrawlObserver extends CrawlObserver
         /** @var \Migrate\Parser\Config $config */
         $config = $this->json->getConfig();
 
-        // Check if any of our groups have merge config file names specified
+        // Check if any of our groups have merge config file names specified.
         $groups = isset($config->get('options')['group_by']) ? $config->get('options')['group_by'] : [];
         $merges = [];
 
@@ -141,26 +140,25 @@ class MigrateCrawlObserver extends CrawlObserver
 
             if (isset($group['options']['merge_into'])) {
                 $merges[] = [
-                    'id' => $group['id'],
-                    'config_file' => $group['options']['merge_into']
-                    ];
+                    'id'          => $group['id'],
+                    'config_file' => $group['options']['merge_into'],
+                ];
             }
         }
 
-        // Check if the crawler has merge config specified (i.e, all urls)
-        if(isset($config->get('options')['merge_into'])) {
+        // Check if the crawler has merge config specified (i.e, all urls).
+        if (isset($config->get('options')['merge_into'])) {
             $merges[] = [
-                'id' => 'default',
-                'config_file' => $config->get('options')['merge_into']
+                'id'          => 'default',
+                'config_file' => $config->get('options')['merge_into'],
             ];
         }
 
-        // Get mergin'
+        // Get mergin'.
         if (count($merges) > 0) {
-
             $this->io->section('Merging urls into config files');
 
-            // Config files are defined relative to the crawler config
+            // Config files are defined relative to the crawler config.
             $pathInfo = pathinfo($config->getSource());
             $basePath = $pathInfo['dirname'];
 
@@ -168,17 +166,16 @@ class MigrateCrawlObserver extends CrawlObserver
                 $errorMsg = null;
                 $id = $merge['id'];
                 $configFile = $merge['config_file'];
-                $srcConfigFile = realpath($basePath . DIRECTORY_SEPARATOR . $configFile);
+                $srcConfigFile = realpath($basePath.DIRECTORY_SEPARATOR.$configFile);
 
                 $srcPathInfo = pathinfo($srcConfigFile);
                 $srcConfigFilename = $srcPathInfo['filename'];
-                $dstConfigFile = $srcPathInfo['dirname'] . DIRECTORY_SEPARATOR . $srcConfigFilename . "_merged_urls.yml";
+                $dstConfigFile = $srcPathInfo['dirname'].DIRECTORY_SEPARATOR.$srcConfigFilename."_merged_urls.yml";
 
                 $data = $this->json->getData();
-                $urls = $data["crawled-urls-{$id}"][$id] ?? [];
+                $urls = ($data["crawled-urls-{$id}"][$id] ?? []);
 
                 if (is_file($srcConfigFile)) {
-
                     if (empty($urls)) {
                         continue;
                     }
@@ -196,30 +193,25 @@ class MigrateCrawlObserver extends CrawlObserver
                         }
                     }
 
-                    $yaml = \Spyc::YAMLDump($srcConfig);
+                    $yaml = \Spyc::YAMLDump($srcConfig, 2, 0);
+
                     $bytes = file_put_contents($dstConfigFile, $yaml);
                     if ($bytes !== false) {
                         $this->io->writeln("Merging urls into $dstConfigFile <info>Done!</info>");
-                    }
-                    else {
+                    } else {
                         $errorMsg = "Failed writing when merging urls into config file: {$dstConfigFile}";
                         $this->json->mergeRow('crawl-merge-error', $id, [$errorMsg], true);
                         $this->io->error($errorMsg);
                     }
-
-                }
-                else {
+                } else {
                     $errorMsg = "Could not find existing config file for group '{$id}' to merge urls: {$configFile}";
                     $this->json->mergeRow('crawl-merge-error', $id, [$errorMsg], true);
                     $this->io->error($errorMsg);
-                }
+                }//end if
+            }//end foreach
+        }//end if
 
-            }
-
-        }
-
-    }//end writeConfigData()
-
+    }//end mergeUrlsIntoConfigFiles()
 
 
 }//end class
