@@ -187,10 +187,10 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                 }
 
                 $this->entities[] = [
-                    'name' => $name,
+                    'name' => substr($name,0,50),
                     'file' => $this->getFileUrl($file),
                     'uuid' => $uuid,
-                    'alt'  => $alt,
+                    'alt'  => substr($alt,0,50),
                 ];
 
                 $parent     = $node->getNode(0);
