@@ -127,7 +127,7 @@ class MigrateCrawlObserver extends CrawlObserver
      */
     private function mergeUrlsIntoConfigFiles() {
 
-        /** @var \Migrate\Parser\Config $config */
+        // /** @var \Migrate\Parser\Config $config */
         $config = $this->json->getConfig();
 
         // Check if any of our groups have merge config file names specified.
