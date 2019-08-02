@@ -133,12 +133,21 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     return;
                 }
 
-                if ($name->count() == 0 || $file->count() == 0) {
+                if ($file->count() == 0) {
                     // Valid xpath but doesn't match anything.
                     return;
                 }
 
-                $name = $name->text();
+                $nameFallback = false;
+                if ($name->count() == 0 && $file->count() > 0) {
+                    // We have a file name, but no name match, use the last part of the file as the name.
+                    $parts = explode("/", $file->text());
+                    $name = $parts[(count($parts) - 1)];
+                    $nameFallback = true;
+                } else {
+                    $name->text();
+                }
+
                 $file = $file->text();
                 $alt = ($alt->count() > 0) ? $alt->text() : null;
 
@@ -165,10 +174,11 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                 }
 
                 $this->entities[] = [
-                    'name' => $name,
-                    'file' => $this->getFileUrl($file),
-                    'uuid' => $uuid,
-                    'alt'  => $alt,
+                    'name'               => $name,
+                    'file'               => $this->getFileUrl($file),
+                    'uuid'               => $uuid,
+                    'alt'                => $alt,
+                    'name_fallback_used' => $nameFallback,
                 ];
 
                 $parent     = $node->getNode(0);
@@ -213,6 +223,14 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
                 }
 
+                $nameFallback = false;
+                if (empty($name) && !empty($file)) {
+                    // We have a file name, but no name match, use the last part of the file as the name.
+                    $parts = explode("/", $file);
+                    $name = $parts[(count($parts) - 1)];
+                    $nameFallback = true;
+                }
+
                 // @TODO: Process controller that can apply to
                 // types or processors recursively and manage this
                 // type of thing ongoing.
@@ -226,10 +244,11 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                 }
 
                 $this->entities[] = [
-                    'name' => $name,
-                    'file' => $this->getFileUrl($file),
-                    'uuid' => $uuid,
-                    'alt'  => $alt,
+                    'name'               => $name,
+                    'file'               => $this->getFileUrl($file),
+                    'uuid'               => $uuid,
+                    'alt'                => $alt,
+                    'name_fallback_used' => $nameFallback,
                 ];
 
                 $parent     = $node->getNode(0);

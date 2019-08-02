@@ -60,35 +60,51 @@ class Media extends TypeBase implements TypeInterface {
 
     $this->crawler->each(
         function (Crawler $node) use (&$uuids) {
-        $name = $node->evaluate($this->config['options']['name'])->text();
-        $file = $node->evaluate($this->config['options']['file'])->text();
-        if ($node->evaluate($this->getOption('alt'))->count() > 0) {
-            $alt = $node->evaluate($this->getOption('alt'))->text();
-        } else {
-            $alt = null;
-        }
 
-        $uuid = $this->getUuid($name, $file);
+            $file = $node->evaluate($this->config['options']['file'])->text();
 
-        if ($this->getOption('process_name')) {
-            $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
-        }
+            $nameFallback = false;
+            if ($node->evaluate($this->config['options']['name'])->count() > 0) {
+                $name = $node->evaluate($this->config['options']['name'])->text();
+            } else {
+                if (empty($name) && !empty($file)) {
+                    // We have a file name, but no name match, use the last part of the file as the name.
+                    $parts = explode("/", $file);
+                    $name = $parts[(count($parts) - 1)];
+                    $nameFallback = true;
+                } else {
+                    $name = null;
+                }
+            }
 
-        $file = $this->getFileUrl($file);
+            if ($node->evaluate($this->getOption('alt'))->count() > 0) {
+                $alt = $node->evaluate($this->getOption('alt'))->text();
+            } else {
+                $alt = null;
+            }
 
-        if ($this->getOption('process_file')) {
-            $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
-        }
+            if ($this->getOption('process_name')) {
+                $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
+            }
 
-        $this->entities[] = [
-            'name' => $name,
-            'file' => $file,
-            'uuid' => $uuid,
-            'alt'  => $alt,
-        ];
+            $file = $this->getFileUrl($file);
 
-        $uuids[] = $uuid;
-        }
+            if ($this->getOption('process_file')) {
+                $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
+            }
+
+            $uuid = $this->getUuid($name, $file);
+
+            $this->entities[] = [
+                'name'               => $name,
+                'file'               => $file,
+                'uuid'               => $uuid,
+                'alt'                => $alt,
+                'name_fallback_used' => $nameFallback,
+            ];
+
+            $uuids[] = $uuid;
+            }
     );
 
     if (count($this->entities) > 0) {
@@ -104,6 +120,7 @@ class Media extends TypeBase implements TypeInterface {
    */
   public function processDom() {
     $uuids = [];
+    $nameFallback = [];
     extract($this->config['options']);
 
     if (empty($name) || empty($file)) {
@@ -115,6 +132,15 @@ class Media extends TypeBase implements TypeInterface {
         $name = $node->attr($this->config['options']['name']);
         $file = $node->attr($this->config['options']['file']);
         $alt = $node->attr($this->getOption('alt'));
+
+        $nameFallback = false;
+        if (empty($name) && !empty($file)) {
+            // We have a file name, but no name match, use the last part of the file as the name.
+            $parts = explode("/", $file);
+            $name = $parts[(count($parts) - 1)];
+            $nameFallback = true;
+        }
+
         $uuid = $this->getUuid($name, $file);
 
         if ($this->getOption('process_name')) {
@@ -128,10 +154,11 @@ class Media extends TypeBase implements TypeInterface {
         }
 
         $this->entities[] = [
-            'name' => $name,
-            'file' => $file,
-            'uuid' => $uuid,
-            'alt'  => $alt,
+            'name'               => $name,
+            'file'               => $file,
+            'uuid'               => $uuid,
+            'alt'                => $alt,
+            'name_fallback_used' => $nameFallback,
         ];
 
         $uuids[] = $uuid;
