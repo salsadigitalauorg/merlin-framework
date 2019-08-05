@@ -144,7 +144,7 @@ class Media extends TypeBase implements TypeInterface {
         $uuid = $this->getUuid($name, $file);
 
         if ($this->getOption('process_name')) {
-        $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
+            $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
         }
 
         $file = $this->getFileUrl($file);
