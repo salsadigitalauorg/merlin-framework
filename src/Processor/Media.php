@@ -32,8 +32,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
     use MediaTrait;
 
-    // @TODO: I guess these are all supposed to be public?
-
     /** @var mixed|string  */
     public $type;
 
@@ -138,12 +136,11 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     return;
                 }
 
-                $nameFallback = false;
                 if ($name->count() == 0 && $file->count() > 0) {
                     // We have a file name, but no name match, use the last part of the file as the name.
                     $parts = explode("/", $file->text());
                     $name = $parts[(count($parts) - 1)];
-                    $nameFallback = true;
+                    $this->output->mergeRow("warning-{$this->type}", $file->text(), ["Using fallback name {$name}"], true);
                 } else {
                     $name = $name->text();
                 }
@@ -178,7 +175,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     'file'               => $this->getFileUrl($file),
                     'uuid'               => $uuid,
                     'alt'                => $alt,
-                    'name_fallback_used' => $nameFallback,
                 ];
 
                 $parent     = $node->getNode(0);
@@ -223,12 +219,11 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
                 }
 
-                $nameFallback = false;
                 if (empty($name) && !empty($file)) {
                     // We have a file name, but no name match, use the last part of the file as the name.
                     $parts = explode("/", $file);
                     $name = $parts[(count($parts) - 1)];
-                    $nameFallback = true;
+                    $this->output->mergeRow("warning-{$this->type}", $file->text(), ["Using fallback name {$name}"], true);
                 }
 
                 // @TODO: Process controller that can apply to
@@ -248,7 +243,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     'file'               => $this->getFileUrl($file),
                     'uuid'               => $uuid,
                     'alt'                => substr($alt, 0, 512),
-                    'name_fallback_used' => $nameFallback,
                 ];
 
                 $parent     = $node->getNode(0);
