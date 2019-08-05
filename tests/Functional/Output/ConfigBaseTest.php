@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Migrate\Tests\Functional\Output;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;

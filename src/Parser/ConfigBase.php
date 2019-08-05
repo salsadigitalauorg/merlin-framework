@@ -63,6 +63,7 @@ abstract class ConfigBase implements ParserInterface
 
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
+        $this->totals['urls'] = count($data['urls']);
         return $this;
 
     }//end parse()
@@ -133,7 +134,7 @@ abstract class ConfigBase implements ParserInterface
      */
     public function getUrl()
     {
-        if ($this->totals['urls'] > 0) {
+        if (!empty($this->totals['urls']) && $this->totals['urls'] > 0) {
             $this->totals['urls']--;
             return $this->data['domain'].array_shift($this->data['urls']);
         }
