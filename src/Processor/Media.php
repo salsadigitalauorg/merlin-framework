@@ -145,7 +145,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = $parts[(count($parts) - 1)];
                     $nameFallback = true;
                 } else {
-                    $name->text();
+                    $name = $name->text();
                 }
 
                 $file = $file->text();
