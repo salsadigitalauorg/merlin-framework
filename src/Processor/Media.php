@@ -13,7 +13,7 @@ use Migrate\ProcessController;
  * A media processor.
  *
  * This processor can be added to any text value and can be used to replace
- * links in-tezt with Drupal media embedded entities.
+ * links in-text with Drupal media embedded entities.
  *
  * This processor can use XPath selectors to access information in the current
  * DOM fragment to determine if we have valid media. To enable xpath you will
@@ -32,6 +32,36 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
     use MediaTrait;
 
+    /** @var mixed|string  */
+    public $type;
+
+    /** @var mixed|string  */
+    public $selector;
+
+    /** @var mixed|string  */
+    public $file;
+
+    /** @var mixed|string  */
+    public $name;
+
+    /** @var mixed|string  */
+    public $alt;
+
+    /** @var boolean  */
+    public $xpath;
+
+    /** @var array  */
+    public $entities;
+
+    /** @var boolean|mixed  */
+    public $processors;
+
+    /** @var boolean|mixed  */
+    public $process_name;
+
+    /** @var boolean|mixed  */
+    public $process_file;
+
 
     /**
      * {@inheritdoc}
@@ -40,13 +70,19 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
     {
         parent::__construct($config, $crawler, $output);
 
+        $xpath = !empty($config['xpath']);
+        $this->xpath = $xpath;
+
+        // Default attribute selectors.
+        $file = $xpath ? './@src' : 'src';
+        $name = $xpath ? './@alt' : 'alt';
+        $alt  = $xpath ? './@alt' : 'alt';
+
         $this->type     = isset($config['type']) ? $config['type'] : 'image';
         $this->selector = isset($config['selector']) ? $config['selector'] : 'img';
-        $this->file     = isset($config['file']) ? $config['file'] : 'src';
-        $this->name     = isset($config['name']) ? $config['name'] : 'alt';
-        $this->alt      = isset($config['alt']) ? $config['alt'] : 'alt';
-
-        $this->xpath = !empty($config['xpath']);
+        $this->file     = isset($config['file']) ? $config['file'] : $file;
+        $this->name     = isset($config['name']) ? $config['name'] : $name;
+        $this->alt      = isset($config['alt']) ? $config['alt'] : $alt;
 
         $this->config = [];
         $this->config['attributes'] = [];
@@ -70,7 +106,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
      * Process media items that will be selected using Xpath selectors.
      *
      * @param string value
-     *   The value to search thorugh.
+     *   The value to search through.
      *
      * @return string
      *   The replaced string.
@@ -95,14 +131,23 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     return;
                 }
 
-                if ($name->count() == 0 || $file->count() == 0) {
+                if ($file->count() == 0) {
                     // Valid xpath but doesn't match anything.
                     return;
                 }
 
-                $name = $name->text();
+                if ($name->count() == 0 && $file->count() > 0) {
+                    // We have a file name, but no name match, use the last part of the file as the name.
+                    $parts = explode("/", $file->text());
+                    $name = $parts[(count($parts) - 1)];
+                    $this->output->mergeRow("warning-{$this->type}", $file->text(), ["Using fallback name {$name}"], true);
+                } else {
+                    $name = $name->text();
+                }
+
                 $file = $file->text();
-                $alt  = $alt->text();
+                $alt = ($alt->count() > 0) ? $alt->text() : null;
+
                 $uuid = $this->getUuid($name, $file);
 
                 if ($this->process_file) {
@@ -145,7 +190,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
      * Process media items that will be selected using DOM selectors.
      *
      * @param string value
-     *   The value to search thorugh.
+     *   The value to search through.
      *
      * @return string
      *   The replaced string.
@@ -172,6 +217,13 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
                 if ($this->process_name) {
                     $name = ProcessController::apply($name, $this->process_name, $this->crawler, $this->output);
+                }
+
+                if (empty($name) && !empty($file)) {
+                    // We have a file name, but no name match, use the last part of the file as the name.
+                    $parts = explode("/", $file);
+                    $name = $parts[(count($parts) - 1)];
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Using fallback name {$name}"], true);
                 }
 
                 // @TODO: Process controller that can apply to
