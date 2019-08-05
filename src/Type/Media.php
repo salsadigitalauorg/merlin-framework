@@ -59,11 +59,10 @@ class Media extends TypeBase implements TypeInterface {
     }
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids) {
+        function (Crawler $node) use (&$uuids, $type) {
 
             $file = $node->evaluate($this->config['options']['file'])->text();
 
-            $nameFallback = false;
             if ($node->evaluate($this->config['options']['name'])->count() > 0) {
                 $name = $node->evaluate($this->config['options']['name'])->text();
             } else {
@@ -71,7 +70,7 @@ class Media extends TypeBase implements TypeInterface {
                     // We have a file name, but no name match, use the last part of the file as the name.
                     $parts = explode("/", $file);
                     $name = $parts[(count($parts) - 1)];
-                    $nameFallback = true;
+                    $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
                 } else {
                     $name = null;
                 }
@@ -100,7 +99,6 @@ class Media extends TypeBase implements TypeInterface {
                 'file'               => $file,
                 'uuid'               => $uuid,
                 'alt'                => $alt,
-                'name_fallback_used' => $nameFallback,
             ];
 
             $uuids[] = $uuid;
@@ -120,7 +118,6 @@ class Media extends TypeBase implements TypeInterface {
    */
   public function processDom() {
     $uuids = [];
-    $nameFallback = [];
     extract($this->config['options']);
 
     if (empty($name) || empty($file)) {
@@ -128,17 +125,16 @@ class Media extends TypeBase implements TypeInterface {
     }
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids) {
+        function (Crawler $node) use (&$uuids, $type) {
         $name = $node->attr($this->config['options']['name']);
         $file = $node->attr($this->config['options']['file']);
         $alt = $node->attr($this->getOption('alt'));
 
-        $nameFallback = false;
         if (empty($name) && !empty($file)) {
             // We have a file name, but no name match, use the last part of the file as the name.
             $parts = explode("/", $file);
             $name = $parts[(count($parts) - 1)];
-            $nameFallback = true;
+            $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
         }
 
         $uuid = $this->getUuid($name, $file);
@@ -158,7 +154,6 @@ class Media extends TypeBase implements TypeInterface {
             'file'               => $file,
             'uuid'               => $uuid,
             'alt'                => $alt,
-            'name_fallback_used' => $nameFallback,
         ];
 
         $uuids[] = $uuid;

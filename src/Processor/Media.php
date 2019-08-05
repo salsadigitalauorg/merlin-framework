@@ -223,7 +223,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     // We have a file name, but no name match, use the last part of the file as the name.
                     $parts = explode("/", $file);
                     $name = $parts[(count($parts) - 1)];
-                    $this->output->mergeRow("warning-{$this->type}", $file->text(), ["Using fallback name {$name}"], true);
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Using fallback name {$name}"], true);
                 }
 
                 // @TODO: Process controller that can apply to
