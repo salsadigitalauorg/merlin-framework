@@ -95,10 +95,10 @@ class Media extends TypeBase implements TypeInterface {
             $uuid = $this->getUuid($name, $file);
 
             $this->entities[] = [
-                'name'               => $name,
-                'file'               => $file,
-                'uuid'               => $uuid,
-                'alt'                => $alt,
+                'name' => $name,
+                'file' => $file,
+                'uuid' => $uuid,
+                'alt'  => $alt,
             ];
 
             $uuids[] = $uuid;
@@ -150,10 +150,10 @@ class Media extends TypeBase implements TypeInterface {
         }
 
         $this->entities[] = [
-            'name'               => $name,
-            'file'               => $file,
-            'uuid'               => $uuid,
-            'alt'                => $alt,
+            'name' => $name,
+            'file' => $file,
+            'uuid' => $uuid,
+            'alt'  => $alt,
         ];
 
         $uuids[] = $uuid;
