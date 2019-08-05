@@ -53,6 +53,7 @@ abstract class TypeBase implements TypeInterface {
    */
   protected $processors;
 
+
   /**
    * Build a field type parser.
    *
@@ -109,12 +110,12 @@ abstract class TypeBase implements TypeInterface {
   {
 
     if (!empty($this->config['processors'])) {
-      return $this->processors::apply(
-          $value,
-          $this->config['processors'],
-          $this->crawler,
-          $this->output
-      );
+    return $this->processors::apply(
+        $value,
+        $this->config['processors'],
+        $this->crawler,
+        $this->output
+    );
     }
 
     return $value;

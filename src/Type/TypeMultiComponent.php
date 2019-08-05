@@ -40,6 +40,7 @@ abstract class TypeMultiComponent extends TypeBase {
 
         return $output;
 
-    }//end processValue()
+    }//end applyProcessors()
 
-}
+
+}//end class

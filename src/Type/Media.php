@@ -59,35 +59,36 @@ class Media extends TypeMultiComponent implements TypeInterface {
             try {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
+                $file = $file->text();
+                $file = $this->getFileUrl($node->text());
             } catch (\Exception $error) {
-                var_dump($this->getOption('file'));
-                exit;
                 throw new ElementNotFoundException();
             }
 
             try {
                 $name = $node->evaluate($this->getOption('name', TRUE));
                 assert($name->count() > 0);
+                $name = $name->text();
             } catch (\Exception $error) {
-                $name = $file;
+                $parts = explode("/", $file);
+                $name = $parts[(count($parts) - 1)];
+                $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
             }
 
             try {
                 $alt = $node->evaluate($this->getOption('alt', TRUE));
                 assert($alt->count() > 0);
+                $alt = $alt->text();
             } catch (\Exception $error) {
                 $alt = null;
             }
 
-            $name = $name->text();
-            $file = $this->getFileUrl($node->text());
-            $alt = $alt ? $alt->text() : $alt;
             $uuid = $this->getUuid($name, $file);
 
             $entity = [
                 'file' => $file,
                 'uuid' => $uuid,
-                'alt' => $alt,
+                'alt'  => $alt,
                 'name' => $name,
             ];
 
@@ -118,6 +119,13 @@ class Media extends TypeMultiComponent implements TypeInterface {
             $file = $this->getFileUrl($file);
             $alt = $node->attr($this->getOption('alt'));
             $uuid = $this->getUuid($name, $file);
+
+            if (empty($name) && !empty($file)) {
+                // We have a file name, but no name match, use the last part of the file as the name.
+                $parts = explode("/", $file);
+                $name = $parts[(count($parts) - 1)];
+                $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
+            }
 
             $entity = [
                 'name' => $name,
