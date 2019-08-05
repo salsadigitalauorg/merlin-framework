@@ -40,9 +40,9 @@ class Media extends TypeMultiComponent implements TypeInterface {
     return [
         'process_name' => FALSE,
         'process_file' => FALSE,
-        'file'         => $xpath ? '@src' : 'src',
-        'name'         => $xpath ? '@alt' : 'alt',
-        'alt'          => $xpath ? '@alt' : 'alt',
+        'file'         => $xpath ? './@src' : 'src',
+        'name'         => $xpath ? './@alt' : 'alt',
+        'alt'          => $xpath ? './@alt' : 'alt',
     ];
 
   }//end options()
@@ -56,31 +56,32 @@ class Media extends TypeMultiComponent implements TypeInterface {
 
     $this->crawler->each(
         function (Crawler $node) use (&$uuids) {
-
             try {
-                $name = $node->evaluate($this->getOption('name'));
-                assert($name->count() > 0);
-            } catch (\Exception $error) {
-                throw new ElementNotFoundException();
-            }
-
-            try {
-                $file = $node->evaluate($this->getOption('file'));
+                $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
             } catch (\Exception $error) {
+                var_dump($this->getOption('file'));
+                exit;
                 throw new ElementNotFoundException();
             }
 
             try {
-                $alt = $node->evaluate($this->getOption('alt'));
+                $name = $node->evaluate($this->getOption('name', TRUE));
+                assert($name->count() > 0);
+            } catch (\Exception $error) {
+                $name = $file;
+            }
+
+            try {
+                $alt = $node->evaluate($this->getOption('alt', TRUE));
                 assert($alt->count() > 0);
             } catch (\Exception $error) {
-                throw new ElementNotFoundException();
+                $alt = null;
             }
 
             $name = $name->text();
             $file = $this->getFileUrl($node->text());
-            $alt = $node->text();
+            $alt = $alt ? $alt->text() : $alt;
             $uuid = $this->getUuid($name, $file);
 
             $entity = [

@@ -39,28 +39,28 @@ class MediaTest extends CrawlerTestCase
     /**
      * Ensure the row can select media with xpath.
      */
-    // public function testMediaXpath()
-    // {
-    //     $config = [
-    //         'field' => 'field_media',
-    //         'type' => 'media',
-    //         'selector' => '//*[@id="with-image"]/img',
-    //         'options' => [],
-    //     ];
-    //     $row = new \stdClass;
-    //     $media = new Media(
-    //         $this->getCrawler(),
-    //         $this->getOutput(),
-    //         $row,
-    //         $config
-    //     );
+    public function testMediaXpath()
+    {
+        $config = [
+            'field' => 'field_media',
+            'type' => 'media',
+            'selector' => '//*[@id="with-image"]/img',
+            'options' => [],
+        ];
+        $row = new \stdClass;
+        $media = new Media(
+            $this->getCrawler(),
+            $this->getOutput(),
+            $row,
+            $config
+        );
 
-    //     $media->process();
+        $media->process();
 
-    //     $this->assertTrue(\property_exists($row, $config['field']));
-        // $this->assertEquals(1, count($media->entities));
+        $this->assertTrue(\property_exists($row, $config['field']));
+        $this->assertEquals(1, count($media->entities));
 
-    // }
+    }
 
     /**
      * Ensure DOM selector performs expectedly if element not found.
@@ -139,7 +139,60 @@ class MediaTest extends CrawlerTestCase
         $this->assertEquals('Alternative text', $media->entities[0]['alt']);
     }
 
+    /**
+     * Ensure thata processors apply when using DOM.
+     */
     public function testProcessorsDOM() {
+        $config = [
+            'field' => 'field_media',
+            'type' => 'media',
+            'selector' => '//*[@id="with-image"]/img',
+            'options' => [
+                'name' => './@data-name',
+                'file' => './@data-file',
+                'alt' => './@data-alt',
+            ],
+            'processors' => [
+                'name' => [
+                    'replace' => [
+                        'pattern' => '^.*',
+                        'replace' => 'name',
+                    ]
+                ],
+                'alt' => [
+                    'replace' => [
+                        'pattern' => '^.*',
+                        'replace' => 'alt',
+                    ]
+                ],
+                'file' => [
+                    'replace' => [
+                        'pattern' => '^.*',
+                        'replace' => 'file',
+                    ]
+                ]
+            ]
+        ];
+        $row = new \stdClass;
+        $media = new Media(
+            $this->getCrawler(),
+            $this->getOutput(),
+            $row,
+            $config
+        );
+
+        $media->process();
+
+        $this->assertEquals('name', $media->entities[0]['name']);
+        $this->assertEquals('file', $media->entities[0]['file']);
+        $this->assertEquals('alt', $media->entities[0]['alt']);
+    }
+
+    /**
+     * Ensure thata processors apply when using Xpath.
+     */
+    public function testProcessorXpath()
+    {
         $config = [
             'field' => 'field_media',
             'type' => 'media',
