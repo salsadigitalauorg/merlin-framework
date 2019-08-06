@@ -28,7 +28,7 @@ class CrawlerTest extends TestCase
     $input->expects($this->at(1))
       ->method('getOption')
       ->with('output')
-      ->willReturn('/tmp');
+      ->willReturn(\sys_get_temp_dir());
 
     return $input;
 
@@ -67,7 +67,7 @@ class CrawlerTest extends TestCase
    */
   public function tearDown()
   {
-    foreach (glob('/tmp/*.yml') as $file) {
+    foreach (glob(sys_get_temp_dir() . '/*.yml') as $file) {
       unlink($file);
     }
   }//end tearDown()
@@ -84,10 +84,10 @@ class CrawlerTest extends TestCase
     $crawl = new CrawlCommand();
     $this->getMethod('execute')->invokeArgs($crawl, [$input, $output]);
 
-    $crawled = file_get_contents('/tmp/crawled-urls-default.yml');
+    $crawled = file_get_contents(sys_get_temp_dir() . '/crawled-urls-default.yml');
     $crawled = Yaml::parse($crawled);
 
-    $ymls = glob('/tmp/*.yml');
+    $ymls = glob(sys_get_temp_dir() . '/*.yml');
 
     $this->assertEquals(1, count($ymls));
     $this->assertEquals(9, count($crawled['default']));
@@ -106,11 +106,11 @@ class CrawlerTest extends TestCase
     $crawl = new CrawlCommand();
     $this->getMethod('execute')->invokeArgs($crawl, [$input, $output]);
 
-    $ymls = glob('/tmp/*.yml');
+    $ymls = glob(sys_get_temp_dir() . '/*.yml');
 
-    $group1 = file_get_contents('/tmp/crawled-urls-group1.yml');
+    $group1 = file_get_contents(sys_get_temp_dir() . '/crawled-urls-group1.yml');
     $group1 = Yaml::parse($group1);
-    $default = file_get_contents('/tmp/crawled-urls-default.yml');
+    $default = file_get_contents(sys_get_temp_dir() . '/crawled-urls-default.yml');
     $default = Yaml::parse($default);
 
     $this->assertEquals(2, count($ymls));
