@@ -43,7 +43,7 @@ class GenerateCommand extends Command
         $this
             ->setDescription('Build migration datasets from configuration objects')
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
-            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', sys_get_temp_dir())
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
 
@@ -107,6 +107,12 @@ class GenerateCommand extends Command
             case 500:
             case 404:
             case 400:
+                $output->add(
+                    "error-{$request->getResponseInfo()['http_code']}",
+                    [$request->getUrl()]
+                );
+
+
                 $output->mergeRow(
                     "error-{$request->getResponseInfo()['http_code']}",
                     'urls',
@@ -125,11 +131,11 @@ class GenerateCommand extends Command
                 try {
                     $type->process();
                 } catch (ElementNotFoundException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
+                    // $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
                 } catch (ValidationException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
+                    // $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
+                    // $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
                 }
             }
 
@@ -138,7 +144,7 @@ class GenerateCommand extends Command
             $io->writeln(' <info>(Done!)</info>');
 
             if (!empty((array) $row)) {
-                $output->addRow($parser->get('entity_type'), $row);
+                $output->add($parser->get('entity_type'), $row);
             }
         };
 
@@ -159,7 +165,7 @@ class GenerateCommand extends Command
         $io->success('Done!');
 
         $start   = microtime(true);
-        $json    = new Json($io, $config);
+        $json    = new Json($io, $config, $input->getOption('output'));
         $request = new RollingCurl();
 
         $io->section('Processing requests');
@@ -171,7 +177,8 @@ class GenerateCommand extends Command
         }
 
         $io->section('Generating files');
-        $json->writeFiles($input->getOption('output'), $input->getOption('quiet'));
+        $json->end();
+        // $json->writeFiles($input->getOption('output'), $input->getOption('quiet'));
         $io->success('Done!');
 
         $output->writeln("<comment>Completed in ".(microtime(true) - $start)."</comment>");

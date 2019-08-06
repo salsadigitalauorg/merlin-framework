@@ -16,6 +16,31 @@ class Json extends OutputBase
     protected $ext = 'json';
 
 
+    public function serialize($row)
+    {
+        return json_encode($row, (JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+
+    protected function afterOpen($resource)
+    {
+        fwrite($resource, '[');
+    }
+
+    protected function beforeClose($resource)
+    {
+        // $stat = fstat($resource);
+        // ftruncate($resource, $stat['size'] - 1);
+        fwrite($resource, ']');
+    }
+
+    protected function afterRow($resource)
+    {
+
+        fwrite($resource, ',');
+
+    }
+
     /**
      * {@inheritdoc}
      */
