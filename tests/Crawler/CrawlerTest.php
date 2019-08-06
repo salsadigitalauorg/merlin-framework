@@ -68,7 +68,7 @@ class CrawlerTest extends TestCase
   public function tearDown()
   {
     foreach (glob(sys_get_temp_dir() . '/*.yml') as $file) {
-      unlink($file);
+      // unlink($file);
     }
   }//end tearDown()
 
