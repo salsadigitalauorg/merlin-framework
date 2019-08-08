@@ -18,7 +18,10 @@ class Alias extends TypeBase implements TypeInterface
      */
     public function process()
     {
-        $this->addValueToRow(parse_url($this->crawler->getUri(), PHP_URL_PATH));
+
+        $alias = parse_url($this->crawler->getUri(), PHP_URL_PATH);
+        $alias = $this->processValue($alias);
+        $this->addValueToRow($alias);
 
     }//end process()
 
