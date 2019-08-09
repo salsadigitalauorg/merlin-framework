@@ -2,6 +2,8 @@
 
 namespace Migrate\Type;
 
+use Migrate\Parser\ParserInterface;
+
 /**
  * Generate an alias for the given row.
  *
@@ -21,17 +23,22 @@ class Alias extends TypeBase implements TypeInterface
         $uri = $this->crawler->getUri();
         $parts = parse_url($uri);
 
-        $mainConfig = $this->output->getConfig();
-        $includeQuery = ($mainConfig->get('url_options')['include_query'] ?? false);
-        $includeFrag  = ($mainConfig->get('url_options')['include_fragment'] ?? false);
+        $includeQuery = false;
+        $includeFrag = false;
 
-        // Check for specific url overrides for the query and fragment options.
-        $overrideUrls = ($mainConfig->get('url_options')['urls'] ?? null);
-        if (is_array($overrideUrls)) {
-          foreach ($overrideUrls as $idx => $overrideUrl) {
-            if ($overrideUrl['url'] == self::getDomainlessUrl($uri)) {
-              $includeQuery = ($overrideUrl['include_query'] ?? false);
-              $includeFrag  = ($overrideUrl['include_fragment'] ?? false);
+        $mainConfig = $this->output->getConfig();
+        if ($mainConfig instanceof ParserInterface) {
+          $includeQuery = ($mainConfig->get('url_options')['include_query'] ?? false);
+          $includeFrag = ($mainConfig->get('url_options')['include_fragment'] ?? false);
+
+          // Check for specific url overrides for the query and fragment options.
+          $overrideUrls = ($mainConfig->get('url_options')['urls'] ?? null);
+          if (is_array($overrideUrls)) {
+            foreach ($overrideUrls as $idx => $overrideUrl) {
+              if ($overrideUrl['url'] === self::getDomainlessUrl($uri)) {
+                $includeQuery = ($overrideUrl['include_query'] ?? false);
+                $includeFrag = ($overrideUrl['include_fragment'] ?? false);
+              }
             }
           }
         }
@@ -49,7 +56,7 @@ class Alias extends TypeBase implements TypeInterface
 
 
     /**
-     * Returns the path query and fragment component of the url.
+     * Returns the path, query and fragment component of the url.
      * @param $uri
      *
      * @return string
