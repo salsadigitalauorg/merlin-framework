@@ -154,6 +154,12 @@ class GenerateCommand extends Command
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
+        // Confirm destination directory is writable.
+        if (!is_writable($input->getOption('output'))) {
+            $io->error("Error: " . $input->getOption('output') . " is not writable.");
+            exit(1);
+        }
+
         $config       = new Config($input->getOption('config'));
         $this->config = $config->getConfig();
         $io->success('Done!');

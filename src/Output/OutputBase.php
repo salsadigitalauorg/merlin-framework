@@ -158,6 +158,12 @@ abstract class OutputBase implements OutputInterface
             }
 
             $data = $this->validate($data, $file);
+            if (file_exists($filename) && !is_writable($filename)) {
+                $new_filename = $dir ? "$dir/$file." . time() . ".$ext" : "$file." . time() . ".$ext";
+                $this->io->writeln("<comment>Permission denied saving to {$filename}. Using {$new_filename} instead.</comment>");
+                $filename = $new_filename;
+            }
+
             file_put_contents($filename, $this->toString($data));
 
             if ($quiet) {
