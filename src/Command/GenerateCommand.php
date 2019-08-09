@@ -156,7 +156,7 @@ class GenerateCommand extends Command
 
         // Confirm destination directory is writable.
         if (!is_writable($input->getOption('output'))) {
-            $io->error("Error: " . $input->getOption('output') . " is not writable.");
+            $io->error("Error: ".$input->getOption('output')." is not writable.");
             exit(1);
         }
 
