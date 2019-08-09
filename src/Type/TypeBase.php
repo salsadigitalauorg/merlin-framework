@@ -284,7 +284,6 @@ abstract class TypeBase implements TypeInterface {
           }
 
           $value = $results;
-
       } else {
           $value = $this->config['default'];
       }
