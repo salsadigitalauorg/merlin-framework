@@ -28,3 +28,7 @@ field: long_text
 type: long_text
 selector: //*/div[contains(@class, 'content')]
 ```
+
+## Defaults
+
+See TypeText
