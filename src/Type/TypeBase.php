@@ -269,8 +269,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * processDefault.
    *
-   * Sets any default if defined and selector was not found.  By default it handles text or a function, but
-   * can be overridden by specific Type class if necessary.
+   * Sets any default if defined and selector was not found.  Some types may override default below.
    *
    * @throws \Migrate\Exception\ValidationException
    */
@@ -278,6 +277,14 @@ abstract class TypeBase implements TypeInterface {
 
       if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
           $value = Callback::getResult($this->config['default']['function'], $this->crawler);
+      } else if (is_array($this->config['default']) && key_exists('fields', $this->config['default'])) {
+          $results = [];
+          foreach ($this->config['default']['fields'] as $field => $data) {
+              $results[$field] = $data;
+          }
+
+          $value = $results;
+
       } else {
           $value = $this->config['default'];
       }
