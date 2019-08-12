@@ -53,7 +53,7 @@ options:
 ## Configuration example
 ```
 ---
-domain: htts://example.com/
+domain: https://example.com/
 
 options:
   follow_redirects: true  # Allow internal redirects.
