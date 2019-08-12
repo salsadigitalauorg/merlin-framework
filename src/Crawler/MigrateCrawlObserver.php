@@ -2,17 +2,19 @@
 
 namespace Migrate\Crawler;
 
+use Consolidation\Comments\Comments;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
+
 class MigrateCrawlObserver extends CrawlObserver
 {
-    /** @var SymfonyStyle */
+    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
     protected $io;
 
-    /** @var Migrate\Output\Json */
+    /** @var \Migrate\Output\OutputBase */
     protected $json;
 
     /** @var integer */
@@ -111,10 +113,114 @@ class MigrateCrawlObserver extends CrawlObserver
      */
     public function finishedCrawling()
     {
+
+      $this->mergeUrlsIntoConfigFiles();
+
       $this->io->success("Done!");
       $this->io->success($this->count." total URLs.");
 
     }//end finishedCrawling()
+
+
+    /**
+     * Checks config and merges any urls into the config files specified if they exist.
+     */
+    private function mergeUrlsIntoConfigFiles() {
+
+        // /** @var \Migrate\Parser\Config $config */
+        $config = $this->json->getConfig();
+
+        // Check if any of our groups have merge config file names specified.
+        $groups = isset($config->get('options')['group_by']) ? $config->get('options')['group_by'] : [];
+        $merges = [];
+
+        foreach ($groups as $group) {
+            if (empty($group['type'])) {
+                // Invalid group definition.
+                continue;
+            }
+
+            if (isset($group['options']['merge_into'])) {
+                $merges[] = [
+                    'id'          => $group['id'],
+                    'config_file' => $group['options']['merge_into'],
+                ];
+            }
+        }
+
+        // Check if the crawler has merge config specified (i.e, all urls).
+        if (isset($config->get('options')['merge_into'])) {
+            $merges[] = [
+                'id'          => 'default',
+                'config_file' => $config->get('options')['merge_into'],
+            ];
+        }
+
+        // Get mergin'.
+        if (count($merges) > 0) {
+            $this->io->section('Merging urls into config files');
+
+            // Config files are defined relative to the crawler config.
+            $pathInfo = pathinfo($config->getSource());
+            $basePath = $pathInfo['dirname'];
+
+            foreach ($merges as $idx => $merge) {
+                $errorMsg = null;
+                $id = $merge['id'];
+                $configFile = $merge['config_file'];
+                $srcConfigFile = realpath($basePath.DIRECTORY_SEPARATOR.$configFile);
+
+                $srcPathInfo = pathinfo($srcConfigFile);
+                $srcConfigFilename = $srcPathInfo['filename'];
+                $dstConfigFile = $srcPathInfo['dirname'].DIRECTORY_SEPARATOR.$srcConfigFilename."_merged_urls.yml";
+
+                $data = $this->json->getData();
+                $urls = ($data["crawled-urls-{$id}"][$id] ?? []);
+
+                if (is_file($srcConfigFile)) {
+                    if (empty($urls)) {
+                        continue;
+                    }
+
+                    $srcConfig = \Spyc::YAMLLoad($srcConfigFile);
+                    if (isset($srcConfig['urls'])) {
+                        $srcUrls = &$srcConfig['urls'];
+                    } else {
+                        $srcUrls = [];
+                    }
+
+                    foreach ($urls as $url) {
+                        if (!in_array($url, $srcUrls)) {
+                            $srcUrls[] = trim($url);
+                        }
+                    }
+
+                    $yaml = \Spyc::YAMLDump($srcConfig, 2, 0);
+
+                    // Attempt to pull in comments from original.
+                    // @TODO: This currently does not seem to bring in comments at the end of the line.
+                    $commentManager = new Comments();
+                    $commentManager->collect(explode("\n", file_get_contents($srcConfigFile)));
+                    $yamlWithComments = $commentManager->inject(explode("\n", $yaml));
+                    $yamlWithComments = implode("\n", $yamlWithComments);
+
+                    $bytes = file_put_contents($dstConfigFile, $yamlWithComments);
+                    if ($bytes !== false) {
+                        $this->io->writeln("Merging urls into $dstConfigFile <info>Done!</info>");
+                    } else {
+                        $errorMsg = "Failed writing when merging urls into config file: {$dstConfigFile}";
+                        $this->json->mergeRow('crawl-merge-error', $id, [$errorMsg], true);
+                        $this->io->error($errorMsg);
+                    }
+                } else {
+                    $errorMsg = "Could not find existing config file for group '{$id}' to merge urls: {$configFile}";
+                    $this->json->mergeRow('crawl-merge-error', $id, [$errorMsg], true);
+                    $this->io->error($errorMsg);
+                }//end if
+            }//end foreach
+        }//end if
+
+    }//end mergeUrlsIntoConfigFiles()
 
 
 }//end class

@@ -189,4 +189,16 @@ abstract class OutputBase implements OutputInterface
     }//end getConfig()
 
 
+    /**
+     * Accessor for the data property
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+
+    }//end getData()
+
+
 }//end class
