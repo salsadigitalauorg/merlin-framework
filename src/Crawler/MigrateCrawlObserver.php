@@ -63,7 +63,7 @@ class MigrateCrawlObserver extends CrawlObserver
             $return_url = '/';
         }
 
-        $this->io->writeln($url);
+        $this->io->writeln($url_string." (found on {$foundOnUrl})");
 
         $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
 
