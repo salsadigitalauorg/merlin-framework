@@ -232,6 +232,11 @@ abstract class TypeBase implements TypeInterface {
         $this->row->{$this->config['field']} = $this->nullValue();
       }
 
+      if (!empty($this->config['options']['mandatory'])) {
+        $this->row->mandatory_fail = TRUE;
+        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element {$this->config['field']} missing in url {$this->crawler->getUri()}"], true);
+      }
+
       if (isset($this->config['default'])) {
           $this->processDefault();
       }

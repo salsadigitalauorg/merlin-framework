@@ -48,6 +48,10 @@ abstract class OutputBase implements OutputInterface
      */
     public function addRow($entity_type, \stdClass $row)
     {
+        if (!empty($row->mandatory_fail)) {
+            return $this;
+        }
+
         if (empty($this->data[$entity_type])) {
             $this->data[$entity_type] = [];
         }
