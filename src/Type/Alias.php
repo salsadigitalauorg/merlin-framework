@@ -45,7 +45,7 @@ class Alias extends TypeBase implements TypeInterface
 
         // Throw away domain, scheme etc and rebuild according to config options.
         $path  = isset($parts['path']) ? $parts['path'] : null;
-        $query = isset($parts['query']) && ($includeQuery || $includeFrag) ? "?".$parts['query'] : null;
+        $query = isset($parts['query']) && $includeQuery ? "?".$parts['query'] : null;
         $frag  = isset($parts['fragment']) && $includeFrag ? "#".$parts['fragment'] : null;
 
         $url = "{$path}{$query}{$frag}";
