@@ -58,7 +58,7 @@ abstract class ConfigBase implements ParserInterface
         }
 
         if (!empty($data['urls_file'])) {
-            $urls_file = dirname($this->source) . '/' . $data['urls_file'];
+            $urls_file = dirname($this->source).'/'.$data['urls_file'];
 
             if (!file_exists($urls_file)) {
                 throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
@@ -68,9 +68,12 @@ abstract class ConfigBase implements ParserInterface
             if (!is_array($urls_from_file['urls'])) {
                 $urls_from_file['urls'] = [$urls_from_file['urls']];
             }
-            
-            $data['urls'] = isset($data['urls']) && is_array($data['urls']) ?
-                array_merge($data['urls'], $urls_from_file['urls']) : $urls_from_file['urls'];
+
+            if (isset($data['urls']) && is_array($data['urls'])) {
+                $data['urls'] = array_merge($data['urls'], $urls_from_file['urls']);
+            } else {
+                $data['urls'] = $urls_from_file['urls'];
+            }
         }
 
         if (!is_array($data['urls'])) {
