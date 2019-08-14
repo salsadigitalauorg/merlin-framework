@@ -65,7 +65,11 @@ abstract class ConfigBase implements ParserInterface
             }
 
             $urls_from_file = \Spyc::YAMLLoad($urls_file);
-            $data['urls'] = $urls_from_file['urls'];
+            if (!is_array($urls_from_file['urls'])) {
+                $urls_from_file['urls'] = [$urls_from_file['urls']];
+            }
+            
+            $data['urls'] = isset($data['urls']) && is_array($data['urls']) ? array_merge($data['urls'], $urls_from_file['urls']) : $urls_from_file['urls'];
         }
 
         if (!is_array($data['urls'])) {
