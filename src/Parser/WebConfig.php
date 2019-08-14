@@ -21,6 +21,17 @@ class WebConfig extends ConfigBase
             throw new \Exception("Invalid source file: No domain found in the source file");
         }
 
+        if (!empty($data['urls_file'])) {
+            $urls_file = dirname($this->source) . '/' . $data['urls_file'];
+
+            if (!file_exists($urls_file)) {
+                throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
+            }
+
+            $urls_from_file = \Spyc::YAMLLoad($urls_file);
+            $data['urls'] = $urls_from_file['urls'];
+        }
+
         if (empty($data['urls'])) {
             throw new \Exception("Invalid source file: No URLs found in the source file");
         }
