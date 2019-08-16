@@ -81,8 +81,8 @@ abstract class ConfigBase implements ParserInterface
         }
 
         $this->data = $data;
-        $this->totals['urls'] = count($data['urls']);
         $this->totals['mappings'] = count($data['mappings']);
+        $this->totals['urls'] = count($data['urls']);
         return $this;
 
     }//end parse()
