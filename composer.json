@@ -12,13 +12,13 @@
     }
   ],
   "require": {
-    "symfony/yaml": "^4.2",
+    "symfony/yaml": "~4.2.0",
     "mustangostang/spyc": "^0.6.2",
     "chuyskywalker/rolling-curl": "^3.1",
-    "symfony/dom-crawler": "^4.2",
-    "symfony/css-selector": "^4.2",
+    "symfony/dom-crawler": "~4.2.0",
+    "symfony/css-selector": "~4.2.0",
     "masterminds/html5": "^2.5",
-    "symfony/console": "^4.2",
+    "symfony/console": "~4.2.0",
     "ramsey/uuid": "^3.8",
     "spatie/crawler": "^4.4",
     "consolidation/comments": "^1.0"
