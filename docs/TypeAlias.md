@@ -21,6 +21,6 @@ type: alias
 
 ```
 {
-  <field_name>: "/alas-of-the-path"
+  <field_name>: "/alias-of-the-path"
 }
 ```
