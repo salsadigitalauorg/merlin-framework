@@ -23,7 +23,7 @@ use Ramsey\Uuid\Uuid;
  *         link: ./a/@href
  *         text: ./a/text()
  */
-class MenuLink extends TypeBase implements TypeInterface
+class MenuLink extends TypeMultiComponent implements TypeInterface
 {
 
 
@@ -54,13 +54,17 @@ class MenuLink extends TypeBase implements TypeInterface
                     $link = 'internal:'.$link;
                 }
 
-                $result[] = [
+                $item = [
+
                     'uuid'   => $uuid,
                     'link'   => $link,
                     'text'   => $text->text(),
                     'parent' => $parent,
                     'weight' => $i,
                 ];
+
+                $item = $this->applyProcessors($item);
+                $result[] = $item;
 
                 if (!empty($config['children'])) {
                     foreach ($config['children'] as $child) {
