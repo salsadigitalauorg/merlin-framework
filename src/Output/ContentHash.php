@@ -123,65 +123,6 @@ class ContentHash
 
 
   /**
-   * Generates a hash from the content string.
-   * // TODO CAN PROBABLY BE REMOVED USING SYMFONY CRAWLER INSTEAD.
-   * @param $content
-   *
-   * @return string
-   */
-  private function hash_old($content) {
-
-    $prevErrors = libxml_use_internal_errors(true);
-    $prevEntities = libxml_disable_entity_loader(true);
-    $dom = new \DOMDocument();
-    $dom->strictErrorChecking = false;
-    $dom->loadHTML($content);
-    libxml_clear_errors();
-    libxml_use_internal_errors($prevErrors);
-    libxml_disable_entity_loader(($prevEntities));
-
-    // Remove some suspects that may be dynamic.
-    foreach ($this->exclude as $xpathString) {
-      $this->removeNodes($dom, $xpathString);
-    }
-
-    $xpath = new \DOMXPath($dom);
-    $nl = $xpath->query($this->selector);
-    if ($nl !== false && $nl->count() === 1) {
-      $node = $nl->item(0);
-      $html = $node->ownerDocument->saveHTML($node);
-    } else {
-      $html = $dom->saveHTML();
-    }
-
-    return sha1($html);
-
-  }//end hash_old()
-
-
-  /**
-   * Remove nodes from the DOM that match the xpath string.
-   * // TODO CAN PROBABLY BE REMOVED USING SYMFONY CRAWLER INSTEAD.
-   * @param $dom
-   * @param $xpathString
-   */
-  private function removeNodes($dom, $xpathString) {
-    $xpath = new \DOMXPath($dom);
-    $nl = $xpath->query($xpathString);
-
-    if ($nl === false) {
-      return;
-    }
-
-    for ($i = $nl->length; --$i >= 0;) {
-      $el = $nl->item($i);
-      $el->parentNode->removeChild($el);
-    }
-
-  }//end removeNodes()
-
-
-  /**
    * Returns true if the hash exists in the map.
    * @param $hash
    *
