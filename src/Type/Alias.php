@@ -49,7 +49,7 @@ class Alias extends TypeBase implements TypeInterface
         $frag  = isset($parts['fragment']) && $includeFrag ? "#".$parts['fragment'] : null;
 
         $url = "{$path}{$query}{$frag}";
-
+        $url = $this->processValue($url);
         $this->addValueToRow($url);
 
     }//end process()
