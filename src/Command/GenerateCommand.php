@@ -122,10 +122,9 @@ class GenerateCommand extends Command
 
             $io->write('Parsing... '.$request->getUrl());
 
+            $duplicate = false;
             if ($hashes instanceof ContentHash) {
               $duplicate = $hashes->put($request);
-            } else {
-              $duplicate = false;
             }
 
             if ($duplicate === false) {
@@ -152,9 +151,8 @@ class GenerateCommand extends Command
                 $output->addRow($parser->get('entity_type'), $row);
             }
 
-            // Clear list of completed requests and prune pending request queue to avoid memory growth.
+            // Clear list of completed requests to avoid memory growth.
             $curl->clearCompleted();
-            $curl->prunePendingRequestQueue();
         };
 
     }//end requestCallback()
