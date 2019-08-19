@@ -2,6 +2,7 @@
 
 namespace Migrate\Type;
 
+use Migrate\Utility\Callback;
 use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Output\OutputInterface;
 use Migrate\Exception\ElementNotFoundException;
@@ -231,6 +232,10 @@ abstract class TypeBase implements TypeInterface {
         $this->row->{$this->config['field']} = $this->nullValue();
       }
 
+      if (isset($this->config['default'])) {
+          $this->processDefault();
+      }
+
       throw new ElementNotFoundException($selector);
     }
 
@@ -242,7 +247,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * processXpath.
    *
-   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
+   * This is defined as an empty method on the base class so that it can be overidden in child classes.
    */
   public function processXpath()
   {
@@ -253,12 +258,39 @@ abstract class TypeBase implements TypeInterface {
   /**
    * processDom.
    *
-   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
+   * This is defined as an empty method on the base class so that it can be overidden in child classes.
    */
   public function processDom()
   {
 
   }//end processDom()
+
+
+  /**
+   * processDefault.
+   *
+   * Sets any default if defined and selector was not found.  Some types may override default below.
+   *
+   * @throws \Migrate\Exception\ValidationException
+   */
+  public function processDefault() {
+
+      if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
+          $value = Callback::getResult($this->config['default']['function'], $this->crawler);
+      } else if (is_array($this->config['default']) && key_exists('fields', $this->config['default'])) {
+          $results = [];
+          foreach ($this->config['default']['fields'] as $field => $data) {
+              $results[$field] = $data;
+          }
+
+          $value = $results;
+      } else {
+          $value = $this->config['default'];
+      }
+
+      $this->addValueToRow($value);
+
+  }//end processDefault()
 
 
 }//end class
