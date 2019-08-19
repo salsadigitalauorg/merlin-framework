@@ -68,7 +68,6 @@ class ContentHash
    * @return bool|void
    */
   public function put(Request $request, $skipEmpty=true) {
-    // $urlHash = $this->hash($url);
     $content = $request->getResponseText();
     if ($skipEmpty && empty(trim($content))) {
       return;
