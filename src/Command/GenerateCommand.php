@@ -2,6 +2,7 @@
 
 namespace Migrate\Command;
 
+use Migrate\Output\ContentHash;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -95,13 +96,15 @@ class GenerateCommand extends Command
      *   The output object.
      * @param Symfony\Component\Console\Output\OutputInterface $io
      *   The console output.
+     * @param ContentHash                                      $hashes
+     *   ContentHash container (null if skip_duplicates=false)
      *
      * @return function
      *   A callback for the curl request handler.
      */
-    public function requestCallback(ParserInterface $parser, MigrateOutputInterface $output, OutputInterface $io, $debug=false)
+    public function requestCallback(ParserInterface $parser, MigrateOutputInterface $output, OutputInterface $io, ContentHash $hashes=null, $debug=false)
     {
-        return function (Request $request, RollingCurl $curl) use ($parser, $output, $io, $debug) {
+        return function (Request $request, RollingCurl $curl) use ($parser, $output, $io, $hashes, $debug) {
             // Handle HTTP statuses.
             switch ($request->getResponseInfo()["http_code"]) {
             case 500:
@@ -119,18 +122,25 @@ class GenerateCommand extends Command
 
             $io->write('Parsing... '.$request->getUrl());
 
-            while ($field = $parser->getMapping()) {
+            $duplicate = false;
+            if ($hashes instanceof ContentHash) {
+              $duplicate = $hashes->put($request);
+            }
+
+            if ($duplicate === false) {
+              while ($field = $parser->getMapping()) {
                 $crawler = new Crawler($request->getResponseText(), $request->getUrl());
-                $type    = self::TypeFactory($field['type'], $crawler, $output, $row, $field);
+                $type = self::TypeFactory($field['type'], $crawler, $output, $row, $field);
                 try {
-                    $type->process();
+                  $type->process();
                 } catch (ElementNotFoundException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
+                  $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
                 } catch (ValidationException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
+                  $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
+                  $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
                 }
+              }//end while
             }
 
             // Reset the parser so we have mappings back at 0.
@@ -140,6 +150,9 @@ class GenerateCommand extends Command
             if (!empty((array) $row)) {
                 $output->addRow($parser->get('entity_type'), $row);
             }
+
+            // Clear list of completed requests to avoid memory growth.
+            $curl->clearCompleted();
         };
 
     }//end requestCallback()
@@ -164,16 +177,28 @@ class GenerateCommand extends Command
         $this->config = $config->getConfig();
         $io->success('Done!');
 
+        if (($config->get('url_options')['find_content_duplicates'] ?? true)) {
+          $hashes = new ContentHash($config);
+        } else {
+          $hashes = null;
+        }
+
         $start   = microtime(true);
         $json    = new Json($io, $config);
-        $request = new RollingCurl();
 
         $io->section('Processing requests');
 
         if ($this->config->get('parser') == 'xml') {
             $this->runXml($json, $io, $input);
         } else {
-            $this->runWeb($json, $io, $input);
+            $this->runWeb($json, $io, $input, $hashes);
+        }
+
+        if ($hashes instanceof ContentHash) {
+          $duplicateUrls = $hashes->getDuplicates();
+          if (!empty($duplicateUrls)) {
+            $json->mergeRow('url-content-duplicates', 'duplicates', $duplicateUrls, true);
+          }
         }
 
         $io->section('Generating files');
@@ -188,7 +213,7 @@ class GenerateCommand extends Command
     /**
      * Run web-based parsing via rolling curl.
      */
-    private function runWeb($json, $io, $input)
+    private function runWeb($json, $io, $input, $hashes)
     {
         $request = new RollingCurl();
 
@@ -197,7 +222,7 @@ class GenerateCommand extends Command
         }
 
         $request
-            ->setCallback($this->requestCallback($this->config, $json, $io, $input->getOption('debug')))
+            ->setCallback($this->requestCallback($this->config, $json, $io, $hashes, $input->getOption('debug')))
             ->setSimultaneousLimit(10)
             ->execute();
 
