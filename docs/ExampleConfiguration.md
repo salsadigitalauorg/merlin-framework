@@ -68,7 +68,7 @@ There are a number of options that can apply to the URL list.  These options are
 
 ```
 ---
-domain: http://www.exampple.com
+domain: http://www.example.com
 
 urls:
   - /some/path
@@ -97,8 +97,31 @@ url_options:
     - '//head'
 ```
 
+# URLs in a separate file
 
+You can also provide a list of URLs in a separate file. Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` as a relative path to the config file.
 
+```
+---
+domain: http://www.example.com
+
+urls:
+ - /some/path
+ - /some/path/subpath
+
+urls_file: list_of_urls.yml
+```
+
+**Example of a separate URLs file**
+
+Provide the list of urls in a separate file with a single `urls` property that contains the list of URLs. Example configuration of a `urls_file`:
+
+```
+---
+urls:
+  - /some/path
+  - /some/other/path
+```
 
 # Basic text
 
