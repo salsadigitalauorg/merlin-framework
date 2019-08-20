@@ -1,8 +1,7 @@
 ---
   domain: http://example.com
-  urls:
-    - /
-  urls_file: urls_file.yml
+  urls: /
+  urls_file: banana_urls_file.yml
   entity_type: test
   mappings:
     -

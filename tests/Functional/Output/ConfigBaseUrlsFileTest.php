@@ -21,6 +21,7 @@ class UrlsFileTest extends TestCase
     $this->source_urls_only = __DIR__.'/config_base_urls_only.yml';
     $this->source_urls_file_only = __DIR__.'/config_base_urls_file_only.yml';
     $this->source_no_urls = __DIR__.'/config_base_no_urls.yml';
+    $this->source_missing_urls_file = __DIR__.'/config_base_missing_urls_file.yml';
   }
 
   /**
@@ -35,6 +36,15 @@ class UrlsFileTest extends TestCase
       $totals = $base->get('totals');
       $this->assertEquals($totals['urls_from_file'] + $totals['urls_from_config'], $totals['urls']);
     }
+  }
+
+  /**
+   * Ensure that an error is thrown when a urls_file is not found
+   */
+  public function testMissingUrlsFile()
+  {
+    $this->expectException(\Exception::class);
+    $base = new WebConfig($this->source_missing_urls_file);
   }
 
   /**
