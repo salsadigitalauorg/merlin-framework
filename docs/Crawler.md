@@ -106,3 +106,12 @@ Generating /tmp/crawl-error.yml Done!
 
 Completed in 29.005132913589
 ```
+
+## Flag Options
+|Flag|Option|Description|Default|
+| --- | --- | --- | --- |
+| -c   | config     | Path to the configuration file | |
+| -o   | output     | Path to the output directory | \_\_\_DIR\_\_\_ |
+| -d   | debug      | Output debug messages | |
+| -l   | limit      | Limit the max number of items to migrate (overrides the `maximum_total` config option if specified) | 0 (Crawl all items) |
+| -concurrency | concurrency | Number of requests to make in parallel | 10 |
