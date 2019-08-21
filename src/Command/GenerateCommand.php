@@ -46,6 +46,7 @@ class GenerateCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
 
     }//end configure()
@@ -188,6 +189,11 @@ class GenerateCommand extends Command
 
         $io->section('Processing requests');
 
+        if ($limit = $input->getOption('limit')) {
+            $io->writeln("Setting the maximum migrate count to {$limit} items.");
+            $io->writeln('');
+        }
+
         if ($this->config->get('parser') == 'xml') {
             $this->runXml($json, $io, $input);
         } else {
@@ -215,10 +221,15 @@ class GenerateCommand extends Command
      */
     private function runWeb($json, $io, $input, $hashes)
     {
+        // Optionally override maximum results (default is unlimited/all).
+        $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
+        $totalRequests = 0;
+
         $request = new RollingCurl();
 
-        while ($url = $this->config->getUrl()) {
+        while (($url = $this->config->getUrl()) && (!$limit || $totalRequests < $limit)) {
             $request->get($url);
+            $totalRequests++;
         }
 
         $request
@@ -234,7 +245,11 @@ class GenerateCommand extends Command
      */
     private function runXml($json, $io, $input)
     {
-        foreach ($this->config->get('files') as $file) {
+        // Optionally override maximum results (default is unlimited/all).
+        $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
+        $files = $limit ? array_slice($this->config->get('files'), 0, $limit, true) : $this->config->get('files');
+
+        foreach ($files as $file) {
             if (!file_exists($file)) {
                 $json->mergeRow('error-file', 'missing', [$file], true);
                 continue;
