@@ -3,8 +3,13 @@
 namespace Migrate\Command;
 
 use GuzzleHttp\RequestOptions;
-use Migrate\Output\ContentHash;
+use Migrate\Fetcher\Cache;
+use Migrate\Fetcher\Observer;
+use Migrate\Fetcher\Queue;
+use Migrate\Fetcher\ContentHash;
+use Spatie\Browsershot\Browsershot;
 use Spatie\Crawler\Crawler as SpatieCrawler;
+use Spatie\Crawler\CrawlUrl;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -126,7 +131,7 @@ class GenerateCommand extends Command
 
             $duplicate = false;
             if ($hashes instanceof ContentHash) {
-              $duplicate = $hashes->put($request);
+              $duplicate = $hashes->put($request->getUrl(), $request->getResponseText());
             }
 
             if ($duplicate === false) {
@@ -212,45 +217,84 @@ class GenerateCommand extends Command
     }//end execute()
 
 
-    private function runWeb($json, $io, $input, $hashes) {
+  /**
+   * Run web-based parsing via the Spatie crawler library
+   * @param $json
+   * @param $io
+   * @param $input
+   * @param $hashes
+   */
+    private function runWeb($json, $io) {
 
-      $baseUrl = $this->config['domain'];
+      // Options from url_options.
+      $concurrency  = ($this->config->get('url_options')['concurrency'] ?? 10);
+      $requestDelay = ($this->config->get('url_options')['delay'] ?? 100);
+      $executeJs    = ($this->config->get('url_options')['execute_js'] ?? false);
+      $useCache     = ($this->config->get('url_options')['cache_enabled'] ?? false);
+
 
       $clientOptions = [
           RequestOptions::COOKIES         => true,
-          RequestOptions::CONNECT_TIMEOUT => 10,
-          RequestOptions::TIMEOUT         => 10,
-          RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
+          RequestOptions::CONNECT_TIMEOUT => 15,
+          RequestOptions::READ_TIMEOUT    => 30,
+          RequestOptions::TIMEOUT         => 60,
+          RequestOptions::ALLOW_REDIRECTS => true,
           RequestOptions::VERIFY          => false,
-          RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
+          RequestOptions::HEADERS         => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'],
       ];
 
       $crawler = SpatieCrawler::create($clientOptions);
-      $profile = new \Migrate\Crawler\CrawlInternalUrls($this->config);
-      $queue   = new \Migrate\Crawler\MigrateCrawlQueue($this->config);
 
-      while ($url = $this->config->getUrl()) {
-        $queue->add($url);
+      $queue    = new Queue();
+      $observer = new Observer($io, $json, $this->config);
+      $cache    = new Cache($this->config->get('domain'));
+
+
+      foreach ($this->config->get('urls') as $url) {
+        $url = $this->config->get('domain').$url;
+        if ($useCache) {
+          if ($contents = $cache->get($url)) {
+            echo "Exists in cache... \n";
+            Observer::processHtml($url, $contents, $this->config, $io, $json);
+            continue;
+          }
+        }
+
+        $uri = new \GuzzleHttp\Psr7\Uri($url);
+        $queue->add(CrawlUrl::create($uri));
       }
 
+
       $crawler->setCrawlQueue($queue);
+      $crawler->setCrawlObserver($observer);
       $crawler->setMaximumDepth(0);
+      $crawler->setConcurrency($concurrency);
+      $crawler->setDelayBetweenRequests($requestDelay);
+      $crawler->ignoreRobots();
 
-      var_dump($queue->getUrls());
+      if ($executeJs) {
+        $crawler->executeJavaScript();
+        $browserShot = new Browsershot();
+        $browserShot->setOption('ignoreHttpsErrors', true);
+        $browserShot->addChromiumArguments([
+            'disk-cache-dir'=> '/tmp/merlin_browser_cache',
+        ]);
+        $crawler->setBrowsershot($browserShot);
+      }
 
 
-      //  ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
-      //  ->SetCrawlQueue()
-      //  ->setCrawlProfile();
+      // If we have any non-cached urls to fetch, go get 'em.
+      if ($queue->hasPendingUrls()) {
+        $crawler->startCrawling($queue->getUrlById(0)->url->__toString());
+      }
 
-
-    }
+    }//end runWeb()
 
 
     /**
      * Run web-based parsing via rolling curl.
      */
-    private function runWeb_rollingCurl($json, $io, $input, $hashes)
+    private function runWeb_($json, $io, $input, $hashes)
     {
         $request = new RollingCurl();
 

@@ -1,6 +1,10 @@
 <?php
 
-namespace Migrate\Output;
+/**
+ * Provides a hash map based on the hash of content and url(s).
+ */
+
+namespace Migrate\Fetcher;
 
 use Migrate\Parser\ParserInterface;
 use RollingCurl\Request;
@@ -62,19 +66,19 @@ class ContentHash
   /**
    * Stores the hash of the content of the request in the map.  Returns true
    * if the content was a duplicate or false if it is the first time seen.
-   * @param \RollingCurl\Request $request
-   * @param bool                 $skipEmpty
+   *
+   * @param string  $url
+   * @param string  $content
+   * @param bool    $skipEmpty
    *
    * @return bool|void
    */
-  public function put(Request $request, $skipEmpty=true) {
-    $content = $request->getResponseText();
+  public function put($url, $content, $skipEmpty=true) {
     if ($skipEmpty && empty(trim($content))) {
       return;
     }
 
     $hash = $this->hash($content);
-    $url = $request->getUrl();
 
     if (key_exists($hash, $this->map)) {
       if (!in_array($url, $this->map[$hash])) {
