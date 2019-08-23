@@ -2,7 +2,9 @@
 
 namespace Migrate\Command;
 
+use GuzzleHttp\RequestOptions;
 use Migrate\Output\ContentHash;
+use Spatie\Crawler\Crawler as SpatieCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -210,10 +212,45 @@ class GenerateCommand extends Command
     }//end execute()
 
 
+    private function runWeb($json, $io, $input, $hashes) {
+
+      $baseUrl = $this->config['domain'];
+
+      $clientOptions = [
+          RequestOptions::COOKIES         => true,
+          RequestOptions::CONNECT_TIMEOUT => 10,
+          RequestOptions::TIMEOUT         => 10,
+          RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
+          RequestOptions::VERIFY          => false,
+          RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
+      ];
+
+      $crawler = SpatieCrawler::create($clientOptions);
+      $profile = new \Migrate\Crawler\CrawlInternalUrls($this->config);
+      $queue   = new \Migrate\Crawler\MigrateCrawlQueue($this->config);
+
+      while ($url = $this->config->getUrl()) {
+        $queue->add($url);
+      }
+
+      $crawler->setCrawlQueue($queue);
+      $crawler->setMaximumDepth(0);
+
+      var_dump($queue->getUrls());
+
+
+      //  ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
+      //  ->SetCrawlQueue()
+      //  ->setCrawlProfile();
+
+
+    }
+
+
     /**
      * Run web-based parsing via rolling curl.
      */
-    private function runWeb($json, $io, $input, $hashes)
+    private function runWeb_rollingCurl($json, $io, $input, $hashes)
     {
         $request = new RollingCurl();
 
