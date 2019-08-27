@@ -39,6 +39,7 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
     $requestDelay   = ($this->config->get('fetch_options')['delay'] ?? FetcherDefaults::DELAY);
     $executeJs      = ($this->config->get('fetch_options')['execute_js'] ?? FetcherDefaults::EXECUTE_JS);
     $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? FetcherDefaults::ALLOW_REDIRECTS);
+    $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
 
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
@@ -67,7 +68,9 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
     $crawler->ignoreRobots();
 
     $browserShot = new Browsershot();
-    $browserShot->setOption('ignoreHttpsErrors', true);
+    if ($ignoreSSL) {
+      $browserShot->setOption('ignoreHttpsErrors', true);
+    }
 
     if ($executeJs) {
       $crawler->executeJavaScript();

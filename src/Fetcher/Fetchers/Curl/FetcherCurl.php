@@ -28,6 +28,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   {
     $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
     $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? FetcherDefaults::ALLOW_REDIRECTS);
+    $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
 
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
@@ -43,6 +44,11 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
 
     if ($allowRedirects) {
       $curl->setOpt(CURLOPT_FOLLOWLOCATION, true);
+    }
+
+    if ($ignoreSSL) {
+      $curl->setOpt(CURLOPT_SSL_VERIFYHOST, false);
+      $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
     }
 
     $this->multiCurl = $curl;

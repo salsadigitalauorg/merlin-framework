@@ -138,9 +138,10 @@ URL content is retrieved via a Fetcher.  There are a number of options that can 
 | `delay` | int | `100` | Delay between requests in milliseconds.
 | `cache_enabled` | boolean | `true` | If enabled, URL content is cached on disk for subsequent processing.  
 | `cache_dir` | string | `/tmp/merlin_cache` | Directory to store the cache.  If the path does not exist it will be created.
-| `fetcher_class` | string | `...FetcherSpatieCrawler` | The full name-spaced class name of the Fetcher class to use to retrieve content.  In most normal circumstances this can be left alone.  *Note: check the class for the full class path of the default Fetcher*.
-| `execute_js` | boolean | false | Executes javascript on the page after fetching.  You need to ensure the necessary node dependencies are met and installed.  <br>**Note: Currently only available when using FetcherSpatieCrawler**.
+| `fetcher_class` | string | `...FetcherSpatieCrawler` <br><br>*The full class path is / Fetcher / Fetchers / SpatieCrawler / FetcherSpatieCrawler*. | The full name-spaced class name of the Fetcher class to use to retrieve content.  In most normal circumstances this can be left alone.
+| `execute_js` | boolean | false | Executes javascript on the page after fetching.  You need to ensure the necessary node dependencies are met and installed.  <br><br>**Note: JS is currently only available when using the default FetcherSpatieCrawler**.
 | `allow_redirects` | boolean | `true` | If enabled, redirects e.g. `302` will be followed.
+| `ignore_ssl_errors` | boolean | `false` | If enabled, will ignore SSL errors.
 | `timeouts` | array | `connect_timeout: 15`<br>`timeout: 15`<br>`read_timeout: 30`<br> | Various fetching timeouts.  Note that if you use `execute_js` these timeouts will need to be at least doubled to allow time to run the javascript.
 
 Most of the time the default Fetcher class should cover most usage requirements, however, you can specify a custom class name if you need to do something different.  Check `Merlin\Fetcher\Fetchers\*` for examples of how to implement.
@@ -169,17 +170,20 @@ fetch_options:
   # Cache storage root dir (path created if doesn't exist), default /tmp/merlin_cache
   cache_dir: '/tmp/merlin_cache'
   
-  # Fetcher class, default \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler
+  # Fetcher class, default FetcherSpatieCrawler
   # fetcher_class: '\Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
-  # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
   fetcher_class: '\Migrate\Fetcher\Fetchers\Curl\FetcherCurl'
-
+  # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
+  
   # Execute on-load JS, default false.
   # Currently only available if using the FetcherSpatieCrawler fetcher class
   execute_js: false
   
   # Whether to follow redirects
   allow_redirects: true
+  
+  # Ignore SSL errors
+  ignore_ssl_errors : true
 
   # Timeouts.  When using execute_js, you want to have reasonably long timeouts.
   # Not all timeouts are applicable to all Fetchers.
