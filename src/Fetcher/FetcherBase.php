@@ -256,7 +256,7 @@ class FetcherBase implements FetcherInterface
     $failed        = $this->counts['failed'];
     $total         = $this->counts['total'];
 
-    $msg = "{$total} URLs processed ({$fetched} fetched, {$fetched_cache} cached), {$failed} failed.";
+    $msg = "{$total} URLs processed ({$fetched} fetched, {$fetched_cache} from cache), {$failed} failed.";
 
     if ($failed === 0) {
       $this->io->success($msg);
