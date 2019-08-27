@@ -1,0 +1,12 @@
+---
+domain: https://www.chiefscientist.gov.au
+urls:
+  - /about/
+
+entity_type: basic_page
+mappings:
+  - field: alias
+    type: alias
+  - field: field_body
+    selector: "//*[@id='content']"
+    type: long_text

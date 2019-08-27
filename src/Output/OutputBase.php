@@ -148,6 +148,7 @@ abstract class OutputBase implements OutputInterface
         $ext    = $this->ext;
         $append = !empty($this->config->get('runner')['append']);
 
+        print_r($this->data);
         foreach ($this->data as $file => $data) {
             $filename = $dir ? "$dir/$file.$ext" : "$file.$ext";
 
