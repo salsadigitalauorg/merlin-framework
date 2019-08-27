@@ -1,0 +1,12 @@
+---
+domain: https://twitter.com
+urls:
+  - /
+
+entity_type: basic_page
+mappings:
+  - field: alias
+    type: alias
+  - field: field_body
+    selector: "//*[@class='StreamsFooter-item']/a"
+    type: long_text

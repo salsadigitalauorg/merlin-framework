@@ -94,7 +94,6 @@ class LongText extends TypeBase implements TypeInterface
     public function processXpath()
     {
         extract($this->config);
-
         $markup = '';
 
         $this->crawler->each(
@@ -140,7 +139,7 @@ class LongText extends TypeBase implements TypeInterface
             $this->findDocumentAttachments($markup);
         }
 
-        $results[] = [
+        $results = [
             'format' => isset($options['format']) ? $options['format'] : 'rich_text',
             'value'  => $this->processValue($markup),
         ];

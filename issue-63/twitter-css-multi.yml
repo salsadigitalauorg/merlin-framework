@@ -1,12 +1,12 @@
 ---
-domain: https://www.chiefscientist.gov.au
+domain: https://twitter.com
 urls:
-  - /about/
+  - /
 
 entity_type: basic_page
 mappings:
   - field: alias
     type: alias
   - field: field_body
-    selector: "//*[@id='content']"
+    selector: ".StreamsFooter-item a"
     type: long_text
