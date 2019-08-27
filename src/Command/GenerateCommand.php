@@ -152,7 +152,7 @@ class GenerateCommand extends Command
         throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
       }
 
-      /** @var \Migrate\Fetcher\FetcherBase $fetcher */
+      // @var \Migrate\Fetcher\FetcherBase $fetcher
       $fetcher  = new $fetcherClass($io, $json, $this->config);
 
       // Use cache?

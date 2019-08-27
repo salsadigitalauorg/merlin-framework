@@ -191,4 +191,4 @@ class Cache
   }//end fileForceContents()
 
 
-}
+}//end class
