@@ -44,12 +44,24 @@ class Cache
   }//end __construct()
 
 
+  /**
+   * Generates hash of the content data.
+   * @param $data
+   *
+   * @return string
+   */
   private function hash($data) {
     return sha1($data);
 
   }//end hash()
 
 
+  /**
+   * Returns the storage directory path.
+   * @param $hash
+   *
+   * @return string
+   */
   private function getStoreDir($hash) {
     $dir = strtolower(substr($hash, 0 , 2));
     return $dir;
@@ -57,6 +69,12 @@ class Cache
   }//end getStoreDir()
 
 
+  /**
+   * Returns the full filename to this cache key.
+   * @param $url
+   *
+   * @return string
+   */
   private function getFilename($url) {
     $hash = $this->hash($url);
     $dir = $this->getStoreDir($hash);
@@ -66,25 +84,49 @@ class Cache
   }//end getFilename()
 
 
+  /**
+   * Writes the url content and to disk.
+   * @param $url
+   * @param $contents
+   */
   public function put($url, $contents) {
-    $fileContents = $this->getFilename($url);
-    self::fileForceContents($fileContents, $contents);
+    if (!empty($contents)) {
+      $fileContents = $this->getFilename($url);
+      self::fileForceContents($fileContents, $contents);
 
-    if ($this->storeUrls) {
-      $fileUrl = $this->getFilename($url).".url";
-      self::fileForceContents($fileUrl, $url);
+      if ($this->storeUrls) {
+        $fileUrl = $this->getFilename($url).".url";
+        self::fileForceContents($fileUrl, $url);
+      }
     }
 
   }//end put()
 
 
+  /**
+   * Fetches url content from disk if it exists.
+   * @param $url
+   *
+   * @return false|string|null
+   */
   public function get($url) {
     $filename = $this->getFilename($url);
-    return file_get_contents($filename);
+
+    if (is_file($filename)) {
+      return file_get_contents($filename);
+    }
+
+    return null;
 
   }//end get()
 
 
+  /**
+   * Checks if an entry exists in the cache for given url.
+   * @param $url
+   *
+   * @return bool
+   */
   public function exists($url) {
     $filename = $this->getFilename($url);
     return is_file($filename) && filesize($filename) > 0;
@@ -92,19 +134,33 @@ class Cache
   }//end exists()
 
 
+  /**
+   * Deletes a cache file from disk.
+   * @param $url
+   */
   public function unlink($url) {
     $filename = $this->getFilename($url);
-    unlink($url);
+    if (is_file($filename)) {
+      unlink($url);
+    }
 
   }//end unlink()
 
 
+  /**
+   * Sets option to store a .url file next to the content file,
+   * which contains the url used to generate the hashed filename.
+   * @param bool $store
+   */
   public function setStoreUrls(bool $store) {
     $this->storeUrls = $store;
 
   }//end setStoreUrls()
 
 
+  /**
+   * @return bool
+   */
   public function getStoreUrls() {
     return $this->storeUrls;
 
@@ -113,7 +169,7 @@ class Cache
 
   /**
    * Creates the path to the file and writes the contents.  Returns
-   * false on failure.  Use === to check for failed case.
+   * false on failure, bytes on true.  Use === to check for failed case.
    * @param $fullPathToFile
    * @param $contents
    * @return int|false

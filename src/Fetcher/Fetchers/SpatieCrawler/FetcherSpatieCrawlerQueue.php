@@ -1,12 +1,12 @@
 <?php
 
-namespace Migrate\Fetcher;
+namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
 
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
 use Spatie\Crawler\CrawlUrl;
 use Spatie\Crawler\Exception\UrlNotFoundByIndex;
 
-class Queue implements CrawlQueue
+class FetcherSpatieCrawlerQueue implements CrawlQueue
 {
   /** @var \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection */
   protected $urls;
@@ -18,6 +18,9 @@ class Queue implements CrawlQueue
   protected $config;
 
 
+  /**
+   * FetcherSpatieCrawlerQueue constructor.
+   */
   public function __construct()
   {
     $this->urls = collect();
@@ -26,6 +29,9 @@ class Queue implements CrawlQueue
   }//end __construct()
 
 
+  /**
+   * @return \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection
+   */
   public function getUrls()
   {
     return $this->urls;
@@ -33,6 +39,9 @@ class Queue implements CrawlQueue
   }//end getUrls()
 
 
+  /**
+   * @return \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection
+   */
   public function getPendingUrls()
   {
     return $this->pendingUrls;
@@ -40,6 +49,12 @@ class Queue implements CrawlQueue
   }//end getPendingUrls()
 
 
+  /**
+   * Add a url to the crawl queue.
+   * @param \Spatie\Crawler\CrawlUrl $url
+   *
+   * @return \Spatie\Crawler\CrawlQueue\CrawlQueue
+   */
   public function add(CrawlUrl $url): CrawlQueue
   {
 
@@ -57,6 +72,10 @@ class Queue implements CrawlQueue
   }//end add()
 
 
+  /**
+   * Returns true if urls in pending collection.
+   * @return bool
+   */
   public function hasPendingUrls(): bool
   {
     return (bool) $this->pendingUrls->count();

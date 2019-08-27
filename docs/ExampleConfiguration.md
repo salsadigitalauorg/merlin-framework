@@ -100,6 +100,72 @@ url_options:
 
 
 
+# Fetch options
+
+URL content is retrieved via a Fetcher.  There are a number of options that can apply to how the content is retreived.  These options are specified by the `fetch_options` array directive in the configuration:
+
+| Option        | Type | Default | Explanation           |
+| ------------- | ---- | ------- | ------------- |
+| `concurrency` | int | `10` | How many maximum concurrent requests should be used to fetch content.
+| `delay` | int | `100` | Delay between requests in milliseconds.
+| `cache_enabled` | boolean | `true` | If enabled, URL content is cached on disk for subsequent processing.  
+| `cache_dir` | string | `/tmp/merlin_cache` | Directory to store the cache.  If the path does not exist it will be created.
+| `fetcher_class` | string | `...FetcherSpatieCrawler` | The full name-spaced class name of the Fetcher class to use to retrieve content.  In most normal circumstances this can be left alone.  *Note: check the class for the full class path of the default Fetcher*.
+| `execute_js` | boolean | false | Executes javascript on the page after fetching.  You need to ensure the necessary node dependencies are met and installed.  <br>**Note: Currently only available when using FetcherSpatieCrawler**.
+| `allow_redirects` | boolean | `true` | If enabled, redirects e.g. `302` will be followed.
+| `timeouts` | array | `connect_timeout: 15`<br>`timeout: 15`<br>`read_timeout: 30`<br> | Various fetching timeouts.  Note that if you use `execute_js` these timeouts will need to be at least doubled to allow time to run the javascript.
+
+Most of the time the default Fetcher class should cover most usage requirements, however, you can specify a custom class name if you need to do something different.  Check `Merlin\Fetcher\Fetchers\*` for examples of how to implement.
+
+**Example `fetcher_options` configuration**:
+ 
+```
+---
+domain: http://www.exampple.com
+
+urls:
+  - /some/path
+  - /some/path?with=a&query=123
+  - /some/path?with=a&query=123#and-a-fragment
+
+fetch_options:  
+  # Default 10   
+  concurrency: 10
+  
+  # Delay between requests, default 100 milliseconds
+  delay: 100
+  
+  # Cache content (and use previously cached content), default true
+  cache_enabled: true
+  
+  # Cache storage root dir (path created if doesn't exist), default /tmp/merlin_cache
+  cache_dir: '/tmp/merlin_cache'
+  
+  # Fetcher class, default \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler
+  # fetcher_class: '\Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
+  # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
+  fetcher_class: '\Migrate\Fetcher\Fetchers\Curl\FetcherCurl'
+
+  # Execute on-load JS, default false.
+  # Currently only available if using the FetcherSpatieCrawler fetcher class
+  execute_js: false
+  
+  # Whether to follow redirects
+  allow_redirects: true
+
+  # Timeouts.  When using execute_js, you want to have reasonably long timeouts.
+  # Not all timeouts are applicable to all Fetchers.
+  timeouts:
+    connect_timeout: 15, 
+    timeout: 60,
+    # FetcherSpatieCrawler only
+    read_timeout: 30
+    
+```
+
+
+
+
 # Basic text
 
 Basic text fields can be mapped in the `mappings` section using the `text` type. Example configuration below:
