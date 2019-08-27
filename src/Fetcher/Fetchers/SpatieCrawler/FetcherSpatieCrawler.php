@@ -54,6 +54,7 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
         RequestOptions::ALLOW_REDIRECTS => $allowRedirects,
         RequestOptions::VERIFY          => false,
         RequestOptions::HEADERS         => ['User-Agent' => FetcherDefaults::USER_AGENT],
+        RequestOptions::VERIFY          => !$ignoreSSL,
     ];
 
     $crawler = SpatieCrawler::create($clientOptions);
@@ -67,15 +68,15 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
     $crawler->setDelayBetweenRequests($requestDelay);
     $crawler->ignoreRobots();
 
-    $browserShot = new Browsershot();
-    if ($ignoreSSL) {
-      $browserShot->setOption('ignoreHttpsErrors', true);
-    }
-
     if ($executeJs) {
+      $browserShot = new Browsershot();
+      $crawler->setBrowsershot($browserShot);
       $crawler->executeJavaScript();
       $browserShot->addChromiumArguments(['disk-cache-dir' => '/tmp/merlin_browser_cache']);
-      $crawler->setBrowsershot($browserShot);
+
+      if ($ignoreSSL) {
+        $browserShot->setOption('ignoreHttpsErrors', true);
+      }
     }
 
     $this->crawler = $crawler;
