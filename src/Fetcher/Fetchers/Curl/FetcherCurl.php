@@ -7,6 +7,7 @@
 namespace Migrate\Fetcher\Fetchers\Curl;
 
 use Migrate\Fetcher\FetcherBase;
+use Migrate\Fetcher\FetcherDefaults;
 use Migrate\Fetcher\FetcherInterface;
 
 use Curl\MultiCurl;
@@ -25,12 +26,12 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   /** @inheritDoc */
   public function init()
   {
-    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? 10);
-    $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? true);
+    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
+    $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? FetcherDefaults::ALLOW_REDIRECTS);
 
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
-    $connectTimeout = ($timeouts['connect_timeout'] ?? 10);
-    $timeout        = ($timeouts['timeout'] ?? 30);
+    $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
+    $timeout        = ($timeouts['timeout'] ?? FetcherDefaults::TIMEOUT);
 
     $curl = new MultiCurl();
     $curl->setConcurrency($concurrency);

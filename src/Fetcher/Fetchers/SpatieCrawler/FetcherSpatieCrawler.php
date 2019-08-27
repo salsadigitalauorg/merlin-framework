@@ -7,6 +7,7 @@
 namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
 
 use GuzzleHttp\RequestOptions;
+use Migrate\Fetcher\FetcherDefaults;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlUrl;
@@ -34,15 +35,15 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
   public function init() {
 
     // Options from fetch_options.
-    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? 10);
-    $requestDelay   = ($this->config->get('fetch_options')['delay'] ?? 100);
-    $executeJs      = ($this->config->get('fetch_options')['execute_js'] ?? false);
-    $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? false);
+    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
+    $requestDelay   = ($this->config->get('fetch_options')['delay'] ?? FetcherDefaults::DELAY);
+    $executeJs      = ($this->config->get('fetch_options')['execute_js'] ?? FetcherDefaults::EXECUTE_JS);
+    $allowRedirects = ($this->config->get('fetch_options')['allow_redirects'] ?? FetcherDefaults::ALLOW_REDIRECTS);
 
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
-    $connectTimeout = ($timeouts['connect_timeout'] ?? 10);
-    $readTimeout    = ($timeouts['read_timeout'] ?? 10);
-    $timeout        = ($timeouts['timeout'] ?? 30);
+    $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
+    $readTimeout    = ($timeouts['read_timeout'] ?? FetcherDefaults::TIMEOUT_READ);
+    $timeout        = ($timeouts['timeout'] ?? FetcherDefaults::TIMEOUT);
 
     $clientOptions = [
         RequestOptions::COOKIES         => true,
@@ -51,7 +52,7 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
         RequestOptions::TIMEOUT         => $timeout,
         RequestOptions::ALLOW_REDIRECTS => $allowRedirects,
         RequestOptions::VERIFY          => false,
-        RequestOptions::HEADERS         => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'],
+        RequestOptions::HEADERS         => ['User-Agent' => FetcherDefaults::USER_AGENT],
     ];
 
     $crawler = SpatieCrawler::create($clientOptions);
