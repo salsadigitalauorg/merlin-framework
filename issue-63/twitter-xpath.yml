@@ -10,3 +10,4 @@ mappings:
   - field: field_body
     selector: "//*[@class='StaticLoggedOutHomePage']"
     type: long_text
+    xpath: true

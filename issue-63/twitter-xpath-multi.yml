@@ -10,3 +10,4 @@ mappings:
   - field: field_body
     selector: "//*[@class='StreamsFooter-item']/a"
     type: long_text
+    xpath: true
