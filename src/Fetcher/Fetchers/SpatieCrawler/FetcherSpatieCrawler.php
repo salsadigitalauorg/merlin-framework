@@ -52,7 +52,6 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
         RequestOptions::READ_TIMEOUT    => $readTimeout,
         RequestOptions::TIMEOUT         => $timeout,
         RequestOptions::ALLOW_REDIRECTS => $allowRedirects,
-        RequestOptions::VERIFY          => false,
         RequestOptions::HEADERS         => ['User-Agent' => FetcherDefaults::USER_AGENT],
         RequestOptions::VERIFY          => !$ignoreSSL,
     ];
