@@ -49,6 +49,7 @@ abstract class OutputBase implements OutputInterface
     public function addRow($entity_type, \stdClass $row)
     {
         if (!empty($row->mandatory_fail)) {
+            $this->io->writeln('<comment>Skipping: Failed mandatory requirement</comment>');
             return $this;
         }
 

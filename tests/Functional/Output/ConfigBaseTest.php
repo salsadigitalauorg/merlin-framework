@@ -23,7 +23,7 @@ class ConfigBaseTest extends TestCase
     return [
       'domain' => 'http://example.com',
       'urls' => [
-        '/'
+        '/',
       ],
       'entity_type' => 'test',
       'mappings' => [
@@ -106,7 +106,7 @@ class ConfigBaseTest extends TestCase
   }
 
   /**
-   * Ensure the iterrator correctly finishes the sequence.
+   * Ensure the iterator correctly finishes the sequence.
    */
   public function testGetMappings()
   {
@@ -126,7 +126,7 @@ class ConfigBaseTest extends TestCase
   }
 
   /**
-   * Ensure the reste method can return the object to the default state.
+   * Ensure the reset method can return the object to the default state.
    */
   public function testReset()
   {
