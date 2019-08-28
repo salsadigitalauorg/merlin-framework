@@ -126,6 +126,21 @@ url_options:
 
 
 
+# Mandatory element
+
+Some elements may be considered mandatory for a row to be considered valid. For example; if a page does not contain a 'Title' then it may fail a mandatory requirement and be skipped.
+
+This is controlled via the `mandatory` option against a field. For example:
+
+```
+mappings:
+  -
+    field: title
+    selector: '#content-main h1'
+    type: text
+    options:
+      mandatory: true
+```
 
 
 # Basic text
