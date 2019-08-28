@@ -113,7 +113,8 @@ class GenerateCommand extends Command
                 $output->mergeRow(
                     "error-{$request->getResponseInfo()['http_code']}",
                     'urls',
-                    [$request->getUrl()]
+                    [$request->getUrl()],
+                    true
                 );
                 return;
             }
