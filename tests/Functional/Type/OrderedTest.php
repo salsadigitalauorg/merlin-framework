@@ -44,7 +44,7 @@ class OrderedTest extends CrawlerTestCase {
     $this->assertEquals(9, count($row->ordered['children']));
   }
 
-    /**
+  /**
    * Test available_items missing.
    */
   public function testAvailableItemsMissing() {
