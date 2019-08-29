@@ -4,7 +4,7 @@ namespace Migrate\Tests\Functional\Type;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
-use  Migrate\Parser\ConfigBase;
+use Migrate\Parser\ConfigBase;
 
 /**
  * Ensure that the config base can correctly instantiate.
