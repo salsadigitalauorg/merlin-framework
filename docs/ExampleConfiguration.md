@@ -98,7 +98,6 @@ url_options:
     - '//head'
 ```
 
-=======
 **Example of overriding for specific URLs**:
 
 If there are URLs that need to have a different query or fragment inclusion setting from that of the global setting, their behaviour can be specified independently:
