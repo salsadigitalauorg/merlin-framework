@@ -64,9 +64,14 @@ class CrawlCommand extends Command
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
+        // Confirm destination directory is writable.
+        if (!is_writable($input->getOption('output'))) {
+            $io->error("Error: ".$input->getOption('output')." is not writable.");
+            exit(1);
+        }
+
         $config       = new CrawlerConfig($input->getOption('config'));
         $this->config = $config->getConfig();
-
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
@@ -76,16 +81,11 @@ class CrawlCommand extends Command
             RequestOptions::TIMEOUT         => 10,
             RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
             RequestOptions::VERIFY          => false,
-            'headers'                       => ['User-Agent' => 'Merlin'],
+            RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
         ];
 
         $baseUrl = $this->config['domain'];
 
-        // Crawler agent header.
-        // $stack = new HandlerStack();
-        // $stack->setHandler(new CurlHandler());
-        // $stack->push($this->add_header('User-Agent', 'Merlin'));
-        // $clientOptions['handler'] = $stack;.
         $crawler = SpatieCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))

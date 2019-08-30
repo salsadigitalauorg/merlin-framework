@@ -1,0 +1,11 @@
+---
+  domain: http://example.com
+  urls_file: urls_file.yml
+  entity_type: test
+  mappings:
+    -
+      field: title
+      selector: h1
+      type: text
+      processors:
+        nl2br: { }

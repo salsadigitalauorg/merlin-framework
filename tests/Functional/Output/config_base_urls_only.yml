@@ -1,0 +1,14 @@
+---
+  domain: http://example.com
+  urls:
+    - /
+    - /about-us
+    - /contact
+  entity_type: test
+  mappings:
+    -
+      field: title
+      selector: h1
+      type: text
+      processors:
+        nl2br: { }
