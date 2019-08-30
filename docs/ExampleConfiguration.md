@@ -120,11 +120,51 @@ url_options:
       include_query: true
       include_fragment: true  
   
-```  
+```
+
+# URLs in a separate file
+
+You can also provide a list of URLs in a separate file. Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` as a relative path to the config file.
+
+```
+---
+domain: http://www.example.com
+
+urls:
+ - /some/path
+ - /some/path/subpath
+
+urls_file: list_of_urls.yml
+```
+
+**Example of a separate URLs file**
+
+Provide the list of urls in a separate file with a single `urls` property that contains the list of URLs. Example configuration of a `urls_file`:
+
+```
+---
+urls:
+  - /some/path
+  - /some/other/path
+```
 
 
 
+# Mandatory element
 
+Some elements may be considered mandatory for a row to be considered valid. For example; if a page does not contain a 'Title' then it may fail a mandatory requirement and be skipped.
+
+This is controlled via the `mandatory` option against a field. For example:
+
+```
+mappings:
+  -
+    field: title
+    selector: '#content-main h1'
+    type: text
+    options:
+      mandatory: true
+```
 
 
 

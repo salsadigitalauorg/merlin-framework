@@ -186,6 +186,7 @@ abstract class TypeBase implements TypeInterface {
   {
     $xpath = FALSE;
     $element = $this->crawler;
+    $sourceUri = $element->getUri();
 
     $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
 
@@ -230,6 +231,11 @@ abstract class TypeBase implements TypeInterface {
     if ($this->crawler->count() == 0) {
       if (!empty($this->config['options']['allow_null'])) {
         $this->row->{$this->config['field']} = $this->nullValue();
+      }
+
+      if (!empty($this->config['options']['mandatory'])) {
+        $this->row->mandatory_fail = TRUE;
+        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
       }
 
       if (isset($this->config['default'])) {

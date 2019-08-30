@@ -37,7 +37,7 @@ interface ParserInterface
 
 
     /**
-     * Retrieves the next URL form the config source.
+     * Retrieves the next URL from the config source.
      *
      * Access the URL directly and return the next in the iteration until it cannot return
      * another row and then it will return false.
