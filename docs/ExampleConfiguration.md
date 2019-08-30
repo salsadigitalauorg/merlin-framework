@@ -142,6 +142,7 @@ URL content is retrieved via a Fetcher.  There are a number of options that can 
 | `execute_js` | boolean | false | Executes javascript on the page after fetching.  You need to ensure the necessary node dependencies are met and installed.  <br><br>**Note: JS is currently only available when using the default FetcherSpatieCrawler**.
 | `allow_redirects` | boolean | `true` | If enabled, redirects e.g. `302` will be followed.
 | `ignore_ssl_errors` | boolean | `false` | If enabled, will ignore SSL errors.
+| `user_agent` | string | "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36" | Set the User-Agent to identify as in requests.
 | `timeouts` | array | `connect_timeout: 15`<br>`timeout: 15`<br>`read_timeout: 30`<br> | Various fetching timeouts.  Note that if you use `execute_js` these timeouts will need to be at least doubled to allow time to run the javascript.
 
 Most of the time the default Fetcher class should cover most usage requirements, however, you can specify a custom class name if you need to do something different.  Check `Merlin\Fetcher\Fetchers\*` for examples of how to implement.
