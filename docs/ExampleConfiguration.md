@@ -120,9 +120,33 @@ url_options:
       include_query: true
       include_fragment: true  
   
-```  
+```
 
+# URLs in a separate file
 
+You can also provide a list of URLs in a separate file. Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` as a relative path to the config file.
+
+```
+---
+domain: http://www.example.com
+
+urls:
+ - /some/path
+ - /some/path/subpath
+
+urls_file: list_of_urls.yml
+```
+
+**Example of a separate URLs file**
+
+Provide the list of urls in a separate file with a single `urls` property that contains the list of URLs. Example configuration of a `urls_file`:
+
+```
+---
+urls:
+  - /some/path
+  - /some/other/path
+```
 
 
 
@@ -141,6 +165,7 @@ mappings:
     options:
       mandatory: true
 ```
+
 
 
 # Basic text
