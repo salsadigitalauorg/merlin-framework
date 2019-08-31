@@ -104,16 +104,6 @@ class FetcherBase implements FetcherInterface
 
 
   /**
-   * Sets the content hash instance for this fetcher to use for duplicate detection.
-   * @param \Migrate\Fetcher\ContentHash $hashes
-   */
-  public function setHashes(ContentHash $hashes) {
-    $this->hashes = $hashes;
-
-  }//end setHashes()
-
-
-  /**
    * @return \Migrate\Parser\ParserInterface
    */
   public function getConfig() {

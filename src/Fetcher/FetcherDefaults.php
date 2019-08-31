@@ -23,7 +23,7 @@ class FetcherDefaults
   const EXECUTE_JS = false;
 
   /** @var bool Follow server redirects */
-  const ALLOW_REDIRECTS = true;
+  const FOLLOW_REDIRECTS = true;
 
   /** @var int Connect timeout */
   const TIMEOUT_CONNECT = 10;

@@ -75,7 +75,7 @@ class Cache
    *
    * @return string
    */
-  private function getFilename($url) {
+  public function getFilename($url) {
     $hash = $this->hash($url);
     $dir = $this->getStoreDir($hash);
     $file = $this->path.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.$hash;
@@ -141,7 +141,12 @@ class Cache
   public function unlink($url) {
     $filename = $this->getFilename($url);
     if (is_file($filename)) {
-      unlink($url);
+      unlink($filename);
+    }
+
+    $fileUrl = $this->getFilename($url).".url";
+    if (is_file($fileUrl)) {
+      unlink($fileUrl);
     }
 
   }//end unlink()

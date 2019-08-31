@@ -92,84 +92,6 @@ class GenerateCommand extends Command
 
 
     /**
-     * Return a request callback for RollingCurl.
-     *
-     * This will handle looping through each CURL response and
-     * will run through each field mapping and attempt to find
-     * those values in the repsonse. This will also handle
-     * parsing the mapping configuration and creating additional
-     * output files for related entities if any are required.
-     *
-     * @param Migrate\Parser\ParserInterface                   $parser
-     *   The configuration object.
-     * @param Migrate\Output\OutputInterface                   $output
-     *   The output object.
-     * @param Symfony\Component\Console\Output\OutputInterface $io
-     *   The console output.
-     * @param ContentHash                                      $hashes
-     *   ContentHash container (null if skip_duplicates=false)
-     *
-     * @return function
-     *   A callback for the curl request handler.
-     */
-    public function requestCallback(ParserInterface $parser, MigrateOutputInterface $output, OutputInterface $io, ContentHash $hashes=null, $debug=false)
-    {
-        return function (Request $request, RollingCurl $curl) use ($parser, $output, $io, $hashes, $debug) {
-            // Handle HTTP statuses.
-            switch ($request->getResponseInfo()["http_code"]) {
-            case 500:
-            case 404:
-            case 400:
-                $output->mergeRow(
-                    "error-{$request->getResponseInfo()['http_code']}",
-                    'urls',
-                    [$request->getUrl()],
-                    true
-                );
-                return;
-            }
-
-            $row = new \stdClass;
-
-            $io->write('Parsing... '.$request->getUrl());
-
-            $duplicate = false;
-            if ($hashes instanceof ContentHash) {
-              $duplicate = $hashes->put($request);
-            }
-
-            if ($duplicate === false) {
-              while ($field = $parser->getMapping()) {
-                $crawler = new Crawler($request->getResponseText(), $request->getUrl());
-                $type = self::TypeFactory($field['type'], $crawler, $output, $row, $field);
-                try {
-                  $type->process();
-                } catch (ElementNotFoundException $e) {
-                  $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
-                } catch (ValidationException $e) {
-                  $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
-                } catch (\Exception $e) {
-                  $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
-                }
-              }//end while
-            }
-
-            // Reset the parser so we have mappings back at 0.
-            $parser->reset();
-            $io->writeln(' <info>(Done!)</info>');
-
-            if (!empty((array) $row)) {
-                $output->addRow($parser->get('entity_type'), $row);
-            }
-
-            // Clear list of completed requests to avoid memory growth.
-            $curl->clearCompleted();
-        };
-
-    }//end requestCallback()
-
-
-    /**
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -248,6 +170,7 @@ class GenerateCommand extends Command
         if ($cache instanceof Cache) {
           if ($contents = $cache->get($url)) {
             echo "Fetched (cache): {$url}\n";
+            //$io->writeln("Fetched (cache): {$url}\n");
             $fetcher->processContent($url, $contents);
             $fetcher->incrementCount('fetched_cache');
             continue;

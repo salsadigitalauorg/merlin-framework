@@ -33,6 +33,7 @@ jobs:
           paths:
             - vendor
 
+      - run: nohup php -S localhost:8000 -t tests/www &> /dev/null &
       - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/phpcs ./
 
