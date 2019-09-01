@@ -169,8 +169,7 @@ class GenerateCommand extends Command
 
         if ($cache instanceof Cache) {
           if ($contents = $cache->get($url)) {
-            echo "Fetched (cache): {$url}\n";
-            //$io->writeln("Fetched (cache): {$url}\n");
+            $io->writeln("Fetched (cache): {$url}\n");
             $fetcher->processContent($url, $contents);
             $fetcher->incrementCount('fetched_cache');
             continue;

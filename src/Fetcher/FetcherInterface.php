@@ -40,12 +40,4 @@ interface FetcherInterface
   public function start();
 
 
-  /**
-   * This function is called after all processing is complete.  If you need to do
-   * some extra processing when everything is finished, you can add that here.
-   * @return mixed
-   */
-  public function onComplete();
-
-
 }//end interface

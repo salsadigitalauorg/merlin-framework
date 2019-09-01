@@ -69,16 +69,6 @@ class FetcherBase implements FetcherInterface
   }//end init()
 
 
-  /** @inheritDoc */
-  public function onComplete()
-  {
-    /*
-     * Implement in your Fetcher class if you need it.
-     */
-
-  }//end onComplete()
-
-
   /** #@inheritDoc */
   public function addUrl(?string $url) {
     throw new \Exception('Your Fetcher class does not implement the addUrl() method!');
@@ -261,8 +251,6 @@ class FetcherBase implements FetcherInterface
         $this->output->mergeRow('url-content-duplicates', 'duplicates', $duplicateUrls, true);
       }
     }
-
-    $this->onComplete();
 
   }//end complete()
 
