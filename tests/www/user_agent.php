@@ -1,6 +1,6 @@
 <?php
 
-$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? USER_AGENT_FAILED;
+$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'No User-Agent set in _SERVER vars!';
 
 ?>
 
