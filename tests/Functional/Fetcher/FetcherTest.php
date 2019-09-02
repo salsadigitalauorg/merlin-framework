@@ -143,7 +143,7 @@ class FetcherTest extends TestCase
   public function testPhpServerRunning() {
     $errno = null;
     $errstr = null;
-    $fp = fsockopen("tcp://127.0.0.1", 8000, $errno, $errstr);
+    $fp = fsockopen("tcp://localhost", 8000, $errno, $errstr);
     $this->assertNotFalse($fp);
   }
 
