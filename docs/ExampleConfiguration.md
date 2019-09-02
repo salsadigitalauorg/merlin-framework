@@ -85,7 +85,7 @@ mappings:
 
 ## Example menu
 
-Menu structures use the `menu_link` type. This sample configuration demonstrates how to pull the main menu from the Health.vic site, with parent/child relationships in-tact.
+Menu structures use the `menu_link` type. This sample configuration demonstrates how to pull a main menu with parent/child relationships in-tact.
 
 The selector uses an Xpath to reference the element in the DOM, in this case all list-items contained in the header nav are evaluated for top level links. The `text` and `link` options are sub-selectors to help define where link text and link values should come from.
 
@@ -118,6 +118,7 @@ mappings:
           text: './a/h3'
           link: './a/@href'
 ```
+
 
 ## URL aliases
 
