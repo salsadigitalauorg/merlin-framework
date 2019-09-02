@@ -221,7 +221,7 @@ fetch_options:
   execute_js: false
   
   # Whether to follow redirects
-  allow_redirects: true
+  follow_redirects: true
   
   # Ignore SSL errors
   ignore_ssl_errors : true
