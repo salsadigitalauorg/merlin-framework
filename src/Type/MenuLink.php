@@ -54,8 +54,7 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
                     $link = 'internal:'.$link;
                 }
 
-                $item = [
-
+                $result_item = [
                     'uuid'   => $uuid,
                     'link'   => $link,
                     'text'   => $text->text(),
@@ -63,8 +62,8 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
                     'weight' => $i,
                 ];
 
-                $item = $this->applyProcessors($item);
-                $result[] = $item;
+                $result_item = $this->applyProcessors($result_item);
+                $result[] = $result_item;
 
                 if (!empty($config['children'])) {
                     foreach ($config['children'] as $child) {

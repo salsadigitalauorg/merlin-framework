@@ -43,11 +43,13 @@ mappings:
     selector: ul.key-messages li
     type: text
     processors:
-      convert_encoding:
-        to_encoding: "HTML-ENTITIES"
+      - processor: remove_empty_tags
+      -
+        processor: convert_encoding
+        to_encoding: HTML-ENTITIES
         from_encoding: UTF-8
-      html_entity_decode: { }
-      whitespace: { }
+      - processor: html_entity_decode
+      - processor: whitespace
 ```
 
 
