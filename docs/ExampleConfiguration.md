@@ -3,190 +3,44 @@ id: examples
 title: Examples
 ---
 
-# Menu
+A configuration file should be made up of several key components.
+- Base domain (e.g `https://www.example.com`)
+- URL list (e.g an array of paths off the parent domain)
+- Optional URL configuration
+- Entity type (unique name for this content structure)
+- Mapping configuration (selectors, data processing)
 
-Menu structures use the `menu_link` type. This sample configuration demonstrates how to pull the main menu from the Health.vic site, with parent/child relationships in-tact.
+See the example files in the [examples](https://github.com/salsadigitalauorg/merlin-framework/tree/develop/examples) folder for complete examples.
 
-The selector uses an Xpath to reference the element in the DOM, in this case all list-items contained in the header nav are evaluated for top level links. The `text` and `link` options are sub-selectors to help define where link text and link values should come from.
+## Basic text
 
-The `children` section allows for sub-menu items to be defined via their own `selector` and configuration.
+Basic text fields can be mapped in the `mappings` section using the `text` type.
 
-```
----
-domain: https://www2.health.vic.gov.au
-
-urls:
-  - /
-
-entity_type: menus
-
-mappings:
-  -
-    field: main_menu
-    name: health_main_menu
-    type: menu_link
-    selector: '//*[@class="header-nav"]/*/ul/li'
-    options:
-      text: './a'
-      link: './a/@href'
-      remove_duplicates: true
-    children:
-      -
-        type: menu_link
-        selector: './descendant::li[@class="dd-level2"]'
-        options:
-          text: './a/h3'
-          link: './a/@href'
-```
-
-# URL aliases
-
-The URL alias of each content should be preserved so URLs can remain in-tact when migrated into the destination CMS. Simply attach the `alias` type to the mappings configuration to ensure URL aliases are captured.
-
-```
-mappings:
-  -
-    field: alias
-    type: alias
-```
-
-# URL options
-
-There are a number of options that can apply to the URL list.  These options are specified by the `url_options` array directive in the configuration:
-
-
-| Option        | Explanation           |
-| ------------- | ------------- |
-| `include_query` | Will include the **query** part of the URL in the request.  If set to false, the crawler will only fetch the path component of the URL. |
-| `include_fragment` | Will include the **fragment** part of the URL.  If set to false, the crawler will only fetch the path component of the URL. |
-| `find_content_duplicates ` | Will check for **content** duplicates.  This will create a file called `url-content-duplicates.json` that contains a list of URLs that appear to resolve to the same content.  This is to avoid content duplication in the target system as well as provide a way to easily generate aliases. |
-| `hash_selector` | This is an **XPath** selector that is used to generate the hash of content that is used to detect duplicates.  By default `sha1` is used as the hash algorithm and uses the `<body>` tag of the page as the determining content.|
-| `hash_exclude_nodes ` | This is an array of **XPath** selectors to *exclude* when generating the hash to detect duplicates.  This could include elements that may appear on the page that might be metadata/cache busters or contain timestamps etc that can be safely excluded from building a hash for duplicate detection.  By default all `<script>`, `<!-- Comment -->`, `<style>`, `<input>` and `<head>` tags will be ignored.  |
-| `urls` | This is an associative array of urls and their corresponding `include_query` and `include_fragment` settings (as above) to override the global setting, if required.|
-	
- 
-**Example `url_options` configuration**:
-
-```
----
-domain: http://www.example.com
-
-urls:
-  - /some/path
-  - /some/path?with=a&query=123
-  - /some/path?with=a&query=123#and-a-fragment
-
-url_options:
-  # Default false
-  include_query: true       
-  
-  # Default false
-  include_fragment: true
-  
-  # Default true
-  find_content_duplicates: true
- 
-  # Default '//body'
-  hash_selector: '//body' 
- 
-  # Default script, comment, style, input, head  
-  hash_exclude_nodes:      
-    - '//script'  
-    - '//comment()'
-    - '//style'
-    - '//input'
-    - '//head'
-```
-
-**Example of overriding for specific URLs**:
-
-If there are URLs that need to have a different query or fragment inclusion setting from that of the global setting, their behaviour can be specified independently:
-
-```
----
-domain: http://www.example.com
-
-urls:
-  - /some/path
-  - /some/path?with=a&query=123
-  - /some/path?with=a&query=123#and-a-fragment
-
-url_options:
-  include_query: false       
-  include_fragment: false
-  urls:
-    -
-      url: /some/path?with=a&query=123#and-a-fragment
-      include_query: true
-      include_fragment: true  
-  
-```
-
-# URLs in a separate file
-
-You can also provide a list of URLs in a separate file. Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` as a relative path to the config file.
-
-```
----
-domain: http://www.example.com
-
-urls:
- - /some/path
- - /some/path/subpath
-
-urls_file: list_of_urls.yml
-```
-
-**Example of a separate URLs file**
-
-Provide the list of urls in a separate file with a single `urls` property that contains the list of URLs. Example configuration of a `urls_file`:
-
-```
----
-urls:
-  - /some/path
-  - /some/other/path
-```
-
-
-
-# Mandatory element
-
-Some elements may be considered mandatory for a row to be considered valid. For example; if a page does not contain a 'Title' then it may fail a mandatory requirement and be skipped.
-
-This is controlled via the `mandatory` option against a field. For example:
+For example this may commonly be used for page content (selector `h1` with id `title`):
 
 ```
 mappings:
   -
     field: title
-    selector: '#content-main h1'
+    selector: "h1#title"
     type: text
-    options:
-      mandatory: true
 ```
-
-
-
-# Basic text
-
-Basic text fields can be mapped in the `mappings` section using the `text` type. Example configuration below:
+You can also use xpath selectors:
 
 ```
 mappings:
   -
     field: title
-    selector: "#phbody_1_ctl01_h1Title"
+    selector: "//h1[@id='title']"
     type: text
 ```
 
-This type was used for the 'key messages' content. It supports both individual items, or arrays of items, e.g in the case of key messages there are multiple matches on the selector, so an array of plain-text results will exist in the JSON object for import.
-
+Another example could be pulling content items from an unordered list and passing them through some data processors:
 ```
 mappings:
   -
     field: field_key_messages
-    selector: .m-key-messages .m-b li
+    selector: ul.key-messages li
     type: text
     processors:
       convert_encoding:
@@ -196,9 +50,8 @@ mappings:
       whitespace: { }
 ```
 
-This also includes additional processors, more detail on these can be found on the [Processors]() page.
 
-# Long, formatted text
+## Long, formatted text
 
 Long text is used for body content, or anywhere a rich-text WYSIWYG editor may be used. It also allows for embedded media (e.g documents, images).
 
@@ -226,4 +79,70 @@ mappings:
           - id
           - style
       - processor: whitespace
+```
+
+
+## Example menu
+
+Menu structures use the `menu_link` type. This sample configuration demonstrates how to pull a main menu with parent/child relationships in-tact.
+
+The selector uses an Xpath to reference the element in the DOM, in this case all list-items contained in the header nav are evaluated for top level links. The `text` and `link` options are sub-selectors to help define where link text and link values should come from.
+
+The `children` section allows for sub-menu items to be defined via their own `selector` and configuration.
+
+```
+---
+domain: https://www.example.com
+
+urls:
+  - /
+
+entity_type: menus
+
+mappings:
+  -
+    field: main_menu
+    name: main_menu
+    type: menu_link
+    selector: '//*[@class="header-nav"]/*/ul/li'
+    options:
+      text: './a'
+      link: './a/@href'
+      remove_duplicates: true
+    children:
+      -
+        type: menu_link
+        selector: './descendant::li[@class="dd-level2"]'
+        options:
+          text: './a/h3'
+          link: './a/@href'
+```
+
+
+## URL aliases
+
+The URL alias of each content should be preserved so URLs can remain in-tact when migrated into the destination CMS. Simply attach the `alias` type to the mappings configuration to ensure URL aliases are captured.
+
+```
+mappings:
+  -
+    field: alias
+    type: alias
+```
+
+
+# Mandatory element
+
+Some elements may be considered mandatory for a row to be considered valid. For example; if a page does not contain a 'Title' then it may fail a mandatory requirement and be skipped.
+
+This is controlled via the `mandatory` option against a field. For example:
+
+```
+mappings:
+  -
+    field: title
+    selector: '#content-main h1'
+    type: text
+    options:
+      mandatory: true
 ```
