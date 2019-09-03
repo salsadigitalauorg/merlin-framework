@@ -46,7 +46,7 @@ class GenerateCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
-            ->addOption('number', 'n', InputOption::VALUE_REQUIRED, 'Number of items to migrate', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of items to migrate', 0)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
 
     }//end configure()
@@ -190,7 +190,7 @@ class GenerateCommand extends Command
 
         $io->section('Processing requests');
 
-        if ($limit = $input->getOption('number')) {
+        if ($limit = $input->getOption('limit')) {
             $io->writeln("Setting the maximum migrate count to {$limit} items.");
             $io->writeln('');
         }
@@ -223,7 +223,7 @@ class GenerateCommand extends Command
     private function runWeb($json, $io, $input, $hashes)
     {
         // Optionally override maximum results (default is unlimited/all).
-        $limit = $input->getOption('number') ? $input->getOption('number') : 0;
+        $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
         $totalRequests = 0;
 
         $request = new RollingCurl();
@@ -247,7 +247,7 @@ class GenerateCommand extends Command
     private function runXml($json, $io, $input)
     {
         // Optionally override maximum results (default is unlimited/all).
-        $limit = $input->getOption('number') ? $input->getOption('number') : 0;
+        $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
         $files = $limit ? array_slice($this->config->get('files'), 0, $limit, true) : $this->config->get('files');
 
         foreach ($files as $file) {
