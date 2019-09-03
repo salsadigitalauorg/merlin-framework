@@ -56,7 +56,8 @@ class GenerateCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
-            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
+            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
+            ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
     }//end configure()
 
@@ -96,6 +97,7 @@ class GenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $io = new SymfonyStyle($input, $output);
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
@@ -108,6 +110,11 @@ class GenerateCommand extends Command
 
         $config       = new Config($input->getOption('config'));
         $this->config = $config->getConfig();
+
+        if ($input->getOption('no-cache')) {
+          $this->config->disableCache();
+        }
+
         $io->success('Done!');
 
         $start   = microtime(true);
@@ -139,7 +146,6 @@ class GenerateCommand extends Command
    * @throws \Exception
    */
     private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io) {
-
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
       $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
