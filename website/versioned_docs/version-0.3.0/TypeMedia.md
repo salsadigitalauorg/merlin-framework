@@ -1,7 +1,8 @@
 ---
-id: type-long-text
+id: version-0.3.0-type-long-text
 title: Long Text
 sidebar_label: Long Text
+original_id: type-long-text
 ---
 
 Extract a structured representation of a media asset from the DOM.
