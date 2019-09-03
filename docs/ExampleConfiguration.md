@@ -25,7 +25,6 @@ mappings:
     selector: "h1#title"
     type: text
 ```
-
 You can also use xpath selectors:
 
 ```
