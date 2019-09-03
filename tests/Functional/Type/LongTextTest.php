@@ -37,7 +37,7 @@ class LongTextTest extends CrawlerTestCase {
     $type->process();
 
     $this->assertTrue(\property_exists($row, $config['field']));
-    $this->assertArrayHasKey('format', $row->{$config['field']}[0]);
-    $this->assertArrayHasKey('value', $row->{$config['field']}[0]);
+    $this->assertArrayHasKey('format', $row->{$config['field']});
+    $this->assertArrayHasKey('value', $row->{$config['field']});
   }
 }

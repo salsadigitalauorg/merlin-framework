@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
-version: 2
+version: 2.0
 jobs:
   build:
     docker:
@@ -12,8 +12,14 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: Install puppeteer with chromium
+          command: |
+            npm i puppeteer
+
       - run: sudo apt update
       - run: sudo docker-php-ext-install zip
+      - run: sudo docker-php-ext-install exif && sudo docker-php-ext-enable exif
 
       # Download and cache dependencies
 
@@ -33,7 +39,7 @@ jobs:
             - vendor
 
       - run: ./vendor/bin/phpunit
-      - run: ./vendor/bin/phpcs ./
+      - run: ./vendor/bin/phpcs ./src
 
   deploy:
     docker:
@@ -45,6 +51,7 @@ jobs:
       - run: sudo apt-get install golang-go
       - run: sudo docker-php-ext-install zip
       - run: sudo docker-php-ext-install bcmath && sudo docker-php-ext-enable bcmath
+      - run: sudo docker-php-ext-install exif && sudo docker-php-ext-enable exif
 
       - run: composer install -n --no-dev --prefer-dist
 

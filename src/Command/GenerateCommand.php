@@ -2,6 +2,17 @@
 
 namespace Migrate\Command;
 
+use GuzzleHttp\RequestOptions;
+use Migrate\Fetcher\Cache;
+use Migrate\Fetcher\FetcherBase;
+use Migrate\Fetcher\FetcherSpatieCrawler;
+use Migrate\Fetcher\FetcherSpatieCrawlerObserver;
+use Migrate\Fetcher\Process;
+use Migrate\Fetcher\FetcherSpatieCrawlerQueue;
+use Migrate\Fetcher\ContentHash;
+use Spatie\Browsershot\Browsershot;
+use Spatie\Crawler\Crawler as SpatieCrawler;
+use Spatie\Crawler\CrawlUrl;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,7 +56,8 @@ class GenerateCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
-            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
+            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
+            ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
     }//end configure()
 
@@ -81,93 +93,39 @@ class GenerateCommand extends Command
 
 
     /**
-     * Return a request callback for RollingCurl.
-     *
-     * This will handle looping through each CURL response and
-     * will run through each field mapping and attempt to find
-     * those values in the repsonse. This will also handle
-     * parsing the mapping configuration and creating additional
-     * output files for related entities if any are required.
-     *
-     * @param Migrate\Parser\ParserInterface                   $parser
-     *   The configuration object.
-     * @param Migrate\Output\OutputInterface                   $output
-     *   The output object.
-     * @param Symfony\Component\Console\Output\OutputInterface $io
-     *   The console output.
-     *
-     * @return function
-     *   A callback for the curl request handler.
-     */
-    public function requestCallback(ParserInterface $parser, MigrateOutputInterface $output, OutputInterface $io, $debug=false)
-    {
-        return function (Request $request, RollingCurl $curl) use ($parser, $output, $io, $debug) {
-            // Handle HTTP statuses.
-            switch ($request->getResponseInfo()["http_code"]) {
-            case 500:
-            case 404:
-            case 400:
-                $output->mergeRow(
-                    "error-{$request->getResponseInfo()['http_code']}",
-                    'urls',
-                    [$request->getUrl()]
-                );
-                return;
-            }
-
-            $row = new \stdClass;
-
-            $io->write('Parsing... '.$request->getUrl());
-
-            while ($field = $parser->getMapping()) {
-                $crawler = new Crawler($request->getResponseText(), $request->getUrl());
-                $type    = self::TypeFactory($field['type'], $crawler, $output, $row, $field);
-                try {
-                    $type->process();
-                } catch (ElementNotFoundException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
-                } catch (ValidationException $e) {
-                    $output->mergeRow($e::FILE, $request->getUrl(), [$e->getMessage()], true);
-                } catch (\Exception $e) {
-                    $output->mergeRow('error-unhandled', $request->getUrl(), [$e->getMessage()], true);
-                }
-            }
-
-            // Reset the parser so we have mappings back at 0.
-            $parser->reset();
-            $io->writeln(' <info>(Done!)</info>');
-
-            if (!empty((array) $row)) {
-                $output->addRow($parser->get('entity_type'), $row);
-            }
-        };
-
-    }//end requestCallback()
-
-
-    /**
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $io = new SymfonyStyle($input, $output);
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
+        // Confirm destination directory is writable.
+        if (!is_writable($input->getOption('output'))) {
+            $io->error("Error: ".$input->getOption('output')." is not writable.");
+            exit(1);
+        }
+
         $config       = new Config($input->getOption('config'));
         $this->config = $config->getConfig();
+
+        if ($input->getOption('no-cache')) {
+          $this->config->disableCache();
+        }
+
         $io->success('Done!');
 
         $start   = microtime(true);
         $json    = new Json($io, $config);
-        $request = new RollingCurl();
 
         $io->section('Processing requests');
 
         if ($this->config->get('parser') == 'xml') {
             $this->runXml($json, $io, $input);
         } else {
-            $this->runWeb($json, $io, $input);
+            $this->runWeb($json, $io);
         }
 
         $io->section('Generating files');
@@ -179,21 +137,56 @@ class GenerateCommand extends Command
     }//end execute()
 
 
-    /**
-     * Run web-based parsing via rolling curl.
-     */
-    private function runWeb($json, $io, $input)
-    {
-        $request = new RollingCurl();
+  /**
+   * Run web-based parsing via a delegated Fetcher.
+   *
+   * @param \Migrate\Output\OutputInterface                   $json
+   * @param \Symfony\Component\Console\Output\OutputInterface $io
+   *
+   * @throws \Exception
+   */
+    private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io) {
+      $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
+      $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
+      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
 
-        while ($url = $this->config->getUrl()) {
-            $request->get($url);
+      if (!class_exists($fetcherClass)) {
+        throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
+      }
+
+      if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
+        throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
+      }
+
+      // @var \Migrate\Fetcher\FetcherBase $fetcher
+      $fetcher  = new $fetcherClass($io, $json, $this->config);
+
+      // Use cache?
+      $cache = null;
+      if ($useCache) {
+        $cache = new Cache($this->config->get('domain'), $cacheDir);
+        $fetcher->setCache($cache);
+      }
+
+      // Processed cached and build non-cached url list to fetch.
+      foreach ($this->config->get('urls') as $url) {
+        $url = $this->config->get('domain').$url;
+        $fetcher->incrementCount('total');
+
+        if ($cache instanceof Cache) {
+          if ($contents = $cache->get($url)) {
+            $io->writeln("Fetched (cache): {$url}\n");
+            $fetcher->processContent($url, $contents);
+            $fetcher->incrementCount('fetched_cache');
+            continue;
+          }
         }
 
-        $request
-            ->setCallback($this->requestCallback($this->config, $json, $io, $input->getOption('debug')))
-            ->setSimultaneousLimit(10)
-            ->execute();
+        $fetcher->addUrl($url);
+      }
+
+      $fetcher->start();
+      $fetcher->complete();
 
     }//end runWeb()
 

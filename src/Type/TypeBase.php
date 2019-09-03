@@ -2,10 +2,13 @@
 
 namespace Migrate\Type;
 
+use Migrate\Utility\Callback;
 use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Output\OutputInterface;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
+use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
+use Migrate\ProcessController;
 
 /**
  * Field type base.
@@ -44,6 +47,13 @@ abstract class TypeBase implements TypeInterface {
    */
   protected $config;
 
+  /**
+   * The process conntroller.
+   *
+   * @var Migrate\ProcessControrller
+   */
+  protected $processors;
+
 
   /**
    * Build a field type parser.
@@ -63,6 +73,7 @@ abstract class TypeBase implements TypeInterface {
     $this->output = $output;
     $this->row = $row;
     $this->config = $config;
+    $this->processors = new ProcessController;
 
   }//end __construct()
 
@@ -88,43 +99,6 @@ abstract class TypeBase implements TypeInterface {
 
 
   /**
-   * Get the processors.
-   *
-   * @return Migrate\Processor\ProcessorInterface[]
-   *   A list of processors.
-   */
-  public function getProcessors()
-  {
-    if (empty($this->config['processors'])) {
-      return [];
-    }
-
-    $processors = [];
-
-    foreach ($this->config['processors'] as $processor => $config) {
-      if (is_numeric($processor)) {
-        $processor = $config['processor'];
-        unset($config['processor']);
-      }
-
-      $processor = str_replace('_', '', ucwords($processor, '_'));
-
-      $class = "Migrate\\Processor\\".ucfirst($processor);
-
-      if (!class_exists($class)) {
-        throw new \Exception('No handler for '.$processor);
-        continue;
-      }
-
-      $processors[] = new $class($config, $this->crawler, $this->output);
-    }
-
-    return $processors;
-
-  }//end getProcessors()
-
-
-  /**
    * Handle processing the value.
    *
    * @param mixed $value
@@ -135,8 +109,14 @@ abstract class TypeBase implements TypeInterface {
    */
   public function processValue($value)
   {
-    foreach ($this->getProcessors() as $processor) {
-      $value = $processor->process($value);
+
+    if (!empty($this->config['processors'])) {
+    return $this->processors::apply(
+        $value,
+        $this->config['processors'],
+        $this->crawler,
+        $this->output
+    );
     }
 
     return $value;
@@ -184,12 +164,20 @@ abstract class TypeBase implements TypeInterface {
   {
     $xpath = FALSE;
     $element = $this->crawler;
+    $sourceUri = $element->getUri();
 
     $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
 
     if ($this->supports('xpath') && $selector) {
       $element = @$this->crawler->evaluate($selector);
       $xpath = TRUE;
+
+      if ($element instanceof Crawler && $element->count() == 0) {
+        // The DOMCrawler can return an empty DOMNode list or an array
+        // if the selector doesn't match something that xpath can evaluate.
+        $xpath = FALSE;
+        $element = $this->crawler;
+      }
 
       if (is_array($element)) {
         // If the evaluate method returns an array we don't have a valid xpath
@@ -207,7 +195,13 @@ abstract class TypeBase implements TypeInterface {
 
     if (!$xpath && $selector) {
       // If we haven't found an element with xpath lets try the DOM.
-      $element = $this->crawler->filter($selector);
+      try {
+        $element = $this->crawler->filter($selector);
+      } catch (SyntaxErrorException $syntax) {
+        // If the domcrawler couldn't filter to the selector, default to an
+        // empty crawler.
+        $element = new Crawler();
+      }
     }
 
     $this->crawler = $element;
@@ -215,6 +209,15 @@ abstract class TypeBase implements TypeInterface {
     if ($this->crawler->count() == 0) {
       if (!empty($this->config['options']['allow_null'])) {
         $this->row->{$this->config['field']} = $this->nullValue();
+      }
+
+      if (!empty($this->config['options']['mandatory'])) {
+        $this->row->mandatory_fail = TRUE;
+        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
+      }
+
+      if (isset($this->config['default'])) {
+          $this->processDefault();
       }
 
       throw new ElementNotFoundException($selector);
@@ -228,7 +231,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * processXpath.
    *
-   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
+   * This is defined as an empty method on the base class so that it can be overidden in child classes.
    */
   public function processXpath()
   {
@@ -239,12 +242,39 @@ abstract class TypeBase implements TypeInterface {
   /**
    * processDom.
    *
-   * This is defined as an empty method on the base class so that it can be ovreidden in child classes.
+   * This is defined as an empty method on the base class so that it can be overidden in child classes.
    */
   public function processDom()
   {
 
   }//end processDom()
+
+
+  /**
+   * processDefault.
+   *
+   * Sets any default if defined and selector was not found.  Some types may override default below.
+   *
+   * @throws \Migrate\Exception\ValidationException
+   */
+  public function processDefault() {
+
+      if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
+          $value = Callback::getResult($this->config['default']['function'], $this->crawler);
+      } else if (is_array($this->config['default']) && key_exists('fields', $this->config['default'])) {
+          $results = [];
+          foreach ($this->config['default']['fields'] as $field => $data) {
+              $results[$field] = $data;
+          }
+
+          $value = $results;
+      } else {
+          $value = $this->config['default'];
+      }
+
+      $this->addValueToRow($value);
+
+  }//end processDefault()
 
 
 }//end class

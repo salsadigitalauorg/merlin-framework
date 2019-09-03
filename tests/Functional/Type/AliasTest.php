@@ -23,4 +23,24 @@ class AliasTest extends CrawlerTestCase {
     $this->assertEquals('/test', $row->alias);
   }
 
+  public function testAliasProcessors() {
+    $row = new \stdClass;
+    $alias = new Alias(
+      $this->getCrawler(),
+      $this->getOutput(),
+      $row,
+      [
+        'field' => 'alias',
+        'processors' => [
+          'replace' => [
+            'pattern' => '\/test',
+            'replace' => '/replaced',
+          ]
+        ]
+      ]
+    );
+    $alias->process();
+    $this->assertEquals('/replaced', $row->alias);
+  }
+
 }
