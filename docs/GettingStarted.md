@@ -72,7 +72,7 @@ Optionally override or specify options when running migrations by using migratio
 | `-c` | `--config` | Path to the configuration file | |
 | `-o` | `--output` | Path to the output directory | `__DIR__` |
 | `-d` | `--debug` | Output debug messages | `false` |
-| `-l` | `--limit` | Limit the max number of items to migrate (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
+| `-n` | `--number` | Limit the max number of items to migrate (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
 | `--concurrency` | `--concurrency` | Number of requests to make in parallel | `10` |
 
 ## Refreshing JSON assets

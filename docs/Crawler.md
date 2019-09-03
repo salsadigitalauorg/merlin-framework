@@ -113,5 +113,5 @@ Completed in 29.005132913589
 | `-c`  | `--config`     | Path to the configuration file | |
 | `-o`   | `--output`     | Path to the output directory | `__DIR__` |
 | `-d`   | `--debug`      | Output debug messages | `false` |
-| `-l`   | `--limit`      | Limit the max number of items to crawl (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
+| `-n`   | `--number`      | Limit the max number of items to crawl (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
 | `--concurrency` | `--concurrency` | Number of requests to make in parallel | `10` |
