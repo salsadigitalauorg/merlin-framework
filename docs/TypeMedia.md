@@ -30,14 +30,6 @@ options:
   file: img
   name: data-name
   alt: alt
-  processor_file: |
-    function ($value) {
-      return "migrated-$value";
-    }
-  process_name: |
-    function ($value) {
-      return "migrated-$value";
-    }
 ```
 
 **Xpath**
@@ -49,12 +41,20 @@ options:
   file: ./img/@src
   name: /img/@data-name
   alt: ./img/@alt
-  processor_file: |
-    function ($value) {
-      return "migrated-$value";
-    }
-  process_name: |
-    function ($value) {
-      return "migrated-$value";
-    }
 ```
+
+## Processors
+
+```
+field: field_featured_image
+type: media
+processors:
+  file:
+    - # <Apply filters to the file path>
+  name:
+    - # <Apply filters to the name>
+  alt:
+    - # <Apply filters to the alt text>
+```
+
+## Output

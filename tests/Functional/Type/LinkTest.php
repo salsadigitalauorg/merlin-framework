@@ -92,4 +92,92 @@ class LinkTest extends CrawlerTestCase {
     $this->assertEquals('internal:', $link->getOption( 'internal_identifier'));
   }
 
+  /**
+   * Ensure that the text can be processed.
+   */
+  public function testTextProcess() {
+    $row = new \stdClass;
+    $config = [
+      'field' => 'field_link',
+      'selector' => 'ul.with-links > li',
+      'processors' => [
+        'text' => [
+          'replace' => [
+            'pattern' => '[\w\s]+',
+            'replace' => 'Test',
+          ],
+        ],
+      ],
+    ];
+
+    $link = new Link($this->getCrawler(), $this->getOutput(), $row, $config);
+    $link->process();
+
+    foreach ($row->field_link as $link) {
+      $this->assertEquals('Test', $link['text']);
+      $this->assertNotEquals('Test', $link['link']);
+    }
+  }
+
+  /**
+   * Ensure taht the link processors can be applied.
+   */
+  public function testLinkProcess() {
+    $row = new \stdClass;
+    $config = [
+      'field' => 'field_link',
+      'selector' => 'ul.with-links > li',
+      'processors' => [
+        'link' => [
+          'replace' => [
+            'pattern' => '.*',
+            'replace' => 'Test Link',
+          ],
+        ],
+      ],
+    ];
+
+    $link = new Link($this->getCrawler(), $this->getOutput(), $row, $config);
+    $link->process();
+
+    foreach ($row->field_link as $link) {
+      $this->assertNotEquals('Test', $link['text']);
+      // Bad regex, but gets the point across.
+      $this->assertEquals('Test LinkTest Link', $link['link']);
+    }
+  }
+
+  /**
+   * Ensure that we can process both.
+   */
+  public function testBothProcess() {
+    $row = new \stdClass;
+    $config = [
+      'field' => 'field_link',
+      'selector' => 'ul.with-links > li',
+      'processors' => [
+        'link' => [
+          'replace' => [
+            'pattern' => '.*',
+            'replace' => 'Test Link',
+          ],
+        ],
+        'text' => [
+          'replace' => [
+            'pattern' => '[\w\s]+',
+            'replace' => 'Test text',
+          ],
+        ],
+      ],
+    ];
+
+    $link = new Link($this->getCrawler(), $this->getOutput(), $row, $config);
+    $link->process();
+
+    foreach ($row->field_link as $link) {
+      $this->assertEquals('Test text', $link['text']);
+      $this->assertEquals('Test LinkTest Link', $link['link']);
+    }
+  }
+
 }

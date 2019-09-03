@@ -16,7 +16,7 @@ use Migrate\Utility\ElementTrait;
  *     link: href # Attribute to determine the URL
  *     text: a # Element that contains the text
  */
-class Link extends TypeBase implements TypeInterface
+class Link extends TypeMultiComponent implements TypeInterface
 {
 
     use ElementTrait;
@@ -81,8 +81,12 @@ class Link extends TypeBase implements TypeInterface
                 $text = $text->text();
                 $link = $link->text();
 
-                $text = $this->processValue($text);
-                $link = $this->processValue($link);
+                $result = [
+                    'link' => $link,
+                    'text' => $text,
+                ];
+
+                $this->applyProcessors($result);
 
                 // Validate links - allow anchor links.
                 if (!parse_url($link) && (substr($link, 0, 1) != '#')) {
@@ -91,13 +95,10 @@ class Link extends TypeBase implements TypeInterface
                 }
 
                 if ($this->isRelativeUri($link)) {
-                    $link = $this->getOption('internal_identifier').$link;
+                    $result['link'] = $this->getOption('internal_identifier').$link;
                 }
 
-                $results[] = [
-                    'link' => $link,
-                    'text' => $text,
-                ];
+                $results[] = $result;
             }
         );
 
@@ -148,8 +149,7 @@ class Link extends TypeBase implements TypeInterface
         }
 
         foreach ($results as &$result) {
-            $result['text'] = $this->processValue($result['text']);
-            $result['link'] = $this->processValue($result['link']);
+            $result = $this->applyProcessors($result);
         }
 
         $this->addValueToRow($results);

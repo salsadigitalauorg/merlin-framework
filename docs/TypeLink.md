@@ -4,7 +4,9 @@ title: Link
 sidebar_label: Link
 ---
 
-Structure link representation.
+Structured link representation.
+
+> Note: Link is a combined output type, as a result processors need to be applied to the output rows.
 
 ## Options
 
@@ -31,4 +33,26 @@ selector: //*/[@class="link-list]/li
 options:
   link: ./a/@href
   text: ./a
+```
+
+## Processors
+
+```
+field:
+processors:
+  text:
+    - # <procesors for the text component>
+  link:
+    - # <processors for the link component>
+```
+
+## Output
+
+```
+{
+  <field_name>: {
+    "link": "internal:/path-to-resource",
+    "text: "Link text"
+  }
+}
 ```

@@ -175,7 +175,7 @@ abstract class ConfigBase implements ParserInterface
      */
     public function getUrl()
     {
-        if ($this->totals['urls'] > 0) {
+        if (!empty($this->totals['urls']) && $this->totals['urls'] > 0) {
             $this->totals['urls']--;
             return $this->data['domain'].array_shift($this->data['urls']);
         }
