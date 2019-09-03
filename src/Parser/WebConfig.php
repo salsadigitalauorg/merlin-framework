@@ -95,4 +95,13 @@ class WebConfig extends ConfigBase
     }//end getUrl()
 
 
+    /**
+     * Forces cache disable.
+     */
+    public function disableCache() {
+        $this->data['fetch_options']['cache_enabled'] = false;
+
+    }//end disableCache()
+
+
 }//end class

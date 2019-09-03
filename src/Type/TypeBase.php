@@ -8,6 +8,7 @@ use Migrate\Output\OutputInterface;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
+use Migrate\ProcessController;
 
 /**
  * Field type base.
@@ -46,6 +47,13 @@ abstract class TypeBase implements TypeInterface {
    */
   protected $config;
 
+  /**
+   * The process conntroller.
+   *
+   * @var Migrate\ProcessControrller
+   */
+  protected $processors;
+
 
   /**
    * Build a field type parser.
@@ -65,6 +73,7 @@ abstract class TypeBase implements TypeInterface {
     $this->output = $output;
     $this->row = $row;
     $this->config = $config;
+    $this->processors = new ProcessController;
 
   }//end __construct()
 
@@ -90,43 +99,6 @@ abstract class TypeBase implements TypeInterface {
 
 
   /**
-   * Get the processors.
-   *
-   * @return Migrate\Processor\ProcessorInterface[]
-   *   A list of processors.
-   */
-  public function getProcessors()
-  {
-    if (empty($this->config['processors'])) {
-      return [];
-    }
-
-    $processors = [];
-
-    foreach ($this->config['processors'] as $processor => $config) {
-      if (is_numeric($processor)) {
-        $processor = $config['processor'];
-        unset($config['processor']);
-      }
-
-      $processor = str_replace('_', '', ucwords($processor, '_'));
-
-      $class = "Migrate\\Processor\\".ucfirst($processor);
-
-      if (!class_exists($class)) {
-        throw new \Exception('No handler for '.$processor);
-        continue;
-      }
-
-      $processors[] = new $class($config, $this->crawler, $this->output);
-    }
-
-    return $processors;
-
-  }//end getProcessors()
-
-
-  /**
    * Handle processing the value.
    *
    * @param mixed $value
@@ -137,8 +109,14 @@ abstract class TypeBase implements TypeInterface {
    */
   public function processValue($value)
   {
-    foreach ($this->getProcessors() as $processor) {
-      $value = $processor->process($value);
+
+    if (!empty($this->config['processors'])) {
+    return $this->processors::apply(
+        $value,
+        $this->config['processors'],
+        $this->crawler,
+        $this->output
+    );
     }
 
     return $value;

@@ -16,3 +16,11 @@ Doesn't provide options.
 field: alias
 type: alias
 ```
+
+## Output
+
+```
+{
+  <field_name>: "/alias-of-the-path"
+}
+```

@@ -38,3 +38,9 @@ mappings:
         options:
           text: './a'
           link: './a/@href'
+    processors:
+      link:
+        -
+          processor: replace
+          pattern: 'https://www.example.com'
+          replace: false

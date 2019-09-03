@@ -22,7 +22,7 @@ mappings:
     selector: div#main-content
     type: long_text
     processors:
-      nl2br: {}
+      - processor: nl2br
       - processor: remove_empty_tags
       -
         processor: media

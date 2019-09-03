@@ -36,10 +36,10 @@ trait ProcessorOptionsTrait
      * @return mixed
      *   The option value.
      */
-    public function getOption($key)
+    public function getOption($key, $xpath=false)
     {
         $options = !empty($this->config['options']) ? $this->config['options'] : [];
-        $options = array_merge($this->options(), $options);
+        $options = array_merge($this->options($xpath), $options);
         return array_key_exists($key, $options) ? $options[$key] : false;
 
     }//end getOption()

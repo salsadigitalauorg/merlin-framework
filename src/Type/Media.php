@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Utility\MediaTrait;
 use Migrate\Utility\ProcessorOptionsTrait;
 use Migrate\ProcessController;
+use Migrate\Exception\ElementNotFoundException;
 
 /**
  * A media processor.
@@ -26,7 +27,7 @@ use Migrate\ProcessController;
  *       name: alt
  *       xpath: false
  */
-class Media extends TypeBase implements TypeInterface {
+class Media extends TypeMultiComponent implements TypeInterface {
 
   use MediaTrait;
   use ProcessorOptionsTrait;
@@ -39,9 +40,9 @@ class Media extends TypeBase implements TypeInterface {
     return [
         'process_name' => FALSE,
         'process_file' => FALSE,
-        'file'         => $xpath ? '@src' : 'src',
-        'name'         => $xpath ? '@alt' : 'alt',
-        'alt'          => $xpath ? '@alt' : 'alt',
+        'file'         => $xpath ? './@src' : 'src',
+        'name'         => $xpath ? './@alt' : 'alt',
+        'alt'          => $xpath ? './@alt' : 'alt',
     ];
 
   }//end options()
@@ -52,62 +53,54 @@ class Media extends TypeBase implements TypeInterface {
    */
   public function processXpath() {
     $uuids = [];
-    extract($this->config['options']);
-
-    if (empty($name) || empty($file)) {
-      throw new \Exception('Cannot parse media for '.$this->config['field']);
-    }
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids, $type) {
-
-            $file = $node->evaluate($this->config['options']['file'])->text();
-
-            if ($node->evaluate($this->config['options']['name'])->count() > 0) {
-                $name = $node->evaluate($this->config['options']['name'])->text();
-            } else {
-                if (empty($name) && !empty($file)) {
-                    // We have a file name, but no name match, use the last part of the file as the name.
-                    $parts = explode("/", $file);
-                    $name = $parts[(count($parts) - 1)];
-                    $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
-                } else {
-                    $name = null;
-                }
+        function (Crawler $node) use (&$uuids) {
+            try {
+                $file = $node->evaluate($this->getOption('file', TRUE));
+                assert($file->count() > 0);
+                $file = $file->text();
+                $file = $this->getFileUrl($node->text());
+            } catch (\Exception $error) {
+                throw new ElementNotFoundException();
             }
 
-            if ($node->evaluate($this->getOption('alt'))->count() > 0) {
-                $alt = $node->evaluate($this->getOption('alt'))->text();
-            } else {
+            try {
+                $name = $node->evaluate($this->getOption('name', TRUE));
+                assert($name->count() > 0);
+                $name = $name->text();
+            } catch (\Exception $error) {
+                $parts = explode("/", $file);
+                $name = $parts[(count($parts) - 1)];
+                $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
+            }
+
+            try {
+                $alt = $node->evaluate($this->getOption('alt', TRUE));
+                assert($alt->count() > 0);
+                $alt = $alt->text();
+            } catch (\Exception $error) {
                 $alt = null;
-            }
-
-            if ($this->getOption('process_name')) {
-                $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
-            }
-
-            $file = $this->getFileUrl($file);
-
-            if ($this->getOption('process_file')) {
-                $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
             }
 
             $uuid = $this->getUuid($name, $file);
 
-            $this->entities[] = [
-                'name' => $name,
+            $entity = [
                 'file' => $file,
                 'uuid' => $uuid,
                 'alt'  => $alt,
+                'name' => $name,
             ];
 
+            $this->entities[] = $this->applyProcessors($entity);
             $uuids[] = $uuid;
-            }
+        }
     );
 
     if (count($this->entities) > 0) {
-      $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
-      $this->addValueToRow($uuids);
+        extract($this->config);
+        $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
+        $this->addValueToRow($uuids);
     }
 
   }//end processXpath()
@@ -118,51 +111,38 @@ class Media extends TypeBase implements TypeInterface {
    */
   public function processDom() {
     $uuids = [];
-    extract($this->config['options']);
-
-    if (empty($name) || empty($file)) {
-      throw new \Exception('Cannot parse media for '.$this->config['field']);
-    }
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids, $type) {
-        $name = $node->attr($this->config['options']['name']);
-        $file = $node->attr($this->config['options']['file']);
-        $alt = $node->attr($this->getOption('alt'));
+        function (Crawler $node) use (&$uuids) {
+            $name = $node->attr($this->getOption('name'));
+            $file = $node->attr($this->getOption('file'));
+            $file = $this->getFileUrl($file);
+            $alt = $node->attr($this->getOption('alt'));
+            $uuid = $this->getUuid($name, $file);
 
-        if (empty($name) && !empty($file)) {
-            // We have a file name, but no name match, use the last part of the file as the name.
-            $parts = explode("/", $file);
-            $name = $parts[(count($parts) - 1)];
-            $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
-        }
+            if (empty($name) && !empty($file)) {
+                // We have a file name, but no name match, use the last part of the file as the name.
+                $parts = explode("/", $file);
+                $name = $parts[(count($parts) - 1)];
+                $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
+            }
 
-        $uuid = $this->getUuid($name, $file);
+            $entity = [
+                'name' => $name,
+                'file' => $file,
+                'uuid' => $uuid,
+                'alt'  => $alt,
+            ];
 
-        if ($this->getOption('process_name')) {
-            $name = ProcessController::apply($name, $this->getOption('process_name'), $node, $this->output);
-        }
-
-        $file = $this->getFileUrl($file);
-
-        if ($this->getOption('process_file')) {
-        $file = ProcessController::apply($file, $this->getOption('process_file'), $node, $this->output);
-        }
-
-        $this->entities[] = [
-            'name' => $name,
-            'file' => $file,
-            'uuid' => $uuid,
-            'alt'  => $alt,
-        ];
-
-        $uuids[] = $uuid;
+            $this->entities[] = $this->applyProcessors($entity);
+            $uuids[] = $uuid;
         }
     );
 
     if (count($this->entities) > 0) {
-      $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
-      $this->addValueToRow($uuids);
+        extract($this->config);
+        $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
+        $this->addValueToRow($uuids);
     }
 
   }//end processDom()
