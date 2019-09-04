@@ -61,8 +61,7 @@ class Media extends TypeMultiComponent implements TypeInterface {
             try {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
-                $file = $file->text();
-                $file = $this->getFileUrl($node->text());
+                $file = $this->getFileUrl($file->text());
             } catch (\Exception $error) {
                 throw new ElementNotFoundException();
             }
