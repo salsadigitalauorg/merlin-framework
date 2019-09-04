@@ -53,9 +53,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
    */
   public function processXpath() {
     $uuids = [];
+    extract($this->config['options']);
+    $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids) {
+        function (Crawler $node) use (&$uuids, $type) {
             try {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
@@ -98,7 +100,6 @@ class Media extends TypeMultiComponent implements TypeInterface {
     );
 
     if (count($this->entities) > 0) {
-        extract($this->config);
         $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
         $this->addValueToRow($uuids);
     }
@@ -111,9 +112,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
    */
   public function processDom() {
     $uuids = [];
+    extract($this->config['options']);
+    $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids) {
+        function (Crawler $node) use (&$uuids, $type) {
             $name = $node->attr($this->getOption('name'));
             $file = $node->attr($this->getOption('file'));
             $file = $this->getFileUrl($file);
@@ -140,7 +143,6 @@ class Media extends TypeMultiComponent implements TypeInterface {
     );
 
     if (count($this->entities) > 0) {
-        extract($this->config);
         $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
         $this->addValueToRow($uuids);
     }
