@@ -5,6 +5,7 @@ namespace Migrate\Tests\Functional\Type;
 use Migrate\Tests\Functional\CrawlerTestCase;
 use Migrate\Type\Media;
 use Migrate\Exception\ElementNotFoundException;
+use Migrate\Output\OutputBase;
 
 class MediaTest extends CrawlerTestCase
 {
@@ -236,6 +237,37 @@ class MediaTest extends CrawlerTestCase
         $this->assertEquals('name', $media->entities[0]['name']);
         $this->assertEquals('file', $media->entities[0]['file']);
         $this->assertEquals('alt', $media->entities[0]['alt']);
+    }
+
+    /**
+     * Ensure that media types passed as options build the filename.
+     */
+    public function testFileNames()
+    {
+        $config = [
+            'field' => 'field_media',
+            'type' => 'media',
+            'selector' => '#with-image img',
+            'options' => [
+                'name' => 'data-name',
+                'file' => 'data-file',
+                'alt' => 'data-alt',
+                'type' => 'custom-media-type',
+            ]
+        ];
+
+        $output = $this->getOutput(['mergeRow']);
+        $output->expects($this->once())->method('mergeRow')->with('media-custom-media-type');
+
+        $row = new \stdClass;
+        $media = new Media(
+            $this->getCrawler(),
+            $output,
+            $row,
+            $config
+        );
+
+        $media->process();
     }
 
 }
