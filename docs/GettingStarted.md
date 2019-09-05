@@ -65,6 +65,17 @@ Generating /tmp/media-embedded_video-bhc_fact_sheet.json Done!
 Completed in 87.295419931412
 ```
 
+## Running migration flags
+Optionally override or specify options when running migrations by using migration flags. At minimum, you need to specify the `-c` flag. All other flags have defaults.
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to migrate | `0` (Migrate all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |
+
 ## Refreshing JSON assets
 
 The resulting JSON files are now ready to push into the Drupal Migration plugins. These files should be hosted somewhere that Drupal can access, e.g a web-accessible URL.

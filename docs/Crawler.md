@@ -3,8 +3,6 @@ id: crawler
 title: URL Crawler
 ---
 
-# URL Crawler
-
 Merlin comes with a URL crawler to help generate URL lists prior to a migration.
 
 ## URL Grouping
@@ -106,3 +104,13 @@ Generating /tmp/crawl-error.yml Done!
 
 Completed in 29.005132913589
 ```
+
+## Flag Options
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to crawl (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |

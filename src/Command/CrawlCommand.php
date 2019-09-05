@@ -50,6 +50,7 @@ class CrawlCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
 
     }//end configure()
@@ -98,12 +99,13 @@ class CrawlCommand extends Command
         }
 
         // Optionally override maximum results (default is unlimited/all).
-        if (!empty($max = @$this->config['options']['maximum_total'])) {
+        if (!empty($input->getOption('limit')) || @$this->config['options']['maximum_total']) {
+          $max = $input->getOption('limit') ? $input->getOption('limit') : @$this->config['options']['maximum_total'];
           $io->writeln("Setting maximum crawl count to {$max}");
           $crawler->setMaximumCrawlCount($max);
         }
 
-        // Optionally override deptch (default is unlimited).
+        // Optionally override depth (default is unlimited).
         if (!empty($depth = @$this->config['options']['maximum_depth'])) {
           $io->writeln("Setting maximum depth to {$depth}");
           $crawler->setMaximumDepth($depth);
