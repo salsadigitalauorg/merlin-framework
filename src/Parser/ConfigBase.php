@@ -57,10 +57,6 @@ abstract class ConfigBase implements ParserInterface
             throw new \Exception("Invalid source file: No mappings found in the source file");
         }
 
-        if (!array_key_exists('urls', $data) && !array_key_exists('urls_file', $data)) {
-            throw new \Exception("Need to supply one or both of: urls, urls_file");
-        }
-
         /*
          * If a URLs file is provided, add the URLs to the URL array
          * otherwise use the URL array.
