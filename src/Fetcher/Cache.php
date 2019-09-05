@@ -35,6 +35,7 @@ class Cache
     }
 
     if (!empty($cacheDir) && is_dir($cacheDir) && is_writable($cacheDir)) {
+      $domain = rtrim($domain, '/');
       $domain = preg_replace('/[^a-z0-9]+/','-', strtolower($domain));
       $this->path = $cacheDir.DIRECTORY_SEPARATOR.$domain;
     } else {
