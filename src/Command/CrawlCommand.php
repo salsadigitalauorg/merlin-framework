@@ -2,6 +2,7 @@
 
 namespace Migrate\Command;
 
+use Migrate\Crawler\MigrateCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -87,7 +88,9 @@ class CrawlCommand extends Command
 
         $baseUrl = $this->config['domain'];
 
-        $crawler = SpatieCrawler::create($clientOptions)
+
+//        $crawler = SpatieCrawler::create($clientOptions)
+          $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
@@ -118,7 +121,9 @@ class CrawlCommand extends Command
         }
 
         $io->success('Starting crawl!');
+
         $crawler->startCrawling($baseUrl);
+
 
         $io->section('Processing requests');
 

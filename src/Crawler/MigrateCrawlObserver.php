@@ -3,6 +3,8 @@
 namespace Migrate\Crawler;
 
 use Consolidation\Comments\Comments;
+use GuzzleHttp\Psr7\Request;
+use Migrate\Fetcher\Cache;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -20,11 +22,20 @@ class MigrateCrawlObserver extends CrawlObserver
     /** @var integer */
     protected $count = 0;
 
+    /** @var \Migrate\Fetcher\Cache  */
+    private $cache;
+
 
     public function __construct($io, $json)
     {
         $this->io = $io;
         $this->json = $json;
+
+        $useCache = ($this->json->getConfig()->get('options')['cache_enabled'] ?? true);
+        if ($useCache) {
+          $domain = $json->getConfig()->get('domain');
+          $this->cache = new Cache($domain);
+        }
 
     }//end __construct()
 
@@ -41,17 +52,22 @@ class MigrateCrawlObserver extends CrawlObserver
     }//end willCrawl()
 
 
-    /**
-     * Called when the crawler has crawled the given url.
-     *
-     * @param \Psr\Http\Message\UriInterface $url
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param \Psr\Http\Message\UriInterface|null $foundOnUrl
-     */
+  /**
+   * Called when the crawler has crawled the given url.
+   *
+   * @param \Psr\Http\Message\UriInterface      $url
+   * @param \Psr\Http\Message\ResponseInterface $response
+   * @param \Psr\Http\Message\UriInterface|null $foundOnUrl
+   *
+   * @param bool                                $crawledFromCache
+   *
+   * @return \Migrate\Output\OutputBase
+   */
     public function crawled(
-        UriInterface $url,
-        ResponseInterface $response,
-        ?UriInterface $foundOnUrl=null
+      UriInterface $url,
+      ResponseInterface $response,
+      ?UriInterface $foundOnUrl=null,
+      $crawledFromCache=false
     ) {
         $url_string = $url->__toString();
         $return_url = $url_string;
@@ -65,7 +81,8 @@ class MigrateCrawlObserver extends CrawlObserver
             $return_url = '/';
         }
 
-        $this->io->writeln($url_string." (found on {$foundOnUrl})");
+        $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
+        $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
 
         $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
 
@@ -93,6 +110,25 @@ class MigrateCrawlObserver extends CrawlObserver
 
         // Add this to the default group if it doesn't match.
         $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
+
+        // Cache data if we are doing that.
+        if ($this->cache instanceof Cache && !$crawledFromCache) {
+          $html = $response->getBody()->__toString();
+
+          $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
+          $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
+
+          $data = [
+              'url'        => $cacheUrl,
+              'foundOnUrl' => $cacheFoundOnUrl,
+              'contents'   => $html,
+          ];
+          $cacheJson = json_encode($data);
+
+          $this->cache->put($url_string, $cacheJson);
+
+          $this->io->writeln("$url_string - content put in cache.");
+        }
 
     }//end crawled()
 
@@ -221,6 +257,15 @@ class MigrateCrawlObserver extends CrawlObserver
         }//end if
 
     }//end mergeUrlsIntoConfigFiles()
+
+
+  /**
+   * @return \Migrate\Fetcher\Cache
+   */
+  public function getCache() {
+    return $this->cache;
+
+  }//end getCache()
 
 
 }//end class

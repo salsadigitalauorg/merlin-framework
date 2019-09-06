@@ -185,11 +185,15 @@ class GenerateCommand extends Command
         $fetcher->incrementCount('total');
 
         if ($cache instanceof Cache) {
-          if ($contents = $cache->get($url)) {
-            $io->writeln("Fetched (cache): {$url}\n");
-            $fetcher->processContent($url, $contents);
-            $fetcher->incrementCount('fetched_cache');
-            continue;
+          if ($cacheJson = $cache->get($url)) {
+            $cacheData = json_decode($cacheJson, true);
+            if (is_array($cacheData) && key_exists('contents', $cacheData) && !empty($cacheData['contents'])) {
+              $contents = $cacheData['contents'];
+              $io->writeln("Fetched (cache): {$url}\n");
+              $fetcher->processContent($url, $contents);
+              $fetcher->incrementCount('fetched_cache');
+              continue;
+            }
           }
         }
 

@@ -14,8 +14,8 @@ class Cache
    */
   private $path;
 
-  /** @var boolean  */
-  private $storeUrls = true;
+  /** @var boolean  Debug function that writes a small file alongside cache file containing the url */
+  private $storeUrls = false;
 
 
   /**
