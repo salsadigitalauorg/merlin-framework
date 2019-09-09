@@ -94,8 +94,7 @@ class CrawlCommand extends Command
           $config->disableCache();
         }
 
-
-//        $crawler = SpatieCrawler::create($clientOptions)
+// $crawler = SpatieCrawler::create($clientOptions)
           $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
@@ -129,7 +128,6 @@ class CrawlCommand extends Command
         $io->success('Starting crawl!');
 
         $crawler->startCrawling($baseUrl);
-
 
         $io->section('Processing requests');
 

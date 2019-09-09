@@ -27,7 +27,6 @@ class MigrateCrawler extends Crawler
           $url = $crawlUrl->url->__toString();
 
           if ($cache instanceof Cache) {
-
             if ($cacheJson = $cache->get($url)) {
               $cacheData = json_decode($cacheJson, true);
 
@@ -51,7 +50,6 @@ class MigrateCrawler extends Crawler
           }//end if
         }//end if
       }//end foreach
-
 
       if (! $this->crawlProfile->shouldCrawl($crawlUrl->url)) {
         $this->crawlQueue->markAsProcessed($crawlUrl);

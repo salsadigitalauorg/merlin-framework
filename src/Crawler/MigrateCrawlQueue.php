@@ -18,10 +18,8 @@ class MigrateCrawlQueue implements CrawlQueue
     /** @var array */
     protected $config;
 
-
-
+    /** @var \Migrate\Fetcher\Cache */
     protected $cache;
-
 
 
     public function __construct($config)
@@ -30,9 +28,7 @@ class MigrateCrawlQueue implements CrawlQueue
         $this->config = $config;
         $this->pendingUrls = collect();
 
-
         $this->cache = new Cache($config['domain']);
-
 
     }//end __construct()
 
