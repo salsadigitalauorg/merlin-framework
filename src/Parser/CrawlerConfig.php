@@ -67,5 +67,13 @@ class CrawlerConfig extends ConfigBase
 
     }//end getConfig()
 
+    /**
+     * Forces cache disable.
+     */
+    public function disableCache() {
+        $this->data['options']['cache_enabled'] = false;
+
+    }//end disableCache()
+
 
 }//end class

@@ -52,7 +52,8 @@ class CrawlCommand extends Command
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
-            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
+            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
+            ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
     }//end configure()
 
@@ -87,6 +88,11 @@ class CrawlCommand extends Command
         ];
 
         $baseUrl = $this->config['domain'];
+
+        // Optionally disable cache at runtime.
+        if ($input->getOption('no-cache')) {
+          $config->disableCache();
+        }
 
 
 //        $crawler = SpatieCrawler::create($clientOptions)
