@@ -47,8 +47,6 @@ class MigrateCrawlObserver extends CrawlObserver
      */
     public function willCrawl(UriInterface $url)
     {
-        $this->count++;
-
     }//end willCrawl()
 
 
@@ -69,6 +67,7 @@ class MigrateCrawlObserver extends CrawlObserver
       ?UriInterface $foundOnUrl=null,
       $crawledFromCache=false
     ) {
+        $this->count++;
         $url_string = $url->__toString();
         $return_url = $url_string;
 
