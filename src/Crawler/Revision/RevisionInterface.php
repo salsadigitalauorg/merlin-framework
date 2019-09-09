@@ -12,14 +12,6 @@ interface RevisionInterface
 
 
     /**
-     * Get the identifier for this grouping.
-     *
-     * @return string
-     */
-    public function getId() : string;
-
-
-    /**
      * Apply the rules to match the current URL.
      */
     public function match($url, ResponseInterface $response) : bool;

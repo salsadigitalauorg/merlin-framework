@@ -67,8 +67,44 @@ class MigrateCrawlObserver extends CrawlObserver
 
         $this->io->writeln($url_string." (found on {$foundOnUrl})");
 
-        $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
+        // Get revisions configuration if it exists.
+        $revisions = isset($this->json->getConfig()->get('options')['revisions']) ? $this->json->getConfig()->get('options')['revisions'] : [];
+        foreach ($revisions as $config) {
+            if (empty($config['is_revision']) || empty($config['is_revision']['type'])) {
+                // Invalid revision definition.
+                continue;
+            }//end if
 
+            $is_revision_class_name = str_replace('_', '', ucwords($config['is_revision']['type'], '_'));
+            $class = "\\Migrate\\Crawler\\Revision\\".ucfirst($is_revision_class_name);
+
+            if (!class_exists($class)) {
+                // An unknown type.
+                continue;
+            }
+
+            $type = new $class($config['is_revision']);
+
+            if ($type->match($url_string, $response)) {
+                $return_url = [
+                    'is_revision' => true,
+                    'url' => $url_string
+                ];
+                // // Get the path of the page that this is a revision of.
+                // if (!empty($config['revision_of']) && !empty($config['revision_of']['type'])) {
+                //     $config['revision_of']
+                //     $revision_of_class_name = str_replace('_', '', ucwords($config['revision_of']['type'], '_'));
+                //     $class = "\\Migrate\\Crawler\\Revision\\".ucfirst($is_revision_class_name);
+
+                //     if (class_exists($class)) {
+                //         $type = new $class($config['is_revision']);
+                //         $element = $dom->filter($this->getOption('selector'));
+                //     }
+                // }//end if
+            }
+        }//end foreach
+
+        $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
         foreach ($groups as $config) {
             if (empty($config['type'])) {
                 // Invalid group definition.

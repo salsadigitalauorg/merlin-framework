@@ -17,3 +17,14 @@ options:
       options:
         pattern:
           - /*
+  revisions:
+    -
+      is_revision:
+        type: path
+        options:
+          pattern:
+            - /*/revisions/*
+      revision_of:
+        type: element
+        options:
+          selector: ol#crumbs .crumb-first a::attr(href)

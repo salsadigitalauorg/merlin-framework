@@ -23,18 +23,6 @@ abstract class RevisionBase implements RevisionInterface
     /**
      * {@inheritdoc}
      */
-    public function getId() : string
-    {
-
-        $id = empty($this->id) ? md5(rand(1, 1000)) : $this->id;
-        return strtolower(str_replace('_', '-', $id));
-
-    }//end getId()
-
-
-    /**
-     * {@inheritdoc}
-     */
     public function getOption($key)
     {
 
