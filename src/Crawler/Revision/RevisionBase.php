@@ -1,16 +1,16 @@
 <?php
 
-namespace Migrate\Crawler\Group;
+namespace Migrate\Crawler\Revision;
 
 /**
- * Standard methods for a Group option.
+ * Standard methods for a Revision option.
  */
-abstract class GroupBase implements GroupInterface
+abstract class RevisionBase implements RevisionInterface
 {
 
 
     /**
-     * Construct a group by rule.
+     * Construct a revision by rule.
      */
     public function __construct(array $config=[])
     {
