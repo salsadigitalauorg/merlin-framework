@@ -90,6 +90,7 @@ class LongText extends TypeBase implements TypeInterface
 
     }//end findDocumentAttachments()
 
+
     /**
      * Retrieve the value from the crawler.
      */
@@ -121,6 +122,7 @@ class LongText extends TypeBase implements TypeInterface
         return $values;
 
     }//end getValues()
+
 
     public function processXpath()
     {
