@@ -90,26 +90,51 @@ class LongText extends TypeBase implements TypeInterface
 
     }//end findDocumentAttachments()
 
+    /**
+     * Retrieve the value from the crawler.
+     */
+    public function getValues()
+    {
+        $values = null;
+
+        if ($this->crawler->count() === 0) {
+            return '';
+        }
+
+        if ($this->crawler->count() > 1) {
+            $values = $this->crawler->each(
+                function (Crawler $node) {
+                    return $node->html();
+                }
+            );
+
+            foreach ($values as &$value) {
+                $value = [
+                    'format' => isset($options['format']) ? $options['format'] : 'rich_text',
+                    'value'  => $this->processValue($value),
+                ];
+            }
+        } else {
+            $values = $this->processValue($this->crawler->eq(0)->html());
+        }
+
+        return $values;
+
+    }//end getValues()
 
     public function processXpath()
     {
         extract($this->config);
-        $markup = '';
 
-        $this->crawler->each(
-            function (Crawler $node) use (&$markup) {
-                $markup .= $node->html();
-            }
-        );
+        $results = $this->getValues();
 
         if (!empty($options['findDocuments'])) {
-            $this->findDocumentAttachments($markup);
+            foreach ($results as $result) {
+                if ($result['value']) {
+                    $this->findDocumentAttachments($result['value']);
+                }
+            }
         }
-
-        $results = [
-            'format' => isset($options['format']) ? $options['format'] : 'rich_text',
-            'value'  => $this->processValue($markup),
-        ];
 
         $this->row->{$field} = $results;
 
@@ -122,27 +147,21 @@ class LongText extends TypeBase implements TypeInterface
     public function processDom()
     {
         extract($this->config);
-        $markup = '';
 
         if (!$this->isValidElement($this->crawler)) {
             $this->addValueToRow('');
             return;
         }
 
-        $this->crawler->each(
-            function (Crawler $node) use (&$markup) {
-                $markup .= $node->html();
-            }
-        );
+        $results = $this->getValues();
 
         if (!empty($options['findDocuments'])) {
-            $this->findDocumentAttachments($markup);
+            foreach ($results as $result) {
+                if ($result['value']) {
+                    $this->findDocumentAttachments($result['value']);
+                }
+            }
         }
-
-        $results = [
-            'format' => isset($options['format']) ? $options['format'] : 'rich_text',
-            'value'  => $this->processValue($markup),
-        ];
 
         $this->addValueToRow($results);
 
