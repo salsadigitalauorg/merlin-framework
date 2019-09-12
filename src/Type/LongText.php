@@ -116,7 +116,10 @@ class LongText extends TypeBase implements TypeInterface
                 ];
             }
         } else {
-            $values = $this->processValue($this->crawler->eq(0)->html());
+            $values = [
+                'format' => isset($options['format']) ? $options['format'] : 'rich_text',
+                'value' => $this->processValue($this->crawler->eq(0)->html()),
+            ];
         }
 
         return $values;
