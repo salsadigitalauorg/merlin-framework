@@ -84,6 +84,26 @@ class MigrateCrawlObserver extends CrawlObserver
         $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
         $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
 
+        // Cache data if we are doing that.
+        if ($this->cache instanceof Cache && !$crawledFromCache) {
+          $html = $response->getBody()->__toString();
+
+          $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
+          $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
+
+          $data = [
+              'url'        => $cacheUrl,
+              'foundOnUrl' => $cacheFoundOnUrl,
+              'contents'   => $html,
+          ];
+          $cacheJson = json_encode($data);
+
+          $this->cache->put($url_string, $cacheJson);
+
+          $this->io->writeln("$url_string - content put in cache.");
+        }
+
+
         $groups = isset($this->json->getConfig()->get('options')['group_by']) ? $this->json->getConfig()->get('options')['group_by'] : [];
 
         foreach ($groups as $config) {
@@ -110,25 +130,6 @@ class MigrateCrawlObserver extends CrawlObserver
 
         // Add this to the default group if it doesn't match.
         $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
-
-        // Cache data if we are doing that.
-        if ($this->cache instanceof Cache && !$crawledFromCache) {
-          $html = $response->getBody()->__toString();
-
-          $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
-          $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
-
-          $data = [
-              'url'        => $cacheUrl,
-              'foundOnUrl' => $cacheFoundOnUrl,
-              'contents'   => $html,
-          ];
-          $cacheJson = json_encode($data);
-
-          $this->cache->put($url_string, $cacheJson);
-
-          $this->io->writeln("$url_string - content put in cache.");
-        }
 
     }//end crawled()
 
