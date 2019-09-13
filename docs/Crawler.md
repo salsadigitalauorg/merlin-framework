@@ -63,6 +63,7 @@ options:
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
   group_by: []            # Group options to allow segmenting URLs basede on some business rules.
+  cache_enabled: true     # Caches crawled content and uses cache to build results.
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:
