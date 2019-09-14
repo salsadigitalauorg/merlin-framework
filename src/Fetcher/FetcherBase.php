@@ -50,7 +50,6 @@ class FetcherBase implements FetcherInterface
     var_dump($config);
     echo "############################################\n";
 
-
     $this->counts = [
         'fetched'       => 0,
         'fetched_cache' => 0,

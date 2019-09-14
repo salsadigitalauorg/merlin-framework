@@ -100,14 +100,11 @@ abstract class ConfigBase implements ParserInterface
             $data['urls'] = [$data['urls']];
         }
 
-
         $data = $this->inflateMappings($data);
-
 
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         $this->totals['urls'] = count($data['urls']);
-
 
         return $this;
 
@@ -250,7 +247,6 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-
           } else if (is_string($field) && is_array($selector)) {
             $selector = array_reverse($selector);
             foreach ($selector as $idx => $newSelector) {
@@ -258,7 +254,6 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-
           } else if (is_array($field) && is_string($selector)) {
             $field = array_reverse($field);
             foreach ($field as $idx => $newField) {
@@ -266,7 +261,6 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-
           }//end if
         }//end if
       }//end for
@@ -290,13 +284,11 @@ abstract class ConfigBase implements ParserInterface
     if (!empty($newField)) {
       unset($clone['field']);
       $clone['field'] = $newField;
-
     }
 
     if (!empty($newSelector)) {
       unset($clone['selector']);
       $clone['selector'] = $newSelector;
-
     }
 
     return $clone;
