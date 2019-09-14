@@ -189,7 +189,7 @@ class GenerateCommand extends Command
             $cacheData = json_decode($cacheJson, true);
             if (is_array($cacheData) && key_exists('contents', $cacheData) && !empty($cacheData['contents'])) {
               $contents = $cacheData['contents'];
-              $io->writeln("Fetched (cache): {$url}\n");
+              $io->writeln("Fetched (cache): {$url}");
               $fetcher->processContent($url, $contents);
               $fetcher->incrementCount('fetched_cache');
               continue;
