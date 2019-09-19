@@ -597,15 +597,17 @@
         </fieldset>
       </form>
 
-      I am <a href="something.doc">a word document</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="something.pdf">a pdf document</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="http://www.something.com">an external website</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="something.rss">an rss feed</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="something.xls">an excel spreadsheet</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="aim:something">an AIM screenname</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="mailto:something">an email address</a> link, so readers know that I'm not a normal link.<br>
-      I am <a href="http://yourwebsite.com">an internal link</a>. Change the stylesheet's "http://yourwebsite.com" to your
-      domain name so I don't look like an external link.<br>
+      <div id="with-links">
+        I am <a href="something.doc">a word document</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="something.pdf">a pdf document</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="http://www.something.com">an external website</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="something.rss">an rss feed</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="something.xls">an excel spreadsheet</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="aim:something">an AIM screenname</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="mailto:something">an email address</a> link, so readers know that I'm not a normal link.<br>
+        I am <a href="http://yourwebsite.com">an internal link</a>. Change the stylesheet's "http://yourwebsite.com" to your
+        domain name so I don't look like an external link.<br>
+      </div>
 
       <br>
 
@@ -750,7 +752,7 @@
     <div id="with-image">
       <h2>Media extraction</h2>
       <p>This is a block of text with an image in it.</p>
-      <img src="https://placehold.it/400x400" alt="test" data-name="Test" data-file="http://localhost/real-path-to-file" data-alt="Alternative text" />
+      <img id="400x400" src="https://placehold.it/400x400.jpg" alt="test" data-name="Test" data-file="http://localhost/real-path-to-file" data-alt="Alternative text" />
       <p>Used for testing the media extraction processor.</p>
     </div>
     <div id="with-image-null-attributes">
