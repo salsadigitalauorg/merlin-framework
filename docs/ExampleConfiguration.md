@@ -148,3 +148,59 @@ mappings:
     options:
       mandatory: true
 ```
+
+
+
+# Multiple Selectors
+
+Sometimes it is useful to be able to re-use a mapping config for different selectors (for intstance, if certain pages have slightly different mark up or multiple regions require identical processing).  There are currently 3 slightly different ways multiple selectors can be configured, these are best explained by looking at the mapping example below:
+
+```
+mappings:
+  
+  ###
+  # 1) Many Fields from Many Selectors:
+  #
+  # E.g. two fields will be present if results found: 
+  # title_1 matching h1 and title_2 matching h2
+  # Note that the field and selector arrays much be the same length if you
+  # choose to use this option, otherwise an exception will be thrown.
+  -
+    field:
+      - 'title_1'
+      - 'title_2'
+    selector:
+      - '.contentPage-content-area h1'
+      - '.contentPage-content-area h2'
+    type: text
+    processors:
+      whitespace: { }
+  
+  ###    
+  # 2) Many Fields from a Single Selector:
+  #
+  # Both title_h1_1 and title_h1_2 will be present if result found.
+  -
+    field:
+      - 'title_h1_1'
+      - 'title_h1_2'
+    selector: '.contentPage-content-area h1'
+    type: text
+    processors:
+      whitespace: { }      
+
+  ###
+  # 3) Single Field from Multiple Selectors (First Match)
+  #
+  # title_h1_or_h2 will contain the *first* matched result from the selector list.
+  # E.g. If both h1 and h2 are found on the page, the h1 result will be used.
+  -
+    field: 'title_h1_or_h2'
+    selector: 
+      - '.contentPage-content-area h1'
+      - '.contentPage-content-area h2'      
+    type: text
+    processors:
+      whitespace: { }      
+            
+```
