@@ -46,10 +46,6 @@ class FetcherBase implements FetcherInterface
     $this->output = $json;
     $this->config = $config;
 
-    echo "############################################\n";
-    var_dump($config);
-    echo "############################################\n";
-
     $this->counts = [
         'fetched'       => 0,
         'fetched_cache' => 0,
