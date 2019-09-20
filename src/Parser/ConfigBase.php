@@ -248,6 +248,7 @@ abstract class ConfigBase implements ParserInterface
 
             unset($mappings[$i]);
           } else if (is_string($field) && is_array($selector)) {
+            // Reverse is here for first match since we are looping backwards.
             $selector = array_reverse($selector);
             foreach ($selector as $idx => $newSelector) {
               $mappings[] = self::cloneMap($currentMap, $field, $newSelector);
@@ -255,6 +256,7 @@ abstract class ConfigBase implements ParserInterface
 
             unset($mappings[$i]);
           } else if (is_array($field) && is_string($selector)) {
+            // Reverse is here for first match since we are looping backwards.
             $field = array_reverse($field);
             foreach ($field as $idx => $newField) {
               $mappings[] = self::cloneMap($currentMap, $newField, $selector);
@@ -264,6 +266,8 @@ abstract class ConfigBase implements ParserInterface
           }//end if
         }//end if
       }//end for
+
+      $mappings = array_values($mappings);
 
       return $data;
 
