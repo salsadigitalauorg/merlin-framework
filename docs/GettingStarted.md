@@ -4,13 +4,12 @@ title: Getting Started
 weight: -1
 ---
 
-The migration tool provides a standard mechanism for scraping content from DHHS websites, split into logical content structures, and perform additional processing to ensure a result ready for import into Drupal.
+Merlin Framework provides a standardised method for migrating content from a website (markup) to more structured data.
 
-- Initial code is available on https://github.com/salsadigitalauorg/merlin-framework
-- As this codebase is likely to be open-sourced and see ongoing development effort the branch `<TBD>` is the safest to use with DHHS migration configurations
+This allows for simplified migration of web content to a new CMS or other systems.
 
 
-# Core concepts
+## Core concepts
 
 The migration framework expects to take a YAML (.yml) file containing all the configuration required for a migration run. A separate migration configuration exists for each logical content structure split, for example these may be:
 - Menus
@@ -30,9 +29,9 @@ The framework requires PHP (latest recommended, but tested on most versions of 7
 # Running a migration
 To run a migration simply run the tool with the input configuration .yml file, and a path to the output, e.g:
 
-`php migrate generate -c configs/bhc/fact_sheet.yml -o /path/to/output/`
+`php migrate generate -c /path/to/config.yml -o /path/to/output`
 
-You will see output as following:
+You will see output as follows:
 ```
 Migration framework
 ===================
@@ -45,7 +44,7 @@ Preparing the configuration
 Processing requests
 -------------------
 
-Parsing... https://www.betterhealth.vic.gov.au/health/conditionsandtreatments/Treating-persistent-pain (Done!)
+Parsing... https://www.example.gov.au/health/conditionsandtreatments/Treating-persistent-pain (Done!)
 
   ... etc (x2000 pages)
 
@@ -66,10 +65,25 @@ Generating /tmp/media-embedded_video-bhc_fact_sheet.json Done!
 Completed in 87.295419931412
 ```
 
+## Running migration flags
+Optionally override or specify options when running migrations by using migration flags. At minimum, you need to specify the `-c` flag. All other flags have defaults.
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to migrate | `0` (Migrate all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |
+
 ## Refreshing JSON assets
 
 The resulting JSON files are now ready to push into the Drupal Migration plugins. These files should be hosted somewhere that Drupal can access, e.g a web-accessible URL.
 
-## Error handling
+## Error handling and reporting
 
 There are JSON files generated with error reporting included. These may include `error-not-found.json`, `error-404.json` and `error-unhandled.json`. These will indicate where selectors cannot find matches on any given page, or where a URL does not resolve (404, 500, or similar).
+
+Warning files will also be generated containing further useful information about a run.
+
+Duplicate content will be detected and tracked in `url-content-duplicates.json`.

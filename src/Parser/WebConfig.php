@@ -21,6 +21,47 @@ class WebConfig extends ConfigBase
             throw new \Exception("Invalid source file: No domain found in the source file");
         }
 
+        if (!array_key_exists('urls', $data) && !array_key_exists('urls_file', $data)) {
+            throw new \Exception("Need to supply one or both of: urls, urls_file");
+        }
+
+        /*
+         * If a URLs file is provided, add the URLs to the URL array
+         * otherwise use the URL array.
+         */
+
+        if (!empty($data['urls_file'])) {
+            $urls_file = dirname($this->source).'/'.$data['urls_file'];
+
+            if (!file_exists($urls_file)) {
+                throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
+            }
+
+            $urls_from_file = \Spyc::YAMLLoad($urls_file);
+            if (!is_array($urls_from_file['urls'])) {
+                $urls_from_file['urls'] = [$urls_from_file['urls']];
+            }
+
+            $this->totals['urls_from_file'] = count($urls_from_file['urls']);
+
+            if (isset($data['urls'])) {
+                $data_urls_array = is_array($data['urls']) ? $data['urls'] : [$data['urls']];
+                $this->totals['urls_from_config'] = count($data_urls_array);
+                $data['urls'] = array_merge($data_urls_array, $urls_from_file['urls']);
+            } else {
+                $data['urls'] = $urls_from_file['urls'];
+            }
+
+            unset($data['urls_file']);
+        } else {
+            if (!isset($data['urls'])) {
+                $this->totals['urls_from_config'] = 0;
+            } else {
+                $data_urls_array = is_array($data['urls']) ? $data['urls'] : [$data['urls']];
+                $this->totals['urls_from_config'] = count($data_urls_array);
+            }
+        }//end if
+
         if (empty($data['urls'])) {
             throw new \Exception("Invalid source file: No URLs found in the source file");
         }
@@ -52,6 +93,15 @@ class WebConfig extends ConfigBase
         }
 
     }//end getUrl()
+
+
+    /**
+     * Forces cache disable.
+     */
+    public function disableCache() {
+        $this->data['fetch_options']['cache_enabled'] = false;
+
+    }//end disableCache()
 
 
 }//end class

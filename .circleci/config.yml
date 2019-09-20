@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
-version: 2
+version: 2.0
 jobs:
   build:
     docker:
@@ -11,6 +11,11 @@ jobs:
 
     steps:
       - checkout
+
+      - run:
+          name: Install puppeteer with chromium
+          command: |
+            npm i puppeteer
 
       - run: sudo apt update
       - run: sudo docker-php-ext-install zip
@@ -36,7 +41,7 @@ jobs:
       - run: nohup php -S localhost:8000 -t ~/project/tests/www &> /dev/null &
       - run: sleep 5
       - run: ./vendor/bin/phpunit
-      - run: ./vendor/bin/phpcs ./
+      - run: ./vendor/bin/phpcs ./src
 
   deploy:
     docker:

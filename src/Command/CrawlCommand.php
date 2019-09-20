@@ -50,6 +50,7 @@ class CrawlCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
 
     }//end configure()
@@ -64,9 +65,14 @@ class CrawlCommand extends Command
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
+        // Confirm destination directory is writable.
+        if (!is_writable($input->getOption('output'))) {
+            $io->error("Error: ".$input->getOption('output')." is not writable.");
+            exit(1);
+        }
+
         $config       = new CrawlerConfig($input->getOption('config'));
         $this->config = $config->getConfig();
-
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
@@ -76,16 +82,11 @@ class CrawlCommand extends Command
             RequestOptions::TIMEOUT         => 10,
             RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
             RequestOptions::VERIFY          => false,
-            'headers'                       => ['User-Agent' => 'Merlin'],
+            RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
         ];
 
         $baseUrl = $this->config['domain'];
 
-        // Crawler agent header.
-        // $stack = new HandlerStack();
-        // $stack->setHandler(new CurlHandler());
-        // $stack->push($this->add_header('User-Agent', 'Merlin'));
-        // $clientOptions['handler'] = $stack;.
         $crawler = SpatieCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
@@ -98,12 +99,13 @@ class CrawlCommand extends Command
         }
 
         // Optionally override maximum results (default is unlimited/all).
-        if (!empty($max = @$this->config['options']['maximum_total'])) {
+        if (!empty($input->getOption('limit')) || @$this->config['options']['maximum_total']) {
+          $max = $input->getOption('limit') ? $input->getOption('limit') : @$this->config['options']['maximum_total'];
           $io->writeln("Setting maximum crawl count to {$max}");
           $crawler->setMaximumCrawlCount($max);
         }
 
-        // Optionally override deptch (default is unlimited).
+        // Optionally override depth (default is unlimited).
         if (!empty($depth = @$this->config['options']['maximum_depth'])) {
           $io->writeln("Setting maximum depth to {$depth}");
           $crawler->setMaximumDepth($depth);

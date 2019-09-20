@@ -47,7 +47,10 @@ class MigrateCrawlQueue implements CrawlQueue
         // Standardise URL to consistent base domain.
         if ($this->config['options']['rewrite_domain']) {
           if (!preg_match("#^{$this->config['domain']}#", $url->url->__toString())) {
-            $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/').$url->url->getPath());
+            $query = parse_url($url->url->__toString(), PHP_URL_QUERY);
+            $return_url = !empty($query) ? $url->url->getPath()."?{$query}" : $url->url->getPath();
+
+            $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/').$return_url);
           }
         }
 
