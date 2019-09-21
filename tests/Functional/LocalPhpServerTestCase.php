@@ -17,9 +17,14 @@ class LocalPhpServerTestCase extends TestCase
   /** @var Process */
   private static $server;
 
-  public static function setUpBeforeClass()
+  public static function startServer($wwwRoot = null)
   {
+
     $www = __DIR__ . "/../www";
+
+    if (!empty($wwwRoot)) {
+      $www = $wwwRoot;
+    }
 
     if (!is_dir(realpath($www))) {
       throw new \Exception("Test www directory does not exist: {$www}");
@@ -38,9 +43,16 @@ class LocalPhpServerTestCase extends TestCase
     sleep(3);
   }
 
+  public static function stopServer() {
+    if (self::$server instanceof Process) {
+      self::$server->stop();
+    }
+  }
+
+
   public static function tearDownAfterClass()
   {
-    self::$server->stop();
+    self::stopServer();
   }
 
   /**

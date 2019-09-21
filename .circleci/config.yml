@@ -38,8 +38,6 @@ jobs:
           paths:
             - vendor
 
-      - run: nohup php -S localhost:8000 -t ~/project/tests/www &> /dev/null &
-      - run: sleep 5
       - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/phpcs ./src
 

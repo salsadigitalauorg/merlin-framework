@@ -21,7 +21,7 @@ class CrawlerCacheTest extends LocalPhpServerTestCase
     $input->expects($this->at(0))
       ->method('getOption')
       ->with($this->equalTo('config'))
-      ->willReturn(__DIR__ . DIRECTORY_SEPARATOR . 'crawler_cache_test.yml');
+      ->willReturn(__DIR__ . DIRECTORY_SEPARATOR);
 
     return $input;
   }
@@ -40,9 +40,7 @@ class CrawlerCacheTest extends LocalPhpServerTestCase
   }//end getOutputMock
 
 
-  /**
-   * @group crawler_options
-   */
+
   public function testPhpServerRunning() {
     $running = $this->isServerRunning();
     $this->assertNotFalse($running);

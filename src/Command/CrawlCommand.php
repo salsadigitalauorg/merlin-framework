@@ -63,7 +63,8 @@ class CrawlCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+
+      $io = new SymfonyStyle($input, $output);
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
@@ -94,7 +95,7 @@ class CrawlCommand extends Command
           $config->disableCache();
         }
 
-// $crawler = SpatieCrawler::create($clientOptions)
+        // $crawler = SpatieCrawler::create($clientOptions)
           $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))

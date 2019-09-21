@@ -15,6 +15,14 @@ use Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
 class FetcherTest extends LocalPhpServerTestCase
 {
 
+  /**
+   * Start up the local PHP server with the www dir required for theses tests.
+   * @throws \Exception
+   */
+  public static function setUpBeforeClass() {
+    self::startServer();
+  }
+
   public function getInputMock() {
 
     /** @var InputInterface $input */
