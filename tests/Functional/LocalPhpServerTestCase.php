@@ -17,7 +17,16 @@ class LocalPhpServerTestCase extends TestCase
   /** @var Process */
   private static $server;
 
-  public static function startServer($wwwRoot = null)
+  /**
+   * Starts the local PHP server
+   *
+   * @param null $wwwRoot
+   *
+   * @param int  $port
+   *
+   * @throws \Exception
+   */
+  public static function startServer($wwwRoot = null, $port=8000)
   {
 
     $www = __DIR__ . "/../www";
@@ -33,7 +42,7 @@ class LocalPhpServerTestCase extends TestCase
     $cmd = [
       'php',
       '-S',
-      'localhost:8000',
+      'localhost:' . $port,
       '-t',
       $www
     ];
@@ -43,6 +52,10 @@ class LocalPhpServerTestCase extends TestCase
     sleep(3);
   }
 
+
+  /**
+   * Stops the local PHP server
+   */
   public static function stopServer() {
     if (self::$server instanceof Process) {
       self::$server->stop();
@@ -50,10 +63,14 @@ class LocalPhpServerTestCase extends TestCase
   }
 
 
+  /**
+   * {@inheritdoc}
+   */
   public static function tearDownAfterClass()
   {
     self::stopServer();
   }
+
 
   /**
    * You can use this in a test function, e.g. for @group tests, create a testPhpServerRunning()

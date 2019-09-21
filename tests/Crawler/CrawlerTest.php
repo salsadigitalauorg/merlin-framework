@@ -27,6 +27,8 @@ class CrawlerTest extends LocalPhpServerTestCase
 
 
   /**
+   * {@inheritdoc}
+   *
    * Start up the local PHP server with the www dir required for theses tests.
    * @throws \Exception
    */
@@ -36,8 +38,10 @@ class CrawlerTest extends LocalPhpServerTestCase
 
 
   /**
+   * {@inheritdoc}
+   *
    * Setup our command to test.  NB: setUp() is called before each test, not
-   * once like the static setUpBeforeClass method.  It doesn't really need to be.
+   * once like the static setUpBeforeClass method.
    * @throws \Exception
    */
   protected function setUp() {
@@ -57,8 +61,8 @@ class CrawlerTest extends LocalPhpServerTestCase
     } else {
       throw new \Exception("Cannot write to temporary test dir: {$dstDir}");
     }
-
   }
+
 
   /**
    * @group crawler_options
@@ -155,6 +159,7 @@ class CrawlerTest extends LocalPhpServerTestCase
    * {@inheritdoc}
    *
    * Removes expected output files to make sure no false-positives in subsequent tests.
+   * Called after every test.
    */
   public function tearDown()
   {
