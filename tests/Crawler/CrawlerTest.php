@@ -2,19 +2,13 @@
 
 namespace Migrate\Tests\Crawler;
 
-use Migrate\Parser\CrawlerConfig;
-use Migrate\Parser\WebConfig;
+use Migrate\Fetcher\Cache;
 use Migrate\Tests\Functional\LocalPhpServerTestCase;
-use PHPUnit\Framework\TestCase;
 use Migrate\Command\CrawlCommand;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
-use ReflectionClass;
-
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Yaml\Yaml;
+
 
 class CrawlerTest extends LocalPhpServerTestCase
 {
@@ -60,6 +54,20 @@ class CrawlerTest extends LocalPhpServerTestCase
       $this->outputDir = $dstDir;
     } else {
       throw new \Exception("Cannot write to temporary test dir: {$dstDir}");
+    }
+  }
+
+
+  /**
+   * {@inheritdoc}
+   *
+   * Removes expected output files to make sure no false-positives in subsequent tests.
+   * Called after every test.
+   */
+  public function tearDown()
+  {
+    foreach (glob($this->outputDir . DIRECTORY_SEPARATOR . '*.yml') as $file) {
+      unlink($file);
     }
   }
 
@@ -155,17 +163,104 @@ class CrawlerTest extends LocalPhpServerTestCase
   }//end testGroupsSplitInFiles()
 
 
+
   /**
-   * {@inheritdoc}
-   *
-   * Removes expected output files to make sure no false-positives in subsequent tests.
-   * Called after every test.
+   * Test caching crawler caching
+   * @group crawler_options
+   * @depends testPhpServerRunning
    */
-  public function tearDown()
-  {
-    foreach (glob($this->outputDir . DIRECTORY_SEPARATOR . '*.yml') as $file) {
-       unlink($file);
-    }
-  }
+  public function testCache() {
+
+    // First test to fetch and cache the content
+    $config = __DIR__ . DIRECTORY_SEPARATOR . 'cache_test.yml';
+    $this->cmdTester->execute(
+      [
+        '-c' => $config,
+        '-o' => $this->outputDir
+      ]
+    );
+
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = Yaml::parse($crawled);
+
+    $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
+
+    $this->assertEquals(1, count($ymls));
+    $this->assertEquals(11, count($crawled['default']));
+
+
+    // Remove our output files, stop local server and test again.  The files should magically come from the cache.
+    $this->tearDown();
+    self::stopServer();
+    sleep(3);
+
+
+    // Second test from cache
+    $this->cmdTester->execute(
+      [
+        '-c' => $config,
+        '-o' => $this->outputDir
+      ]
+    );
+
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = Yaml::parse($crawled);
+
+    $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
+
+    $this->assertEquals(1, count($ymls));
+    $this->assertEquals(11, count($crawled['default']));
+
+
+    // Remove cached files
+    $ymlDomain = 'http://localhost:8000';
+    $cache = new Cache($ymlDomain);
+    $cache->clearCache(true);
+
+
+    // Restart local server in case this is not the last test
+    self::startServer(__DIR__ . "/../www/crawler_tests");
+
+
+  }//end testCache()
+
+
+  /**
+   * Test caching crawler caching
+   * @group crawler_options
+   * @depends testPhpServerRunning
+   */
+  public function testDuplicates() {
+
+    $config = __DIR__ . DIRECTORY_SEPARATOR . 'duplicates_test.yml';
+    $this->cmdTester->execute(
+      [
+        '-c' => $config,
+        '-o' => $this->outputDir
+      ]
+    );
+
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = Yaml::parse($crawled);
+    $crawledDupes = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-duplicates.yml');
+    $crawledDupes = Yaml::parse($crawledDupes);
+
+    $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
+    $this->assertEquals(2, count($ymls));
+
+    $this->assertArrayHasKey('default', $crawled);
+    $this->assertEquals(8, count($crawled['default']));
+
+    $this->assertArrayHasKey('duplicates', $crawledDupes);
+    $this->assertIsArray($crawledDupes['duplicates']);
+    $this->assertGreaterThan(0, count($crawledDupes['duplicates']));
+
+    $duplicates = $crawledDupes['duplicates'][0];
+    $this->assertArrayHasKey('hash', $duplicates);
+    $this->assertArrayHasKey('urls', $duplicates);
+    $this->assertEquals(4, count($duplicates['urls']));
+
+  }// end testDuplicates()
+
 
 }

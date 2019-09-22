@@ -489,4 +489,8 @@ class FetcherTest extends LocalPhpServerTestCase
 
   }
 
+
+  //TODO: Consider adding a cache test similar to the one defined in CrawlerTest
+
+
 }

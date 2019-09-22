@@ -1,3 +1,8 @@
+<?php
+$page = $_GET['p'] ?? null;
+$page = intval($page);
+?>
+
 <html>
 
 <head>
@@ -18,7 +23,7 @@
     </ul>
   </nav>
   <?php
-  switch ($_GET['p']) {
+  switch ($page) {
     case 1:
       echo '<p>The first page</p>';
       break;
