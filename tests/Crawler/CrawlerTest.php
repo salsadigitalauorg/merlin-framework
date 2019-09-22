@@ -40,6 +40,8 @@ class CrawlerTest extends LocalPhpServerTestCase
    */
   protected function setUp() {
 
+    $this->clearOutputDir();
+
     $application = new Application();
     $application->add(new CrawlCommand());
     $command = $application->find('crawl');
@@ -66,6 +68,14 @@ class CrawlerTest extends LocalPhpServerTestCase
    */
   public function tearDown()
   {
+    $this->clearOutputDir();
+  }
+
+
+  /**
+   * Removes the yaml result files from the test output dir
+   */
+  private function clearOutputDir() {
     foreach (glob($this->outputDir . DIRECTORY_SEPARATOR . '*.yml') as $file) {
       unlink($file);
     }
