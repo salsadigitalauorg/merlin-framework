@@ -49,7 +49,7 @@ class LocalPhpServerTestCase extends TestCase
 
     self::$server = new Process($cmd);
     self::$server->start();
-    sleep(3);
+    sleep(5);
   }
 
 
@@ -59,6 +59,7 @@ class LocalPhpServerTestCase extends TestCase
   public static function stopServer() {
     if (self::$server instanceof Process) {
       self::$server->stop();
+      sleep(5);
     }
   }
 

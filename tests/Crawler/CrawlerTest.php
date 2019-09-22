@@ -20,7 +20,7 @@ class CrawlerTest extends LocalPhpServerTestCase
   private $outputDir;
 
 
-  /**
+  /**testGroupsSplitInFiles
    * {@inheritdoc}
    *
    * Start up the local PHP server with the www dir required for theses tests.
@@ -203,7 +203,6 @@ class CrawlerTest extends LocalPhpServerTestCase
     // Remove our output files, stop local server and test again.  The files should magically come from the cache.
     $this->tearDown();
     self::stopServer();
-    sleep(3);
 
 
     // Second test from cache
