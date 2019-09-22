@@ -20,6 +20,7 @@ class FetcherTest extends LocalPhpServerTestCase
    * @throws \Exception
    */
   public static function setUpBeforeClass() {
+    self::stopServer();
     self::startServer();
   }
 

@@ -27,6 +27,7 @@ class CrawlerTest extends LocalPhpServerTestCase
    * @throws \Exception
    */
   public static function setUpBeforeClass() {
+    self::stopServer();
     self::startServer(__DIR__ . "/../www/crawler_tests");
   }
 
