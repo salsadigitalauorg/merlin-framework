@@ -220,10 +220,11 @@ class GenerateCommand extends Command
         // Optionally override maximum results (default is unlimited/all).
         $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
         $files = $limit ? array_slice($this->config->get('files'), 0, $limit, true) : $this->config->get('files');
+        $entity_type = $this->config->get('entity_type');
 
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                $json->mergeRow('error-file', 'missing', [$file], true);
+                $json->mergeRow("{$entity_type}-error-file", 'missing', [$file], true);
                 continue;
             }
 
@@ -239,11 +240,11 @@ class GenerateCommand extends Command
                 try {
                     $type->process();
                 } catch (ElementNotFoundException $e) {
-                    $json->mergeRow($e::FILE, $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (ValidationException $e) {
-                    $json->mergeRow($e::FILE, $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $json->mergeRow('error-unhandled', $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getMessage()], true);
                 }
             }
 

@@ -105,9 +105,9 @@ abstract class OutputBase implements OutputInterface
      */
     public function validate(&$data, $file)
     {
-        $uuids = [];
-
         foreach ($data as $key => $row) {
+            $uuids = [];
+
             // Hash of null is c87ee674-4ddc-3efe-a74e-dfe25da5d7b3.
             if (!is_array($row) && isset($row->uuid) && $row->uuid == "c87ee674-4ddc-3efe-a74e-dfe25da5d7b3") {
                 unset($data[$key]);
