@@ -8,6 +8,8 @@ use Migrate\Exception\ValidationException;
 use Migrate\Parser\ParserInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use function DeepCopy\deep_copy;
+
 
 class FetcherBase implements FetcherInterface
 {
