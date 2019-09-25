@@ -164,7 +164,14 @@ class FetcherBase implements FetcherInterface
 
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
-      $this->cache->put($url, $html);
+    $data = json_encode(
+        [
+            'url'      => $url,
+            'contents' => $html,
+        ]
+    );
+
+      $this->cache->put($url, $data);
     }
 
     // Check if duplicate if we are doing that.

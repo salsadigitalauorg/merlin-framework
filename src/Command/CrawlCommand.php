@@ -2,6 +2,7 @@
 
 namespace Migrate\Command;
 
+use Migrate\Crawler\MigrateCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,7 +52,8 @@ class CrawlCommand extends Command
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
-            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
+            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
+            ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
     }//end configure()
 
@@ -61,7 +63,8 @@ class CrawlCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+
+      $io = new SymfonyStyle($input, $output);
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
@@ -87,7 +90,13 @@ class CrawlCommand extends Command
 
         $baseUrl = $this->config['domain'];
 
-        $crawler = SpatieCrawler::create($clientOptions)
+        // Optionally disable cache at runtime.
+        if ($input->getOption('no-cache')) {
+          $config->disableCache();
+        }
+
+        // $crawler = SpatieCrawler::create($clientOptions)
+          $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
@@ -118,6 +127,7 @@ class CrawlCommand extends Command
         }
 
         $io->success('Starting crawl!');
+
         $crawler->startCrawling($baseUrl);
 
         $io->section('Processing requests');

@@ -3,6 +3,7 @@
 use Migrate\Output\Json;
 use Migrate\Parser\Config;
 use Migrate\Parser\WebConfig;
+use Migrate\Tests\Functional\LocalPhpServerTestCase;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,30 +12,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 use Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
 
-class FetcherTest extends TestCase
+class FetcherTest extends LocalPhpServerTestCase
 {
 
-  /** @var Process */
-  private static $server;
-
-  public static function setUpBeforeClass()
-  {
-    $www = __DIR__ . "/../../www";
-    $cmd = [
-      'php',
-      '-S',
-      'localhost:8000',
-      '-t',
-      $www
-    ];
-    self::$server = new Process($cmd);
-    self::$server->start();
-    sleep(3);
-  }
-
-  public static function tearDownAfterClass()
-  {
-    self::$server->stop();
+  /**
+   * Start up the local PHP server with the www dir required for theses tests.
+   * @throws \Exception
+   */
+  public static function setUpBeforeClass() {
+    self::stopServer();
+    self::startServer();
   }
 
   public function getInputMock() {
@@ -141,10 +128,8 @@ class FetcherTest extends TestCase
    * @group url_options
    */
   public function testPhpServerRunning() {
-    $errno = null;
-    $errstr = null;
-    $fp = fsockopen("tcp://localhost", 8000, $errno, $errstr);
-    $this->assertNotFalse($fp);
+    $running = $this->isServerRunning();
+    $this->assertNotFalse($running);
   }
 
 
@@ -504,5 +489,9 @@ class FetcherTest extends TestCase
     $this->assertCount(count($config['urls']), $results);
 
   }
+
+
+  //TODO: Consider adding a cache test similar to the one defined in CrawlerTest
+
 
 }

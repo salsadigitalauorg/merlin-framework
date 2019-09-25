@@ -2,6 +2,7 @@
 
 namespace Migrate\Crawler;
 
+use Migrate\Fetcher\Cache;
 use Spatie\Crawler\CrawlUrl;
 use Spatie\Crawler\Exception\UrlNotFoundByIndex;
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
@@ -17,12 +18,17 @@ class MigrateCrawlQueue implements CrawlQueue
     /** @var array */
     protected $config;
 
+    /** @var \Migrate\Fetcher\Cache */
+    protected $cache;
+
 
     public function __construct($config)
     {
         $this->urls = collect();
         $this->config = $config;
         $this->pendingUrls = collect();
+
+        $this->cache = new Cache($config['domain']);
 
     }//end __construct()
 

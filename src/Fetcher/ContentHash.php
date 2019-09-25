@@ -7,7 +7,6 @@
 namespace Migrate\Fetcher;
 
 use Migrate\Parser\ParserInterface;
-use RollingCurl\Request;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
