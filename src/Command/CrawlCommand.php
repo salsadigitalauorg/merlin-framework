@@ -19,6 +19,7 @@ use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Migrate\MigrateCrawlObserver;
 use Spatie\Crawler\Crawler as SpatieCrawler;
+use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
@@ -95,10 +96,23 @@ class CrawlCommand extends Command
           $config->disableCache();
         }
 
-        // $crawler = SpatieCrawler::create($clientOptions)
-          $crawler = MigrateCrawler::create($clientOptions)
+        // Set crawl queue, preload with URLs if provided.
+        $crawlQueue = new \Migrate\Crawler\MigrateCrawlQueue($this->config);
+
+        // Add.
+        if (!empty($urls = @$this->config['options']['urls'])) {
+          $urls = is_array($urls) ? $urls : [$urls];
+          foreach ($urls as $url) {
+            $io->writeln("Adding starting point URL to queue: {$url}");
+            $uri = new \GuzzleHttp\Psr7\Uri($this->config['domain'] . $url);
+            $crawlQueue->add(CrawlUrl::create($uri));
+          }
+        }
+
+          $crawler = SpatieCrawler::create($clientOptions)
+          ->executeJavaScript()
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
-          ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
+          ->SetCrawlQueue($crawlQueue)
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
 
         // Optionally override concurrency (default is 10).
