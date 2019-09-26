@@ -62,8 +62,13 @@ options:
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
+
+  # Optionally provide one or more URLs as the starting point. This can be provided
+  # as a string or an array.
+  urls:                   
+    - /sports/cricket
   
-  # Group options to allow segmenting URLs basede on some business rules.
+  # Group options to allow segmenting URLs based on some business rules.
   group_by: []             
   
   # Caches crawled content and uses cache to build results.
