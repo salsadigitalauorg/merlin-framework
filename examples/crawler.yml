@@ -9,7 +9,7 @@ options:
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
-  urls: /hello            # Starting point for crawler
+  urls: /sports/cricket   # Starting point for crawler
 
   group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
