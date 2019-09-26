@@ -109,7 +109,7 @@ class CrawlCommand extends Command
           }
         }
 
-          $crawler = SpatieCrawler::create($clientOptions)
+          $crawler = MigrateCrawler::create($clientOptions)
           ->executeJavaScript()
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue($crawlQueue)
