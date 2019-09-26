@@ -18,7 +18,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Migrate\MigrateCrawlObserver;
-use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\HandlerStack;
@@ -102,6 +101,7 @@ class CrawlCommand extends Command
         // Add.
         if (!empty($urls = @$this->config['options']['urls'])) {
           $urls = is_array($urls) ? $urls : [$urls];
+          $baseUrl = $this->config['domain'].$urls[0];
           foreach ($urls as $url) {
             $io->writeln("Adding starting point URL to queue: {$url}");
             $uri = new \GuzzleHttp\Psr7\Uri($this->config['domain'].$url);
@@ -110,7 +110,6 @@ class CrawlCommand extends Command
         }
 
           $crawler = MigrateCrawler::create($clientOptions)
-          ->executeJavaScript()
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue($crawlQueue)
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));

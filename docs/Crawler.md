@@ -68,7 +68,7 @@ options:
   urls:                   
     - /sports/cricket
   
-  # Group options to allow segmenting URL basede on some business rules.
+  # Group options to allow segmenting URLs based on some business rules.
   group_by: []             
   
   # Caches crawled content and uses cache to build results.
