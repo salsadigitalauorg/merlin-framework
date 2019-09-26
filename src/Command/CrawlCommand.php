@@ -104,7 +104,7 @@ class CrawlCommand extends Command
           $urls = is_array($urls) ? $urls : [$urls];
           foreach ($urls as $url) {
             $io->writeln("Adding starting point URL to queue: {$url}");
-            $uri = new \GuzzleHttp\Psr7\Uri($this->config['domain'] . $url);
+            $uri = new \GuzzleHttp\Psr7\Uri($this->config['domain'].$url);
             $crawlQueue->add(CrawlUrl::create($uri));
           }
         }
