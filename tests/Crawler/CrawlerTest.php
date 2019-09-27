@@ -272,5 +272,45 @@ class CrawlerTest extends LocalPhpServerTestCase
 
   }// end testDuplicates()
 
+  /**
+   * Test that provided URLs are crawled
+   * @group crawler_options
+   * @depends testPhpServerRunning
+   */
+  public function testStartUrls() {
+
+    $config = __DIR__ . DIRECTORY_SEPARATOR . 'urls_test.yml';
+    $this->cmdTester->execute(
+      [
+        '-c' => $config,
+        '-o' => $this->outputDir
+      ]
+    );
+
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = Yaml::parse($crawled);
+
+    $expected_default = [
+      '/',
+      '/orphan.html',
+      '/orphan-child.html',
+      '/search.php',
+      '/home.html',
+      '/about.html',
+      '/index.php?p=1',
+      '/index.php?p=2',
+      '/index.php?p=3',
+      '/duplicate_links.php'
+    ];
+
+    $this->assertArrayHasKey('default', $crawled);
+    $this->assertEquals(10, count($crawled['default']));
+
+    foreach ($expected_default as $path) {
+      $this->assertContains($path, $crawled['default']);
+    }
+
+  }// end testStartUrls()
+
 
 }
