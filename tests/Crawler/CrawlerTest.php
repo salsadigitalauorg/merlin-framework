@@ -312,5 +312,37 @@ class CrawlerTest extends LocalPhpServerTestCase
 
   }// end testStartUrls()
 
+  /**
+   * Test that starting URL is crawled when provided as a string
+   * @group crawler_options
+   * @depends testPhpServerRunning
+   */
+  public function testStartUrlsString() {
+
+    $config = __DIR__ . DIRECTORY_SEPARATOR . 'urls_string_test.yml';
+    $this->cmdTester->execute(
+      [
+        '-c' => $config,
+        '-o' => $this->outputDir
+      ]
+    );
+
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = Yaml::parse($crawled);
+
+    $expected_default = [
+      '/orphan.html',
+      '/orphan-child.html'
+    ];
+
+    $this->assertArrayHasKey('default', $crawled);
+    $this->assertEquals(2, count($crawled['default']));
+
+    foreach ($expected_default as $path) {
+      $this->assertContains($path, $crawled['default']);
+    }
+
+  }// end testStartUrlsString()
+
 
 }
