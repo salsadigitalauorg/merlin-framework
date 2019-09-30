@@ -6,7 +6,7 @@ options:
   maximum_total: 0        # Optionally restrict total number of crawled URLs.
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
-  delay: 100              # Pause between requests in ms.
+  delay: 10               # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
   cache_enabled: false    # Caches crawled content and uses cache to build results.
