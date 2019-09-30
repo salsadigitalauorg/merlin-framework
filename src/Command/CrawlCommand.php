@@ -2,6 +2,7 @@
 
 namespace Migrate\Command;
 
+use Migrate\Crawler\MigrateCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Migrate\MigrateCrawlObserver;
-use Spatie\Crawler\Crawler as SpatieCrawler;
+use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
@@ -50,7 +51,9 @@ class CrawlCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
-            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10);
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the max number of items to migrate', 0)
+            ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
+            ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
     }//end configure()
 
@@ -60,7 +63,8 @@ class CrawlCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+
+      $io = new SymfonyStyle($input, $output);
         $io->title('Migration framework');
         $io->section('Preparing the configuration');
 
@@ -86,9 +90,28 @@ class CrawlCommand extends Command
 
         $baseUrl = $this->config['domain'];
 
-        $crawler = SpatieCrawler::create($clientOptions)
+        // Optionally disable cache at runtime.
+        if ($input->getOption('no-cache')) {
+          $config->disableCache();
+        }
+
+        // Set crawl queue, preload with URLs if provided.
+        $crawlQueue = new \Migrate\Crawler\MigrateCrawlQueue($this->config);
+
+        // Add.
+        if (!empty($urls = @$this->config['options']['urls'])) {
+          $urls = is_array($urls) ? $urls : [$urls];
+          $baseUrl = $this->config['domain'].$urls[0];
+          foreach ($urls as $url) {
+            $io->writeln("Adding starting point URL to queue: {$url}");
+            $uri = new \GuzzleHttp\Psr7\Uri($this->config['domain'].$url);
+            $crawlQueue->add(CrawlUrl::create($uri));
+          }
+        }
+
+          $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
-          ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
+          ->SetCrawlQueue($crawlQueue)
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
 
         // Optionally override concurrency (default is 10).
@@ -98,12 +121,13 @@ class CrawlCommand extends Command
         }
 
         // Optionally override maximum results (default is unlimited/all).
-        if (!empty($max = @$this->config['options']['maximum_total'])) {
+        if (!empty($input->getOption('limit')) || @$this->config['options']['maximum_total']) {
+          $max = $input->getOption('limit') ? $input->getOption('limit') : @$this->config['options']['maximum_total'];
           $io->writeln("Setting maximum crawl count to {$max}");
           $crawler->setMaximumCrawlCount($max);
         }
 
-        // Optionally override deptch (default is unlimited).
+        // Optionally override depth (default is unlimited).
         if (!empty($depth = @$this->config['options']['maximum_depth'])) {
           $io->writeln("Setting maximum depth to {$depth}");
           $crawler->setMaximumDepth($depth);
@@ -116,6 +140,7 @@ class CrawlCommand extends Command
         }
 
         $io->success('Starting crawl!');
+
         $crawler->startCrawling($baseUrl);
 
         $io->section('Processing requests');

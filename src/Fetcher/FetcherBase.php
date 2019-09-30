@@ -8,6 +8,8 @@ use Migrate\Exception\ValidationException;
 use Migrate\Parser\ParserInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use function DeepCopy\deep_copy;
+
 
 class FetcherBase implements FetcherInterface
 {
@@ -156,12 +158,20 @@ class FetcherBase implements FetcherInterface
     $io = $this->io;
     $output = $this->output;
     $parser = $this->config;
+    $entity_type = $parser->get('entity_type');
 
     $io->write('Parsing: '.$url);
 
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
-      $this->cache->put($url, $html);
+    $data = json_encode(
+        [
+            'url'      => $url,
+            'contents' => $html,
+        ]
+    );
+
+      $this->cache->put($url, $data);
     }
 
     // Check if duplicate if we are doing that.
@@ -177,11 +187,11 @@ class FetcherBase implements FetcherInterface
           try {
             $type->process();
           } catch (ElementNotFoundException $e) {
-            $output->mergeRow($e::FILE, $url, [$e->getMessage()], true);
+            $output->mergeRow("{$entity_type}-".$e::FILE, $url, [$e->getMessage()], true);
           } catch (ValidationException $e) {
-            $output->mergeRow($e::FILE, $url, [$e->getMessage()], true);
+            $output->mergeRow("{$entity_type}-".$e::FILE, $url, [$e->getMessage()], true);
           } catch (\Exception $e) {
-            $output->mergeRow('error-unhandled', $url, [$e->getMessage()], true);
+            $output->mergeRow("{$entity_type}-error-unhandled", $url, [$e->getMessage()], true);
           }
         }//end while
     }
@@ -191,7 +201,7 @@ class FetcherBase implements FetcherInterface
     $io->writeln(' <info>(Done!)</info>');
 
     if (!empty((array) $row)) {
-      $output->addRow($parser->get('entity_type'), $row);
+      $output->addRow($entity_type, $row);
     }
 
   }//end processContent()
@@ -205,18 +215,20 @@ class FetcherBase implements FetcherInterface
    */
   public function processFailed(?string $url, ?int $status, ?string $errorMessage) {
 
+    $entity_type = $this->config->get('entity_type');
+
     // For some common http statuses we want to store in separate error files.
     switch ($status) {
       case 500:
       case 404:
       case 400:
         $msg = "{$url} -- {$errorMessage}";
-        $type = "error-{$status}";
+        $type = "{$entity_type}-error-{$status}";
         break;
 
       default:
         $msg = "{$url} -- {$errorMessage}";
-        $type = "error-fetch";
+        $type = "{$entity_type}-error-fetch";
     }
 
     $this->output->mergeRow($type, 'urls', [$msg], true);

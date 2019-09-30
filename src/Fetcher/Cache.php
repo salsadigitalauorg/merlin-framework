@@ -10,12 +10,13 @@ class Cache
 {
 
   /**
+   * Path to the directory containing the files for this cached domain.
    * @var string
    */
   private $path;
 
-  /** @var boolean  */
-  private $storeUrls = true;
+  /** @var boolean  Debug function that writes a small file alongside cache file containing the url */
+  private $storeUrls = false;
 
 
   /**
@@ -34,7 +35,12 @@ class Cache
       }
     }
 
-    if (!empty($cacheDir) && is_dir($cacheDir) && is_writable($cacheDir)) {
+    if (strstr($cacheDir, ".") || strstr($cacheDir, "..")) {
+      throw new \Exception("Cannot initialise cache!  You must use an absolute path for the cache dir.");
+    }
+
+    if (!empty($cacheDir) && is_dir($cacheDir) && is_writable($cacheDir) && realpath($cacheDir) != "/") {
+      $domain = rtrim($domain, '/');
       $domain = preg_replace('/[^a-z0-9]+/','-', strtolower($domain));
       $this->path = $cacheDir.DIRECTORY_SEPARATOR.$domain;
     } else {
@@ -170,6 +176,71 @@ class Cache
     return $this->storeUrls;
 
   }//end getStoreUrls()
+
+
+  /**
+   * Returns the absolute path of the top-level directory of
+   * this cache (i.e. the dir with the name of the domain).
+   * @return string
+   */
+  public function getPath() {
+    return $this->path;
+
+  }//end getPath()
+
+
+  /**
+   * Recursively deletes a directory contents and optionally the containing dir.
+   *
+   * @param string $dir The directory path.
+   * @param bool   $removeRootDir Remove the top level directory.
+   *
+   * @return bool TRUE on success, otherwise FALSE.
+   */
+  private function unlinkDir(
+    $dir,
+    $removeRootDir=false)
+  {
+
+    if (empty($dir) || !file_exists($dir) || realpath($dir) == "/" || strstr("..", $dir)) {
+      return false;
+    }
+
+    // /** @var SplFileInfo[] $files */
+    $files = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+        \RecursiveIteratorIterator::CHILD_FIRST
+    );
+    foreach ($files as $fileInfo) {
+      if ($fileInfo->isDir()) {
+        if (false === rmdir($fileInfo->getRealPath())) {
+          return false;
+        }
+      } else {
+        if (false === unlink($fileInfo->getRealPath())) {
+          return false;
+        }
+      }
+    }
+
+    // Delete root dir?
+    if ($removeRootDir && is_dir($dir)) {
+      rmdir($dir);
+    }
+
+  }//end unlinkDir()
+
+
+  /**
+   * Removes the cache contents for this domain and, optionally, the
+   * containing directory.
+   *
+   * @param bool $removeDomainDir
+   */
+  public function clearCache($removeDomainDir=false) {
+    $this->unlinkDir($this->path, $removeDomainDir);
+
+  }//end clearCache()
 
 
   /**

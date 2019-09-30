@@ -23,7 +23,8 @@
     "spatie/crawler": "^4.4",
     "consolidation/comments": "^1.0",
     "spatie/browsershot": "^3.32",
-    "php-curl-class/php-curl-class": "^8.6"
+    "php-curl-class/php-curl-class": "^8.6",
+    "myclabs/deep-copy": "^1.9"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5",

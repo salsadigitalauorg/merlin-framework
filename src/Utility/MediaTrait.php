@@ -128,4 +128,32 @@ trait MediaTrait
     }//end getDrupalEntityEmbed()
 
 
+    /**
+     * Get the Drupal linkit markup string.
+     *
+     * @param \DomCrawler\Crawler $node
+     *   The Dom node for the media entity to link
+     * @param String $url
+     *   URL of the original asset
+     * @param String $uuid
+     *   uuid value of the media entity
+     * @return string
+     *   A Drupal linkit tag to the entity.
+     */
+    protected function getDrupalLinkitEmbed($node, $url, $uuid)
+    {
+
+        $linkText = !empty($node->textContent) ? $node->textContent : basename($url);
+        $defaultLink = "/sites/default/files/".basename($url);
+
+        $data = " data-entity-uuid=\"{$uuid}\"";
+        $data .= " data-entity-substitution=\"media\"";
+        $data .= " data-entity-type=\"media\"";
+        $data  = trim($data);
+
+        return "<a href=\"{$defaultLink}\" {$data}>{$linkText}</a>";
+
+    }//end getDrupalLinkitEmbed()
+
+
 }

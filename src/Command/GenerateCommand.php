@@ -56,6 +56,7 @@ class GenerateCommand extends Command
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
             ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of items to migrate', 0)
             ->addOption('concurrency', null, InputOption::VALUE_REQUIRED, 'Number of requests to make in parallel', 10)
             ->addOption('no-cache', null, InputOption::VALUE_NONE, 'Disable cache on this run');
 
@@ -122,10 +123,15 @@ class GenerateCommand extends Command
 
         $io->section('Processing requests');
 
+        if ($limit = $input->getOption('limit')) {
+            $io->writeln("Setting the maximum migrate count to {$limit} items.");
+            $io->writeln('');
+        }
+
         if ($this->config->get('parser') == 'xml') {
             $this->runXml($json, $io, $input);
         } else {
-            $this->runWeb($json, $io);
+            $this->runWeb($json, $io, $input);
         }
 
         $io->section('Generating files');
@@ -137,18 +143,23 @@ class GenerateCommand extends Command
     }//end execute()
 
 
-  /**
-   * Run web-based parsing via a delegated Fetcher.
-   *
-   * @param \Migrate\Output\OutputInterface                   $json
-   * @param \Symfony\Component\Console\Output\OutputInterface $io
-   *
-   * @throws \Exception
-   */
-    private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io) {
+    /**
+     * Run web-based parsing via a delegated Fetcher.
+     *
+     * @param \Migrate\Output\OutputInterface                   $json
+     * @param \Symfony\Component\Console\Output\OutputInterface $io
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     *
+     * @throws \Exception
+     */
+    private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
       $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
+
+      // Optionally override maximum results (default is unlimited/all).
+      $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
+      $urls = $limit ? array_slice($this->config->get('urls'), 0, $limit, true) : $this->config->get('urls');
 
       if (!class_exists($fetcherClass)) {
         throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
@@ -169,16 +180,20 @@ class GenerateCommand extends Command
       }
 
       // Processed cached and build non-cached url list to fetch.
-      foreach ($this->config->get('urls') as $url) {
+      foreach ($urls as $url) {
         $url = $this->config->get('domain').$url;
         $fetcher->incrementCount('total');
 
         if ($cache instanceof Cache) {
-          if ($contents = $cache->get($url)) {
-            $io->writeln("Fetched (cache): {$url}\n");
-            $fetcher->processContent($url, $contents);
-            $fetcher->incrementCount('fetched_cache');
-            continue;
+          if ($cacheJson = $cache->get($url)) {
+            $cacheData = json_decode($cacheJson, true);
+            if (is_array($cacheData) && key_exists('contents', $cacheData) && !empty($cacheData['contents'])) {
+              $contents = $cacheData['contents'];
+              $io->writeln("Fetched (cache): {$url}");
+              $fetcher->processContent($url, $contents);
+              $fetcher->incrementCount('fetched_cache');
+              continue;
+            }
           }
         }
 
@@ -193,12 +208,23 @@ class GenerateCommand extends Command
 
     /**
      * Run xml-based parsing.
+     *
+     * @param \Migrate\Output\OutputInterface                   $json
+     * @param \Symfony\Component\Console\Output\OutputInterface $io
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     *
+     * @throws \Exception
      */
-    private function runXml($json, $io, $input)
-    {
-        foreach ($this->config->get('files') as $file) {
+    private function runXml(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
+
+        // Optionally override maximum results (default is unlimited/all).
+        $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
+        $files = $limit ? array_slice($this->config->get('files'), 0, $limit, true) : $this->config->get('files');
+        $entity_type = $this->config->get('entity_type');
+
+        foreach ($files as $file) {
             if (!file_exists($file)) {
-                $json->mergeRow('error-file', 'missing', [$file], true);
+                $json->mergeRow("{$entity_type}-error-file", 'missing', [$file], true);
                 continue;
             }
 
@@ -214,11 +240,11 @@ class GenerateCommand extends Command
                 try {
                     $type->process();
                 } catch (ElementNotFoundException $e) {
-                    $json->mergeRow($e::FILE, $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (ValidationException $e) {
-                    $json->mergeRow($e::FILE, $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $json->mergeRow('error-unhandled', $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getMessage()], true);
                 }
             }
 

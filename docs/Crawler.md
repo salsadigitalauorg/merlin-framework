@@ -3,8 +3,6 @@ id: crawler
 title: URL Crawler
 ---
 
-# URL Crawler
-
 Merlin comes with a URL crawler to help generate URL lists prior to a migration.
 
 ## URL Grouping
@@ -64,7 +62,21 @@ options:
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
-  group_by: []            # Group options to allow segmenting URLs basede on some business rules.
+
+  # Optionally provide one or more URLs as the starting point. This can be provided
+  # as a string or an array.
+  urls:                   
+    - /sports/cricket
+  
+  # Group options to allow segmenting URLs based on some business rules.
+  group_by: []             
+  
+  # Caches crawled content and uses cache to build results.
+  cache_enabled: true     
+ 
+  # Generates a list of urls containing duplicate content.  Only the first
+  # crawled duplicate will appear in the crawled url or grouped url results. 
+  find_content_duplicates: true   
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:
@@ -106,3 +118,13 @@ Generating /tmp/crawl-error.yml Done!
 
 Completed in 29.005132913589
 ```
+
+## Flag Options
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to crawl (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |

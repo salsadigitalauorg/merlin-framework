@@ -25,6 +25,7 @@ class MediaNullAttributeTest extends CrawlerTestCase
       'data_embed_button' => 'test_media',
       'data_entity_embed_display' => 'view_mode:media.test',
       'data_entity_type' => 'test',
+      'media_plugin' => 'media'
     ];
 
     $crawler = $this->getCrawler();
