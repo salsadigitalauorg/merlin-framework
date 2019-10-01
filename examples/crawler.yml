@@ -3,7 +3,9 @@ domain: https://madcore.com.au
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
-  maximum_total: 20        # Optionally restrict total number of crawled URLs.
+  headers:
+    X-Foo: Bar
+  maximum_total: 20       # Optionally restrict total number of crawled URLs.
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.

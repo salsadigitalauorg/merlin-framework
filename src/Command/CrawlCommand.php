@@ -79,13 +79,20 @@ class CrawlCommand extends Command
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
+        $headers = ['User-Agent' => 'Merlin'];
+
+        // Add headers listed in config, if any are provided
+        if (!empty($this->config['options']['headers'])) {
+          $headers = array_merge($headers, $this->config['options']['headers']);
+        }
+
         $clientOptions = [
             RequestOptions::COOKIES         => true,
             RequestOptions::CONNECT_TIMEOUT => 10,
             RequestOptions::TIMEOUT         => 10,
             RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
             RequestOptions::VERIFY          => false,
-            RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
+            RequestOptions::HEADERS         => $headers,
         ];
 
         $baseUrl = $this->config['domain'];
@@ -109,10 +116,12 @@ class CrawlCommand extends Command
           }
         }
 
-          $crawler = MigrateCrawler::create($clientOptions)
+        $crawler = MigrateCrawler::create($clientOptions)
           ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
           ->SetCrawlQueue($crawlQueue)
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
+
+        print_r($crawler);
 
         // Optionally override concurrency (default is 10).
         if (!empty($concurrency = @$this->config['options']['concurrency'])) {
