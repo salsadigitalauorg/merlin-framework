@@ -121,8 +121,6 @@ class CrawlCommand extends Command
           ->SetCrawlQueue($crawlQueue)
           ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
 
-        print_r($crawler);
-
         // Optionally override concurrency (default is 10).
         if (!empty($concurrency = @$this->config['options']['concurrency'])) {
           $io->writeln("Setting concurrency to {$concurrency}");
