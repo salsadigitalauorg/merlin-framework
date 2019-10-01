@@ -2,7 +2,10 @@
 
 namespace Migrate\Command;
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Migrate\Crawler\MigrateCrawler;
+use Migrate\Crawler\MigrateCrawlerRedirectHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -79,11 +82,14 @@ class CrawlCommand extends Command
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
+        $redirectHandler = new MigrateCrawlerRedirectHandler($this->config, $yaml, 'crawled-urls-redirects');
+        $redirectOptions = $redirectHandler->getRedirectOptions();
+
         $clientOptions = [
             RequestOptions::COOKIES         => true,
             RequestOptions::CONNECT_TIMEOUT => 10,
             RequestOptions::TIMEOUT         => 10,
-            RequestOptions::ALLOW_REDIRECTS => $this->config['options']['follow_redirects'],
+            RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
             RequestOptions::VERIFY          => false,
             RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
         ];
