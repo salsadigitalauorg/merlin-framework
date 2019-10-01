@@ -2,6 +2,8 @@
 
 namespace Migrate\Parser;
 
+use function DeepCopy\deep_copy;
+
 abstract class ConfigBase implements ParserInterface
 {
 
@@ -32,8 +34,8 @@ abstract class ConfigBase implements ParserInterface
      */
     public function __construct($source)
     {
-        $this->source = $source;
-        $this->parse();
+      $this->source = $source;
+      $this->parse();
 
     }//end __construct()
 
@@ -98,9 +100,12 @@ abstract class ConfigBase implements ParserInterface
             $data['urls'] = [$data['urls']];
         }
 
+        $data = $this->inflateMappings($data);
+
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         $this->totals['urls'] = count($data['urls']);
+
         return $this;
 
     }//end parse()
@@ -187,6 +192,112 @@ abstract class ConfigBase implements ParserInterface
         return !empty($this->data[$key]) ? $this->data[$key] : false;
 
     }//end get()
+
+
+  /**
+   * This checks for field and/or selectors that are arrays in a config mapping.
+   * If found, it deep clones the config map and appends it ready to process.
+   * This allows you to re-use a config mapping on content that may need the
+   * same processing but appears with different classes on certain pages etc.
+   *
+   * Field and selector can be any combination of a string or array.
+   *
+   * The behaviour is such that:
+   *
+   * field (array), selector (array):
+   *    field[n] will use selector[n] to build results.  Must be the same size.
+   *
+   * field (array), selector (string):
+   *    Multiple fields will appear in results with the result of the selector.
+   *
+   * field (string), selector (array):
+   *    The field will contain the result from the *first* matched selector.
+   *
+   *
+   * @param $data
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+    protected function inflateMappings($data) {
+
+      // Expand array maps.
+      $mappings =& $data['mappings'];
+
+      for ($i = count($mappings); --$i >= 0;) {
+        $currentMap = $mappings[$i];
+
+        $field = ($currentMap['field'] ?? null);
+        $selector = ($currentMap['selector'] ?? null);
+
+        if (!empty($field) && !empty($selector)) {
+          if (is_string($field) && is_string($selector)) {
+            // Default case.
+            continue;
+          } else if (is_array($field) && is_array($selector)) {
+            if (count($field) !== count($selector)) {
+              $msg = "If both 'field' and 'selector' are both arrays, their lengths must match.\n";
+              $msg .= " - field: \n".print_r($field,1)." - selector: \n".print_r($selector ,1);
+              throw new \Exception($msg);
+            }
+
+            foreach ($field as $idx => $newField) {
+              $newSelector = $selector[$idx];
+              $mappings[] = self::cloneMap($currentMap, $newField, $newSelector);
+            }
+
+            unset($mappings[$i]);
+          } else if (is_string($field) && is_array($selector)) {
+            // Reverse is here for first match since we are looping backwards.
+            $selector = array_reverse($selector);
+            foreach ($selector as $idx => $newSelector) {
+              $mappings[] = self::cloneMap($currentMap, $field, $newSelector);
+            }
+
+            unset($mappings[$i]);
+          } else if (is_array($field) && is_string($selector)) {
+            // Reverse is here for first match since we are looping backwards.
+            $field = array_reverse($field);
+            foreach ($field as $idx => $newField) {
+              $mappings[] = self::cloneMap($currentMap, $newField, $selector);
+            }
+
+            unset($mappings[$i]);
+          }//end if
+        }//end if
+      }//end for
+
+      $mappings = array_values($mappings);
+
+      return $data;
+
+    }//end inflateMappings()
+
+
+  /**
+   * Returns a deep clone of a config mapping, optionally replacing
+   * @param $existingMap
+   * @param $newField
+   * @param $newSelector
+   *
+   * @return mixed
+   */
+  protected static function cloneMap(array $existingMap, ?string $newField, ?string $newSelector) {
+    $clone = deep_copy($existingMap);
+
+    if (!empty($newField)) {
+      unset($clone['field']);
+      $clone['field'] = $newField;
+    }
+
+    if (!empty($newSelector)) {
+      unset($clone['selector']);
+      $clone['selector'] = $newSelector;
+    }
+
+    return $clone;
+
+  }//end cloneMap()
 
 
 }//end class

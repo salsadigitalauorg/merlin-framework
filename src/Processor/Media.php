@@ -90,6 +90,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $this->config['attributes']['data_embed_button']         = !empty($config['data_embed_button']) ? $config['data_embed_button'] : 'tide_media';
         $this->config['attributes']['data_entity_embed_display'] = !empty($config['data_entity_embed_display']) ? $config['data_entity_embed_display'] : 'view_mode:media.embedded';
         $this->config['attributes']['data_entity_type']          = !empty($config['data_entity_type']) ? $config['data_entity_type'] : 'media';
+        $this->config['attributes']['media_plugin']              = !empty($config['media_plugin']) ? $config['media_plugin'] : 'media';
 
         $this->config['extra'] = isset($config['extra']) ? $config['extra'] : [];
 
@@ -179,7 +180,18 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
-                $value      = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+
+                // Basic support for linkit vs. media embed.
+                switch ($this->config['attributes']['media_plugin']) {
+                  case "linkit":
+                    $value = str_replace($outer_html, $this->getDrupalLinkitEmbed($parent, $this->getFileUrl($file), $uuid), $value);
+                  break;
+
+                  case "media":
+                  default:
+                    $value = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+                  break;
+                }
             }
         );
 
@@ -247,7 +259,18 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
 
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
-                $value      = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+
+                // Basic support for linkit vs. media embed.
+                switch ($this->config['attributes']['media_plugin']) {
+                  case "linkit":
+                    $value = str_replace($outer_html, $this->getDrupalLinkitEmbed($parent, $this->getFileUrl($file), $uuid), $value);
+                  break;
+
+                  case "media":
+                  default:
+                    $value = str_replace($outer_html, $this->getDrupalEntityEmbed($uuid), $value);
+                  break;
+                }
             }
         );
 

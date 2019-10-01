@@ -62,7 +62,21 @@ options:
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
-  group_by: []            # Group options to allow segmenting URLs basede on some business rules.
+
+  # Optionally provide one or more URLs as the starting point. This can be provided
+  # as a string or an array.
+  urls:                   
+    - /sports/cricket
+  
+  # Group options to allow segmenting URLs based on some business rules.
+  group_by: []             
+  
+  # Caches crawled content and uses cache to build results.
+  cache_enabled: true     
+ 
+  # Generates a list of urls containing duplicate content.  Only the first
+  # crawled duplicate will appear in the crawled url or grouped url results. 
+  find_content_duplicates: true   
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:

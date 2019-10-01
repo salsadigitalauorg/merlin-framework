@@ -1,16 +1,17 @@
 ---
-domain: http://example.com.au
+domain: https://madcore.com.au
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
-  maximum_total: 0        # Optionally restrict total number of crawled URLs.
+  maximum_total: 20        # Optionally restrict total number of crawled URLs.
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
+  urls: /sports/cricket   # Starting point for crawler
 
-  group_by:               # Group options to allow segmenting URLs basede on some business rules.
+  group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
       id: group-2016-2014
       type: path

@@ -1,7 +1,7 @@
 ---
-id: type-long-text
-title: Long Text
-sidebar_label: Long Text
+id: type-media
+title: Media
+sidebar_label: Media
 ---
 
 Extract a structured representation of a media asset from the DOM.
