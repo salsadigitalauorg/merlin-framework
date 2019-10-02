@@ -3,8 +3,6 @@ domain: https://madcore.com.au
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
-  headers:                # Provide headers to send with requests
-    X-Foo: Bar
   maximum_total: 20       # Optionally restrict total number of crawled URLs.
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
@@ -12,6 +10,12 @@ options:
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
   urls: /sports/cricket   # Starting point for crawler
+  verify: false           # Ensure the crawler verifies SSL certificates.
+  cookies: true           # Enable cookie support for the crawler
+  timeout: 10             # Timeout in seconds for a page download.
+  connect_timeout: 10     # Connect timeout for the crawler.
+  headers:                # Provide headers to send with requests
+    X-Foo: Bar
 
   group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
