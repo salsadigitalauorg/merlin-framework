@@ -32,6 +32,14 @@ class CrawlerConfig extends ConfigBase
 // Delay between URL retrieval (ms).
             'exclude'          => [],
 // Regex options for crawl exclusion.
+            'timeout'          => 10,
+// Timeout for the crawler in seconds.
+            'connect_timeout'  => 10,
+// Connect timeout for the crawler in seconds.
+            'verify'           => false,
+// Enable SSL verification.
+            'cookies'          => true,
+// Enable cookies.
         ];
 
         if (!file_exists($this->source)) {
