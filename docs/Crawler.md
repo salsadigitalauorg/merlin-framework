@@ -80,7 +80,9 @@ options:
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:
-`php migrate crawl -c /path/to/config.yml -o /path/to/output`
+```
+php migrate crawl -c /path/to/config.yml -o /path/to/output
+```
 
 You will see output as follows:
 
