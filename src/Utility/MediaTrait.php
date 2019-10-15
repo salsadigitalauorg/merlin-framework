@@ -90,14 +90,14 @@ trait MediaTrait
         if (substr($uri, 0, 1) === '/') {
             // If the first character is a / we have a relative URI so
             // we can append the base domain to the URI.
-            return $base . urldecode($uri);
+            return $base.urldecode($uri);
         } else {
             if (isset($this->config['extra']['filename_callback'])) {
                 $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
                 return $url;
             }
 
-            return "{$base}/" . urldecode($uri);
+            return "{$base}/".urldecode($uri);
         }
 
         throw new \Exception('Invalid file URL for media.');
