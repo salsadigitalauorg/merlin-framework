@@ -84,20 +84,20 @@ trait MediaTrait
         if (isset($parsedUri['host'])) {
             // If the host is in the URI we have an absolute URL
             // so we should return that.
-            return $uri;
+            return urldecode($uri);
         }
 
         if (substr($uri, 0, 1) === '/') {
             // If the first character is a / we have a relative URI so
             // we can append the base domain to the URI.
-            return "{$base}{$uri}";
+            return $base . urldecode($uri);
         } else {
             if (isset($this->config['extra']['filename_callback'])) {
                 $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
                 return $url;
             }
 
-            return "{$base}/{$uri}";
+            return "{$base}/" . urldecode($uri);
         }
 
         throw new \Exception('Invalid file URL for media.');
