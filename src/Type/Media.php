@@ -5,6 +5,7 @@ namespace Migrate\Type;
 use Symfony\Component\DomCrawler\Crawler;
 use Migrate\Utility\MediaTrait;
 use Migrate\Utility\ProcessorOptionsTrait;
+use Migrate\Utility\Callback;
 use Migrate\ProcessController;
 use Migrate\Exception\ElementNotFoundException;
 
@@ -62,6 +63,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
                 $file = $this->getFileUrl($file->text());
+                if (isset($this->config['options']['process_file'])) {
+                    if (!empty($file)) {
+                        $file = Callback::getResult($this->config['options']['process_file'], $file);
+                    }
+                }
             } catch (\Exception $error) {
                 throw new ElementNotFoundException();
             }
@@ -70,6 +76,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $name = $node->evaluate($this->getOption('name', TRUE));
                 assert($name->count() > 0);
                 $name = $name->text();
+                if (isset($this->config['options']['process_name'])) {
+                    if (!empty($name)) {
+                        $name = Callback::getResult($this->config['options']['process_name'], $name);
+                    }
+                }
             } catch (\Exception $error) {
                 $parts = explode("/", $file);
                 $name = $parts[(count($parts) - 1)];
@@ -127,6 +138,18 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $parts = explode("/", $file);
                 $name = $parts[(count($parts) - 1)];
                 $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
+            }
+
+            if (isset($this->config['options']['process_name'])) {
+                if (!empty($name)) {
+                    $name = Callback::getResult($this->config['options']['process_name'], $name);
+                }
+            }
+
+            if (isset($this->config['options']['process_file'])) {
+                if (!empty($file)) {
+                    $file = Callback::getResult($this->config['options']['process_file'], $file);
+                }
             }
 
             $entity = [
