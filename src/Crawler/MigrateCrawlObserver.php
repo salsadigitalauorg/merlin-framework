@@ -140,13 +140,13 @@ class MigrateCrawlObserver extends CrawlObserver
 
       if ($type->match($url_string, $response)) {
         // Only match on the first option.
-        $this->json->mergeRow("crawled-urls-{$type->getId()}", $type->getId(), [$return_url], true);
+        $this->json->mergeRow("crawled-urls-{$type->getId()}", 'urls', [$return_url], true);
         return;
       }
     }//end foreach
 
     // Add this to the default group if it doesn't match.
-    $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
+    $this->json->mergeRow('crawled-urls-default', 'urls', [$return_url], true);
 
   }//end crawled()
 
