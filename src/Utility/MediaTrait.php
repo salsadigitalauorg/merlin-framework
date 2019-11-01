@@ -3,6 +3,7 @@
 namespace Migrate\Utility;
 
 use Ramsey\Uuid\Uuid;
+use GuzzleHttp\Psr7;
 
 /**
  * A trait to be used for media representations throughout the project.
@@ -77,30 +78,26 @@ trait MediaTrait
      */
     protected function getFileUrl($uri)
     {
-        $host      = parse_url($this->crawler->getUri());
-        $base      = "{$host['scheme']}://{$host['host']}";
-        $parsedUri = parse_url($uri);
 
-        if (isset($parsedUri['host'])) {
-            // If the host is in the URI we have an absolute URL
-            // so we should return that.
+        if (isset($this->config['extra']['filename_callback'])) {
+            $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
+            return $url;
+        }
+
+        // Return absolute URLs without further processing.
+        if (strncasecmp($uri, "http", 4) === 0) {
             return urldecode($uri);
         }
 
-        if (substr($uri, 0, 1) === '/') {
-            // If the first character is a / we have a relative URI so
-            // we can append the base domain to the URI.
-            return $base.urldecode($uri);
-        } else {
-            if (isset($this->config['extra']['filename_callback'])) {
-                $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
-                return $url;
-            }
-
-            return "{$base}/".urldecode($uri);
+        // Resolve relative paths.
+        try {
+            $uri = Psr7\uri_for($uri);
+            $uri = Psr7\UriResolver::resolve(Psr7\uri_for($this->crawler->getUri()), $uri);
+        } catch (Exception $e) {
+            throw new \Exception('Invalid file URL for media.');
         }
 
-        throw new \Exception('Invalid file URL for media.');
+        return urldecode((string) $uri);
 
     }//end getFileUrl()
 
