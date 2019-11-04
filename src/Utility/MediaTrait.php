@@ -153,4 +153,29 @@ trait MediaTrait
     }//end getDrupalLinkitEmbed()
 
 
+    /**
+     * Determine whether media asset is on an external domain.
+     *
+     * @param String $url
+     *   URL of the original asset
+     */
+    protected function checkExternalUrl($url) {
+
+      // Relative urls are ok.
+      if (substr( $url, 0, 4 ) != "http") {
+        return false;
+      }
+
+      $mainConfig = $this->output->getConfig();
+      $domain = $mainConfig->get('domain');
+
+      $mediaDomain = str_ireplace('www.', '', parse_url($url, PHP_URL_HOST));
+      if (!strpos($domain, $mediaDomain)) {
+        return true;
+      }
+
+      return false;
+    }
+
+
 }
