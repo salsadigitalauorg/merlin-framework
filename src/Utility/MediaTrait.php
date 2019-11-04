@@ -162,7 +162,7 @@ trait MediaTrait
     protected function checkExternalUrl($url) {
 
       // Relative urls are ok.
-      if (substr( $url, 0, 4 ) != "http") {
+      if (substr($url, 0, 4) != "http") {
         return false;
       }
 
@@ -175,7 +175,8 @@ trait MediaTrait
       }
 
       return false;
-    }
+
+    }//end checkExternalUrl()
 
 
 }
