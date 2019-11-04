@@ -39,7 +39,8 @@ class MigrateCrawlObserver extends CrawlObserver
     $useCache = ($config->get('options')['cache_enabled'] ?? true);
     if ($useCache) {
       $domain = $json->getConfig()->get('domain');
-      $this->cache = new Cache($domain);
+      $cacheDir = ($config->get('options')['cache_dir'] ?? "/tmp/merlin_cache");
+      $this->cache = new Cache($domain, $cacheDir);
     }
 
     $findDuplicates = ($config->get('options')['find_content_duplicates'] ?? false);
