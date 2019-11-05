@@ -167,6 +167,10 @@ trait MediaTrait
       }
 
       $mainConfig = $this->output->getConfig();
+      if (empty($mainConfig)) {
+        return false;
+      }
+
       $domain = $mainConfig->get('domain');
 
       $mediaDomain = str_ireplace('www.', '', parse_url($url, PHP_URL_HOST));
