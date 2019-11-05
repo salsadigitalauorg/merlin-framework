@@ -91,6 +91,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $this->config['attributes']['data_entity_embed_display'] = !empty($config['data_entity_embed_display']) ? $config['data_entity_embed_display'] : 'view_mode:media.embedded';
         $this->config['attributes']['data_entity_type']          = !empty($config['data_entity_type']) ? $config['data_entity_type'] : 'media';
         $this->config['attributes']['media_plugin']              = !empty($config['media_plugin']) ? $config['media_plugin'] : 'media';
+        $this->config['attributes']['external_assets']           = !empty($config['external_assets']) ? $config['external_assets'] : false;
 
         $this->config['extra'] = isset($config['extra']) ? $config['extra'] : [];
 
@@ -171,9 +172,19 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     }
                 }
 
+                $fileUrl = $this->getFileUrl($file);
+
+                // Ignore if external assets are not permitted.
+                if (!$this->config['attributes']['external_assets']) {
+                  if ($this->checkExternalUrl($fileUrl)) {
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Skipping external asset {$fileUrl}"], true);
+                    return;
+                  }
+                }
+
                 $this->entities[] = [
                     'name' => $name,
-                    'file' => $this->getFileUrl($file),
+                    'file' => $fileUrl,
                     'uuid' => $uuid,
                     'alt'  => $alt,
                 ];
@@ -250,9 +261,19 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     }
                 }
 
+                $fileUrl = $this->getFileUrl($file);
+
+                // Ignore if external assets are not permitted.
+                if (!$this->config['attributes']['external_assets']) {
+                  if ($this->checkExternalUrl($fileUrl)) {
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Skipping external asset {$fileUrl}"], true);
+                    return;
+                  }
+                }
+
                 $this->entities[] = [
                     'name' => substr($name, 0, 255),
-                    'file' => $this->getFileUrl($file),
+                    'file' => $fileUrl,
                     'uuid' => $uuid,
                     'alt'  => substr($alt, 0, 512),
                 ];
