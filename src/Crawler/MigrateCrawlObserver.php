@@ -95,6 +95,8 @@ class MigrateCrawlObserver extends CrawlObserver
     $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
     $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
 
+    $entity_type = $this->json->getConfig()->get('entity_type');
+
     // Cache data if we are doing that.
     if ($this->cache instanceof Cache && !$crawledFromCache) {
       $html = $response->getBody()->__toString();
@@ -141,13 +143,13 @@ class MigrateCrawlObserver extends CrawlObserver
 
       if ($type->match($url_string, $response)) {
         // Only match on the first option.
-        $this->json->mergeRow("crawled-urls-{$type->getId()}", 'urls', [$return_url], true);
+        $this->json->mergeRow("crawled-urls-{$entity_type}_{$type->getId()}", 'urls', [$return_url], true);
         return;
       }
     }//end foreach
 
     // Add this to the default group if it doesn't match.
-    $this->json->mergeRow('crawled-urls-default', 'urls', [$return_url], true);
+    $this->json->mergeRow("crawled-urls-{$entity_type}_default", 'urls', [$return_url], true);
 
   }//end crawled()
 
@@ -171,12 +173,13 @@ class MigrateCrawlObserver extends CrawlObserver
   {
 
     $this->mergeUrlsIntoConfigFiles();
+    $entity_type = $this->json->getConfig()->get('entity_type');
 
     // Build the duplicates file.
     if ($this->hashes instanceof ContentHash) {
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
-        $this->json->mergeRow('crawled-urls-duplicates', 'duplicates', $duplicateUrls, true);
+        $this->json->mergeRow("crawled-urls-{$entity_type}_duplicates", 'duplicates', $duplicateUrls, true);
       }
     }
 
@@ -193,6 +196,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
     // /** @var \Migrate\Parser\Config $config */
     $config = $this->json->getConfig();
+    $entity_type = $config->get('entity_type');
 
     // Check if any of our groups have merge config file names specified.
     $groups = isset($config->get('options')['group_by']) ? $config->get('options')['group_by'] : [];
@@ -239,7 +243,7 @@ class MigrateCrawlObserver extends CrawlObserver
         $dstConfigFile = $srcPathInfo['dirname'].DIRECTORY_SEPARATOR.$srcConfigFilename."_merged_urls.yml";
 
         $data = $this->json->getData();
-        $urls = ($data["crawled-urls-{$id}"][$id] ?? []);
+        $urls = ($data["crawled-urls-{$entity_type}_{$id}"][$id] ?? []);
 
         if (is_file($srcConfigFile)) {
           if (empty($urls)) {
