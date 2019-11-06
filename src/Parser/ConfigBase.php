@@ -52,11 +52,11 @@ abstract class ConfigBase implements ParserInterface
         $data = \Spyc::YAMLLoad($this->source);
 
         if (empty($data['entity_type'])) {
-            throw new \Exception("Invalid source file: No content type found in the source file");
+            throw new \Exception("Invalid source file: No content type defined in the source file");
         }
 
         if (empty($data['mappings'])) {
-            throw new \Exception("Invalid source file: No mappings found in the source file");
+            throw new \Exception("Invalid source file: No mappings defined in the source file");
         }
 
         /*
