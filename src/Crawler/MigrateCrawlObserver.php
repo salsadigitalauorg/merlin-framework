@@ -157,7 +157,8 @@ class MigrateCrawlObserver extends CrawlObserver
     RequestException $requestException,
     ?UriInterface $foundOnUrl=null
   ) {
-    $this->json->mergeRow('crawl-error', $url->__toString(), [$requestException->getMessage()], true);
+    $entity_type = $this->json->getConfig()->get('entity_type');
+    $this->json->mergeRow("crawl-error-{$entity_type}", $url->__toString(), [$requestException->getMessage()], true);
     $this->io->error("Error: ${url} -- Found on url: ${foundOnUrl}");
 
   }//end crawlFailed()
