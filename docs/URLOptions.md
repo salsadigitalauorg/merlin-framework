@@ -144,9 +144,9 @@ url_options:
   
 ```
 
-## URLs in a separate file
+## URLs in separate file(s)
 
-You can also provide a list of URLs in a separate file. Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` as a relative path to the config file.
+You can also provide a list of URLs in one or more separate file(s). Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` relative paths to the config files. You can provide `urls_file` as a string for just one file or as an array if you have more than one list of URLs. 
 
 ```
 ---
@@ -157,6 +157,21 @@ urls:
  - /some/path/subpath
 
 urls_file: list_of_urls.yml
+```
+
+### Example of multiple urls_file
+
+```
+---
+domain: http://www.example.com
+
+urls:
+ - /some/path
+ - /some/path/subpath
+
+urls_file:
+ - list_of_urls.yml
+ - another_list_of_urls.yml
 ```
 
 ### Example of a separate URLs file
