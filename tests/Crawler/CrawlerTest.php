@@ -107,7 +107,7 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
@@ -138,9 +138,9 @@ class CrawlerTest extends LocalPhpServerTestCase
 
     $ymls = glob($this->outputDir . DIRECTORY_SEPARATOR . '*.yml');
 
-    $group1 = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-group1.yml');
+    $group1 = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_group1.yml');
     $group1 = Yaml::parse($group1);
-    $default = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-default.yml');
+    $default = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_default.yml');
     $default = Yaml::parse($default);
 
     $this->assertEquals(2, count($ymls));
@@ -191,7 +191,7 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
@@ -213,7 +213,7 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
@@ -250,9 +250,9 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
-    $crawledDupes = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-duplicates.yml');
+    $crawledDupes = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_duplicates.yml');
     $crawledDupes = Yaml::parse($crawledDupes);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
@@ -287,7 +287,7 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
     $expected_default = [
@@ -327,7 +327,7 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-default.yml');
+    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
     $expected_default = [
