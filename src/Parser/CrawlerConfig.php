@@ -49,7 +49,11 @@ class CrawlerConfig extends ConfigBase
         $data = \Spyc::YAMLLoad($this->source);
 
         if (empty($data['domain'])) {
-            throw new \Exception("Invalid source file: No domain found in the source file");
+            throw new \Exception("Invalid source file: No domain defined in the source file");
+        }
+
+        if (empty($data['entity_type'])) {
+            throw new \Exception("Invalid source file: No entity type defined in the source file");
         }
 
         if (empty($data['options'])) {

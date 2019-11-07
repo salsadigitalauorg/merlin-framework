@@ -52,6 +52,7 @@ options:
 ```
 ---
 domain: https://example.com/
+entity_type: standard_page
 
 options:
   follow_redirects: true  # Allow internal redirects.
