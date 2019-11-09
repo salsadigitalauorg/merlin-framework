@@ -62,6 +62,7 @@ options:
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
+  include: []             # Regex matches to include.
   path_only: true         # Return only the path from the crawled URL.
 
   # Optionally provide one or more URLs as the starting point. This can be provided

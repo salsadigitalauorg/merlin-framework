@@ -80,6 +80,12 @@ class CrawlInternalUrls extends CrawlProfile
           }
         }
 
+        foreach ($this->config['options']['include'] as $include) {
+          if (!preg_match($include, $url->__toString())) {
+            return FALSE;
+          }
+        }
+
         // Internal paths only.
         return $this->baseUrl->getHost() === $url->getHost();
 
