@@ -41,7 +41,8 @@ class MigrateCrawlerRedirectHandler
 
   public function getRedirectOptions() {
 
-    if ($this->config['options']['follow_redirects'] === false) {
+    $followRedirects = ($this->config['options']['follow_redirects'] ?? true);
+    if ($followRedirects === false) {
       return false;
     }
 

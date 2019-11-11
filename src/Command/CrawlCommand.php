@@ -86,11 +86,11 @@ class CrawlCommand extends Command
         $redirectOptions = $redirectHandler->getRedirectOptions();
 
         $clientOptions = [
-            RequestOptions::COOKIES         => true,
-            RequestOptions::CONNECT_TIMEOUT => 10,
-            RequestOptions::TIMEOUT         => 10,
+            RequestOptions::COOKIES         => $this->config['options']['cookies'],
+            RequestOptions::CONNECT_TIMEOUT => $this->config['options']['connect_timeout'],
+            RequestOptions::TIMEOUT         => $this->config['options']['timeout'],
             RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
-            RequestOptions::VERIFY          => false,
+            RequestOptions::VERIFY          => $this->config['options']['verify'],
             RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
         ];
 

@@ -113,7 +113,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
     $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['default']));
+    $this->assertEquals(11, count($crawled['urls']));
 
 
   }//end testAllPages()
@@ -144,8 +144,8 @@ class CrawlerTest extends LocalPhpServerTestCase
     $default = Yaml::parse($default);
 
     $this->assertEquals(2, count($ymls));
-    $this->assertEquals(1, count($group1['group1']));
-    $this->assertEquals(10, count($default['default']));
+    $this->assertEquals(1, count($group1['urls']));
+    $this->assertEquals(10, count($default['urls']));
 
     $expected_default = [
       '/',
@@ -163,11 +163,11 @@ class CrawlerTest extends LocalPhpServerTestCase
     $expected_group1 = ['/about.html'];
 
     foreach ($expected_default as $path) {
-      $this->assertContains($path, $default['default']);
+      $this->assertContains($path, $default['urls']);
     }
 
     foreach ($expected_group1 as $path) {
-      $this->assertContains($path, $group1['group1']);
+      $this->assertContains($path, $group1['urls']);
     }
 
 
@@ -197,7 +197,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
     $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['default']));
+    $this->assertEquals(11, count($crawled['urls']));
 
 
     // Remove our output files, stop local server and test again.  The files should magically come from the cache.
@@ -219,7 +219,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
     $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['default']));
+    $this->assertEquals(11, count($crawled['urls']));
 
 
     // Remove cached files
@@ -258,8 +258,8 @@ class CrawlerTest extends LocalPhpServerTestCase
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
     $this->assertEquals(2, count($ymls));
 
-    $this->assertArrayHasKey('default', $crawled);
-    $this->assertEquals(8, count($crawled['default']));
+    $this->assertArrayHasKey('urls', $crawled);
+    $this->assertEquals(8, count($crawled['urls']));
 
     $this->assertArrayHasKey('duplicates', $crawledDupes);
     $this->assertIsArray($crawledDupes['duplicates']);
@@ -303,11 +303,11 @@ class CrawlerTest extends LocalPhpServerTestCase
       '/duplicate_links.php'
     ];
 
-    $this->assertArrayHasKey('default', $crawled);
-    $this->assertEquals(10, count($crawled['default']));
+    $this->assertArrayHasKey('urls', $crawled);
+    $this->assertEquals(10, count($crawled['urls']));
 
     foreach ($expected_default as $path) {
-      $this->assertContains($path, $crawled['default']);
+      $this->assertContains($path, $crawled['urls']);
     }
 
   }// end testStartUrls()
@@ -335,11 +335,11 @@ class CrawlerTest extends LocalPhpServerTestCase
       '/orphan-child.html'
     ];
 
-    $this->assertArrayHasKey('default', $crawled);
-    $this->assertEquals(2, count($crawled['default']));
+    $this->assertArrayHasKey('urls', $crawled);
+    $this->assertEquals(2, count($crawled['urls']));
 
     foreach ($expected_default as $path) {
-      $this->assertContains($path, $crawled['default']);
+      $this->assertContains($path, $crawled['urls']);
     }
 
   }// end testStartUrlsString()

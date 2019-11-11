@@ -146,7 +146,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = $name->text();
                 }
 
-                $file = $file->text();
+                $file = urldecode($file->text());
                 $alt = ($alt->count() > 0) ? $alt->text() : null;
 
                 $uuid = $this->getUuid($name, $file);

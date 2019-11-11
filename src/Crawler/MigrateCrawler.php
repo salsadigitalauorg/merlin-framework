@@ -41,7 +41,6 @@ class MigrateCrawler extends Crawler
                 $this->crawlQueue->markAsProcessed($crawlUrl);
 
                 $fakeResponse = new Response(200, [], $contents);
-
                 $observer->crawled($crawlUrl->url, $fakeResponse, $foundOnUrl, true);
 
                 continue 2;
@@ -51,7 +50,7 @@ class MigrateCrawler extends Crawler
         }//end if
       }//end foreach
 
-      if (! $this->crawlProfile->shouldCrawl($crawlUrl->url)) {
+      if (!$this->crawlProfile->shouldCrawl($crawlUrl->url)) {
         $this->crawlQueue->markAsProcessed($crawlUrl);
         continue;
       }

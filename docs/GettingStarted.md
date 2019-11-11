@@ -24,7 +24,7 @@ Each configuration file contains a reference to either a website domain and list
 Content from these sources are then passed through mappings, which take selectors (XPath or JQuery-like selectors) to map content from the DOM to the JSON file that gets generated during a run. These data values can also pass through processors to further refine and alter the data.
 
 # Prerequisites
-The framework requires PHP (latest recommended, but tested on most versions of 7.x) and composer. All other dependencies will be pulled in by running a `composer install`
+The framework requires PHP (latest recommended, but tested on most versions of 7.x) and composer. All other dependencies will be pulled in by running a `composer install`.
 
 # Running a migration
 To run a migration simply run the tool with the input configuration .yml file, and a path to the output, e.g:
