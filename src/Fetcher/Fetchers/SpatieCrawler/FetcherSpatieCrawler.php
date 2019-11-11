@@ -97,7 +97,7 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
   /** @inheritDoc */
   public function start() {
     if ($this->queue->hasPendingUrls()) {
-      $this->crawler->startCrawling($this->queue->getUrlById(0)->url->__toString());
+      $this->crawler->startCrawling($this->queue->getFirstPendingUrl()->url->__toString());
     }
 
   }//end start()
