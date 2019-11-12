@@ -44,11 +44,13 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
         // Parent override support.
         if (!empty($config['options']['parent']['selector'])) {
           $n = $this->crawler->evaluate($config['options']['parent']['selector']);
-          $parentText = $n->evaluate($config['options']['parent']['text']);
-          $parentLink = $n->evaluate($config['options']['parent']['link']);
 
-          $processedLink = $this->processLink($parentText, $parentLink);
-          $parent = $processedLink['uuid'];
+          if ($n->count() > 0) {
+            $parentText = $n->evaluate($config['options']['parent']['text']);
+            $parentLink = $n->evaluate($config['options']['parent']['link']);
+            $processedLink = $this->processLink($parentText, $parentLink);
+            $parent = $processedLink['uuid'];
+          }
         }
 
         $node->each(
