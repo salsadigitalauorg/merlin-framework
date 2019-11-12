@@ -39,8 +39,6 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
     $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
     $requestDelay   = ($this->config->get('fetch_options')['delay'] ?? FetcherDefaults::DELAY);
     $executeJs      = ($this->config->get('fetch_options')['execute_js'] ?? FetcherDefaults::EXECUTE_JS);
-    //$allowRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
-    //$maxRedirects   = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
     $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
 
@@ -106,7 +104,6 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
   /** @inheritDoc */
   public function start() {
     if ($this->queue->hasPendingUrls()) {
-      // $this->crawler->startCrawling($this->queue->getUrlById(0)->url->__toString());
       $this->crawler->startCrawling($this->queue->getFirstPendingUrl()->url->__toString());
     }
 

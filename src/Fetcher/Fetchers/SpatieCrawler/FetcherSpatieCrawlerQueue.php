@@ -140,9 +140,3 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
 
 
 }//end class
-
-
-
-{
-
-}

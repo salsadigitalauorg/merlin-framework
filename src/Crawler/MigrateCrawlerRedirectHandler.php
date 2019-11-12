@@ -11,7 +11,7 @@ class MigrateCrawlerRedirectHandler
 {
 
   /** @var array */
-  private $config;
+  private $options;
 
   /** @var \Migrate\Output\OutputBase */
   private $json;
@@ -26,13 +26,13 @@ class MigrateCrawlerRedirectHandler
   /**
    * MigrateCrawlerRedirectHandler constructor.
    *
-   * @param array                      $config
+   * @param array                      $options
    * @param \Migrate\Output\OutputBase $json
    * @param string                     $resultFilename
    */
-  public function __construct(array $config, OutputBase $json, string $resultFilename)
+  public function __construct(array $options, OutputBase $json, string $resultFilename)
   {
-    $this->config = $config;
+    $this->options = $options;
     $this->json = $json;
     $this->filename = $resultFilename;
 
@@ -41,12 +41,12 @@ class MigrateCrawlerRedirectHandler
 
   public function getRedirectOptions() {
 
-    $followRedirects = ($this->config['options']['follow_redirects'] ?? true);
+    $followRedirects = ($this->options['follow_redirects'] ?? true);
     if ($followRedirects === false) {
       return false;
     }
 
-    $maxRedirects = ($this->config['options']['max_redirects'] ?? 5);
+    $maxRedirects = ($this->options['max_redirects'] ?? 5);
 
     $redirectOptions = [
         'max'         => $maxRedirects,

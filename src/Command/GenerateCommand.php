@@ -161,16 +161,7 @@ class GenerateCommand extends Command
       $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
       $urls = $limit ? array_slice($this->config->get('urls'), 0, $limit, true) : $this->config->get('urls');
 
-      if (!class_exists($fetcherClass)) {
-        throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
-      }
-
-      if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
-        throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
-      }
-
-      // @var \Migrate\Fetcher\FetcherBase $fetcher
-      $fetcher  = new $fetcherClass($io, $json, $this->config);
+      $fetcher = FetcherBase::FetcherFactory($fetcherClass, $io, $json, $this->config);
 
       // Use cache?
       $cache = null;

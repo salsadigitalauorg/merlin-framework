@@ -62,7 +62,6 @@ class MigrateCrawlQueue implements CrawlQueue
       }
     }
 
-    // We haz a new string.
     $urlString = (string) $url->url;
 
     if (!isset($this->urls[$urlString])) {

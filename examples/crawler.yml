@@ -1,5 +1,7 @@
 ---
-domain: https://madcore.com.au
+domain: https://www.example.com
+entity_type: standard_page
+
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
@@ -9,7 +11,7 @@ options:
   delay: 100              # Pause between requests in ms.
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
-  urls: /sports/cricket   # Starting point for crawler
+  urls: []                # Array of starting point urls.
   verify: false           # Ensure the crawler verifies SSL certificates.
   cookies: true           # Enable cookie support for the crawler
   timeout: 10             # Timeout in seconds for a page download.
@@ -34,7 +36,7 @@ options:
       options:
         pattern: /2018/*
     -
-      id: group-dom
+      id: group-news
       type: element
       options:
-        selector: h1
+        selector: h1.news-article

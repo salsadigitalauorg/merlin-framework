@@ -82,7 +82,7 @@ class CrawlCommand extends Command
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
-        $redirectHandler = new MigrateCrawlerRedirectHandler($this->config, $yaml, 'crawled-urls-redirects');
+        $redirectHandler = new MigrateCrawlerRedirectHandler($this->config['options'], $yaml, 'crawled-urls-redirects');
         $redirectOptions = $redirectHandler->getRedirectOptions();
 
         $clientOptions = [

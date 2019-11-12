@@ -183,7 +183,7 @@ class FetcherBase implements FetcherInterface
     if ($duplicate === false) {
         $crawler = new Crawler($html, $url);
         while ($field = $parser->getMapping()) {
-//          $crawler = new Crawler($html, $url);
+        // $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
             $type->process();
@@ -266,6 +266,34 @@ class FetcherBase implements FetcherInterface
     }
 
   }//end complete()
+
+
+  /**
+   * Returns an instance of a valid Fetcher.
+   * @param string                                            $fetcherClass
+   * @param \Symfony\Component\Console\Output\OutputInterface $io
+   * @param \Migrate\Output\OutputInterface                   $json
+   * @param \Migrate\Parser\ParserInterface                   $config
+   *
+   * @return \Migrate\Fetcher\FetcherBase
+   * @throws \Exception
+   */
+  public static function FetcherFactory(string $fetcherClass, OutputInterface $io,
+                                        \Migrate\Output\OutputInterface $json, ParserInterface $config) {
+
+    if (!class_exists($fetcherClass)) {
+      throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
+    }
+
+    if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
+      throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
+    }
+
+    $fetcher  = new $fetcherClass($io, $json, $config);
+
+    return $fetcher;
+
+  }//end FetcherFactory()
 
 
 }//end class
