@@ -14,10 +14,12 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Migrate\Command\GenerateCommand;
 use Migrate\Command\CrawlCommand;
-
+use Migrate\Command\CacheCommand;
 
 /**
  * Defines a useful global function to do a var_dump to error_log
+ *
+ * @param null $object
  */
 function var_error_log($object = null)
 {
@@ -33,5 +35,6 @@ $application = new Application;
 
 $application->add(new GenerateCommand);
 $application->add(new CrawlCommand);
+$application->add(new CacheCommand);
 
 $application->run();

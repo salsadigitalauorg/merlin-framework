@@ -142,18 +142,25 @@ class Cache
 
   /**
    * Deletes a cache file from disk.
+   *
    * @param $url
+   *
+   * @return bool
    */
   public function unlink($url) {
+
+    $success = false;
     $filename = $this->getFilename($url);
     if (is_file($filename)) {
-      unlink($filename);
+      $success = unlink($filename);
     }
 
     $fileUrl = $this->getFilename($url).".url";
     if (is_file($fileUrl)) {
-      unlink($fileUrl);
+      $success = unlink($fileUrl);
     }
+
+    return $success;
 
   }//end unlink()
 
