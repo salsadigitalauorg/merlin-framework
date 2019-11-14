@@ -155,7 +155,7 @@ class GenerateCommand extends Command
     private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
-      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
+      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\Curl\\FetcherCurl");
 
       // Optionally override maximum results (default is unlimited/all).
       $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;

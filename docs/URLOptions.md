@@ -46,7 +46,7 @@ fetch_options:
   # Cache storage root dir (path created if doesn't exist), default /tmp/merlin_cache
   cache_dir: '/tmp/merlin_cache'
   
-  # Fetcher class, default FetcherSpatieCrawler
+  # Fetcher class, default FetcherCurl
   # fetcher_class: '\Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
   fetcher_class: '\Migrate\Fetcher\Fetchers\Curl\FetcherCurl'
   # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
