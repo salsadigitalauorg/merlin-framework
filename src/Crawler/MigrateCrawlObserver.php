@@ -104,6 +104,13 @@ class MigrateCrawlObserver extends CrawlObserver
       $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
       $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
 
+      // Check for malformed UTF-8 encoding.
+      // NOTE: Only checking content, not $cacheUrl or $cacheFoundOnUrl which assuming are OK (!).
+      $testJson = json_encode($html);
+      if (json_last_error() === JSON_ERROR_UTF8) {
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+      }
+
       $data = [
           'url'        => $cacheUrl,
           'foundOnUrl' => $cacheFoundOnUrl,
@@ -111,9 +118,16 @@ class MigrateCrawlObserver extends CrawlObserver
       ];
 
       $cacheJson = json_encode($data);
+
+      // Check for any more strange happenings and record it.
+      if (json_last_error()) {
+        $jsonErrMsg = json_last_error_msg();
+        $this->json->mergeRow("error-json-cache-fail", 'urls', ["{$cacheUrl} -- json_error: {$jsonErrMsg}"], true);
+      }
+
       $this->cache->put($url_string, $cacheJson);
       $this->io->writeln("$url_string - content put in cache.");
-    }
+    }//end if
 
     // Check if duplicate if we are doing that.
     if ($this->hashes instanceof ContentHash) {

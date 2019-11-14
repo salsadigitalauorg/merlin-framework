@@ -164,15 +164,28 @@ class FetcherBase implements FetcherInterface
 
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
-    $data = json_encode(
-        [
-            'url'      => $url,
-            'contents' => $html,
-        ]
-    );
+      // Check for malformed UTF-8 encoding.
+      // NOTE: Only checking content, not $url which assuming are OK (!).
+      $testJson = json_encode($html);
+      if (json_last_error() === JSON_ERROR_UTF8) {
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+      }
 
-      $this->cache->put($url, $data);
-    }
+      $data = [
+          'url'      => $url,
+          'contents' => $html,
+      ];
+
+      $cacheJson = json_encode($data);
+
+      // Check for any more strange happenings and record it.
+      if (json_last_error()) {
+        $jsonErrMsg = json_last_error_msg();
+        $output->mergeRow("error-json-cache-fail", 'urls', ["{$url} -- json_error: {$jsonErrMsg}"], true);
+      }
+
+      $this->cache->put($url, $cacheJson);
+    }//end if
 
     // Check if duplicate if we are doing that.
     $duplicate = false;
