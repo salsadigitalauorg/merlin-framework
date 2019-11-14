@@ -163,8 +163,8 @@ class CacheCommand extends Command
         $cache = $this->initCache($domain);
         $filename = $cache->getFilename($url);
 
-        $this->io->writeln("Remove url:  ".$url);
-        $this->io->writeln("Remove file: ".$filename);
+        $this->io->writeln("Purge url:  ".$url);
+        $this->io->writeln("Purge file: ".$filename);
 
         $exists = is_file($filename);
         if (!$exists) {
@@ -172,9 +172,9 @@ class CacheCommand extends Command
         } else {
           $success = $cache->unlink($url);
           if ($success) {
-            $this->io->success("{$filename} -- Removed!");
+            $this->io->success("{$filename} -- Purged!");
           } else {
-            $this->io->error("{$filename} -- Remove Failed!");
+            $this->io->error("{$filename} -- Purge Failed!");
           }
         }
       }//end if
@@ -193,9 +193,9 @@ class CacheCommand extends Command
   private function purgeDomain($domain) {
 
       if (!empty($domain)) {
-        $yes = $this->io->ask("Really remove entire cache for {$domain}? [y/n]");
+        $yes = $this->io->ask("Really purge entire cache for {$domain}? [y/n]");
         if (!in_array($yes,['Y', 'y'])) {
-          $this->io->writeln('Not removing, safety first! :D');
+          $this->io->writeln('Not purging, safety first! :D');
           exit(0);
         }
 
@@ -210,9 +210,9 @@ class CacheCommand extends Command
 
         $success = !is_dir($path);
         if ($success) {
-          $this->io->success("{$path} -- Removed!");
+          $this->io->success("{$path} -- Purged!");
         } else {
-          $this->io->error("{$path} -- Remove Failed!");
+          $this->io->error("{$path} -- Purge Failed!");
         }
       } else {
         // This one should never happen (!).
