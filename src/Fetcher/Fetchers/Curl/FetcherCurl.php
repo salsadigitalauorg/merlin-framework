@@ -125,10 +125,11 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
         }
       }
 
-      // If you need a more robust way, you can use pecl_http has parse_http_headers()
-      // function, or if you don't want to install that, another option is to make
-      // a new curl request and let it parse the headers for you.
       /*
+          // If you need a more robust way, you can use pecl_http has parse_http_headers()
+          // function, or if you don't want to install that, another option is to make
+          // a new curl request and let it parse the headers for you.
+
           $ch = curl_init($url);
           curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
           curl_setopt($ch, CURLOPT_NOBODY, true);    // we don't need body
