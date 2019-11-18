@@ -114,8 +114,8 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $originUri = $instance->url;
 
       // Fish out the original redirect header to get the status code. Note
-      // that this is not smart - it looks for the initial status, only and
-      // isn't checking for [Ll]ocation:, keeping track of multiple redirects etc.
+      // this is not smart - it looks for the initial status only, not even 3xx, and
+      // isn't checking for [Ll]ocation: or keeping track of multiple redirects etc.
       $statusCode = null;
       $headers = (explode("\r\n", $instance->rawResponseHeaders));
       foreach ($headers as $key => $r) {
@@ -129,15 +129,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
           // If you need a more robust way, you can use pecl_http has parse_http_headers()
           // function, or if you don't want to install that, another option is to make
           // a new curl request and let it parse the headers for you.
-
-          $ch = curl_init($url);
-          curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
-          curl_setopt($ch, CURLOPT_NOBODY, true);    // we don't need body
-          curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-          curl_setopt($ch, CURLOPT_TIMEOUT,10);
-          $output = curl_exec($ch);
-          $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-          curl_close($ch);
+          // Check Reporting/RedirectUtils::
       */
 
       $redirect = [];
@@ -146,7 +138,10 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
           'destination' => $destUri,
           'status_code' => $statusCode,
       ];
-      $this->output->mergeRow('fetched-urls-redirects', 'redirects', $redirect, true);
+
+      $entity_type = $this->config->get('entity_type');
+
+      $this->output->mergeRow("{$entity_type}-redirects", 'redirects', $redirect, true);
     }//end if
 
 }//end checkForRedirect()

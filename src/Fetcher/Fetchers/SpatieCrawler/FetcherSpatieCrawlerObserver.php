@@ -3,6 +3,7 @@
 namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
 
 use GuzzleHttp\Exception\RequestException;
+use Migrate\Reporting\RedirectUtils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObserver;
@@ -63,8 +64,12 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
 
     $this->io->writeln("Fetched ({$status}): {$urlString}");
 
+    // Get raw headers and redirect info.
+    // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
+    $redirect = RedirectUtils::checkRedirect($urlString);
+
     if (!empty($urlString) && !empty($html)) {
-      $this->fetcher->processContent($urlString, $html);
+      $this->fetcher->processContent($urlString, $html, $redirect);
     }
 
     $this->fetcher->incrementCount('fetched');

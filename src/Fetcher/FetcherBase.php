@@ -6,6 +6,7 @@ use Migrate\Command\GenerateCommand;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Migrate\Parser\ParserInterface;
+use Migrate\Reporting\RedirectUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use function DeepCopy\deep_copy;
@@ -146,12 +147,15 @@ class FetcherBase implements FetcherInterface
 
   /**
    * Processes a URL and its respective html content according to the config map.
-   * @param string $url
-   * @param string $html
+   *
+   * @param string     $url
+   * @param string     $html
+   *
+   * @param array|null $redirect
    *
    * @throws \Exception
    */
-  public function processContent(string $url, string $html) {
+  public function processContent(string $url, string $html, array $redirect=[]) {
 
     $row = new \stdClass;
 
@@ -162,16 +166,27 @@ class FetcherBase implements FetcherInterface
 
     $io->write('Parsing: '.$url);
 
+    // Get raw headers and redirect info.
+    $rawHeaders = ($redirect['raw_headers'] ?? null);
+    $isRedirect = ($redirect['redirect'] ?? false);
+    if ($isRedirect) {
+      unset($redirect['raw_headers']);
+      $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
+    }
+
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
-    $data = json_encode(
-        [
-            'url'      => $url,
-            'contents' => $html,
-        ]
-    );
+      $data = [
+          'url'        => $url,
+          'contents'   => $html,
+          'rawHeaders' => $rawHeaders,
+      ];
 
-      $this->cache->put($url, $data);
+      if ($isRedirect) {
+        $data['redirect'] = $redirect;
+      }
+
+      $this->cache->put($url, json_encode($data));
     }
 
     // Check if duplicate if we are doing that.

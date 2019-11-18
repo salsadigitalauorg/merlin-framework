@@ -42,17 +42,19 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
     $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
 
+    $followRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
+    $maxRedirects = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
+
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
     $readTimeout    = ($timeouts['read_timeout'] ?? FetcherDefaults::TIMEOUT_READ);
     $timeout        = ($timeouts['timeout'] ?? FetcherDefaults::TIMEOUT);
 
-    $redirectHandler = new MigrateCrawlerRedirectHandler(
-        (array) $this->config->get('fetch_options'),
-        $this->output,
-        'fetched-urls-redirects'
-    );
-    $redirectOptions = $redirectHandler->getRedirectOptions();
+    if ($followRedirects === false) {
+      $redirectOptions = false;
+    } else {
+      $redirectOptions = ['max' => $maxRedirects];
+    }
 
     $clientOptions = [
         RequestOptions::COOKIES         => true,

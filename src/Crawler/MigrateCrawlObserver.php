@@ -6,6 +6,7 @@ use Consolidation\Comments\Comments;
 use GuzzleHttp\Psr7\Request;
 use Migrate\Fetcher\Cache;
 use Migrate\Fetcher\ContentHash;
+use Migrate\Reporting\RedirectUtils;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -104,18 +105,44 @@ class MigrateCrawlObserver extends CrawlObserver
       $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
       $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
 
+      // Get raw headers and redirect info.
+      // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
+      $redirect = RedirectUtils::checkRedirect($url);
+      $rawHeaders = ($redirect['raw_headers'] ?? null);
+      if (!empty($redirect) && $redirect['redirect']) {
+        unset($redirect['raw_headers']);
+        $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+      }
+
       $data = [
           'url'        => $cacheUrl,
           'foundOnUrl' => $cacheFoundOnUrl,
           'contents'   => $html,
+          'rawHeaders' => $rawHeaders,
       ];
+
+      if ($isRedirect) {
+        $data['redirect'] = $redirect;
+      }
 
       $cacheJson = json_encode($data);
       $this->cache->put($url_string, $cacheJson);
       $this->io->writeln("$url_string - content put in cache.");
-    }
+    } else if ($this->cache instanceof Cache && $crawledFromCache) {
+      // Check for cached redirect data.  We do this because the getCrawlRequests() method
+      // in MigrateCrawler doesn't pass this information as it is impossible to obtain in
+      // the same way in the non-cached version so we have to handle it a bit differently.
+      if ($cacheJson = $this->cache->get($url_string)) {
+        $cacheData = json_decode($cacheJson, true);
+        $redirect = $cacheData['redirect'];
+        if (!empty($redirect) && $redirect['redirect']) {
+          unset($redirect['raw_headers']);
+          $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+        }
+      }
+    }//end if
 
-    // Check if duplicate if we are doing that.
+      // Check if duplicate if we are doing that.
     if ($this->hashes instanceof ContentHash) {
       $html = $response->getBody()->__toString();
       if ($this->hashes->put($url_string, $html)) {
