@@ -16,7 +16,7 @@ class RedirectUtils
    *
    * @return array|null
    */
-  public static function checkRedirect(string $url) {
+  public static function checkForRedirect(string $url) {
 
     if (empty($url)) {
       return null;
@@ -34,40 +34,50 @@ class RedirectUtils
     $redirectCount = ($info['redirect_count'] ?? 0);
     $redirect = $redirectCount > 0;
 
-    $destUri = null;
-    if ($redirect > 0) {
-      $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-    }
-
-    $statusCodeOrigin = null;
-    $statusCodeDestination = null;
-
-    $headers = (explode("\r\n", $rawHeaders));
-    foreach ($headers as $key => $r) {
-      if (stripos($r, 'HTTP/1.1') === 0) {
-        list(,$statusCodeOrigin, $status) = explode(' ', $r, 3);
-        break;
-      }
-    }
-
-    $statusCodeOrigin = intval($statusCodeOrigin);
     $statusCodeDestination = intval($info['http_code']);
 
-    $ret = [
-        'status_code_origin'      => $statusCodeOrigin,
-        'status_code_destination' => $statusCodeDestination,
-        'redirect'                => $redirect,
-        'redirect_count'          => $redirectCount,
-        'url_origin'              => $url,
-        'url_destination'         => $destUri,
-        'raw_headers'             => $rawHeaders,
-    ];
+    if ($redirect) {
+      $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+      $statusCodeOrigin = null;
+
+      // Find the first redirect in raw headers.
+      $headers = (explode("\r\n", $rawHeaders));
+      foreach ($headers as $key => $r) {
+        if (stripos($r, 'HTTP/1.1') === 0) {
+          list(, $statusCodeOrigin, $status) = explode(' ', $r, 3);
+          $statusCodeOrigin = intval($statusCodeOrigin);
+          if ($statusCodeOrigin >= 300 && $statusCodeOrigin < 400) {
+            break;
+          } else {
+            // Let it be the last found code.. this would be weird.
+          }
+        }
+      }
+
+      $ret = [
+          'status_code_origin'      => $statusCodeOrigin,
+          'status_code_destination' => $statusCodeDestination,
+          'redirect'                => $redirect,
+          'redirect_count'          => $redirectCount,
+          'url_origin'              => $url,
+          'url_destination'         => $destUri,
+          'raw_headers'             => $rawHeaders,
+      ];
+    } else {
+      $ret = [
+          'status_code_destination' => $statusCodeDestination,
+          'redirect'                => false,
+          'raw_headers'             => $rawHeaders,
+          'url_origin'              => $url,
+      ];
+    }//end if
 
     curl_close($ch);
 
     return $ret;
 
-  }//end checkRedirect()
+  }//end checkForRedirect()
 
 
 }//end class

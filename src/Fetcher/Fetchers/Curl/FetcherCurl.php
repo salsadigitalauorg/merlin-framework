@@ -114,22 +114,27 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $originUri = $instance->url;
 
       // Fish out the original redirect header to get the status code. Note
-      // this is not smart - it looks for the initial status only, not even 3xx, and
+      // this is not smart - it looks for the initial redirect only and
       // isn't checking for [Ll]ocation: or keeping track of multiple redirects etc.
       $statusCode = null;
       $headers = (explode("\r\n", $instance->rawResponseHeaders));
       foreach ($headers as $key => $r) {
         if (stripos($r, 'HTTP/1.1') === 0) {
           list(,$statusCode, $status) = explode(' ', $r, 3);
-          break;
+          $statusCode = intval($statusCode);
+          if ($statusCode >= 300 && $statusCode < 400) {
+            break;
+          } else {
+            // Let it be the last found code.. this would be weird.
+          }
         }
       }
 
       /*
           // If you need a more robust way, you can use pecl_http has parse_http_headers()
           // function, or if you don't want to install that, another option is to make
-          // a new curl request and let it parse the headers for you.
-          // Check Reporting/RedirectUtils::
+          // a new curl request and let it parse headers & detect redirects for you.
+          // Check Reporting/RedirectUtils::checkForRedirect()
       */
 
       $redirect = [];

@@ -107,7 +107,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
       // Get raw headers and redirect info.
       // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
-      $redirect = RedirectUtils::checkRedirect($url);
+      $redirect = RedirectUtils::checkForRedirect($url);
       $rawHeaders = ($redirect['raw_headers'] ?? null);
       if (!empty($redirect) && $redirect['redirect']) {
         unset($redirect['raw_headers']);
