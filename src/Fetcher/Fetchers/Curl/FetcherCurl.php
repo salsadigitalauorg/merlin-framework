@@ -116,6 +116,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       // Fish out the original redirect header to get the status code. Note
       // this is not smart - it looks for the initial redirect only and
       // isn't checking for [Ll]ocation: or keeping track of multiple redirects etc.
+      // If you need a more robust way, maybe consider pecl_http has parse_http_headers().
       $statusCode = null;
       $headers = (explode("\r\n", $instance->rawResponseHeaders));
       foreach ($headers as $key => $r) {
@@ -129,13 +130,6 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
           }
         }
       }
-
-      /*
-          // If you need a more robust way, you can use pecl_http has parse_http_headers()
-          // function, or if you don't want to install that, another option is to make
-          // a new curl request and let it parse headers & detect redirects for you.
-          // Check Reporting/RedirectUtils::checkForRedirect()
-      */
 
       $redirect = [];
       $redirect[] = [
