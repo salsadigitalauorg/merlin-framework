@@ -14,6 +14,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Migrate\Command\GenerateCommand;
 use Migrate\Command\CrawlCommand;
+use Migrate\Command\ReportCommand;
 
 
 /**
@@ -33,5 +34,6 @@ $application = new Application;
 
 $application->add(new GenerateCommand);
 $application->add(new CrawlCommand);
+$application->add(new ReportCommand);
 
 $application->run();

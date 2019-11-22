@@ -110,7 +110,7 @@ class MigrateCrawlObserver extends CrawlObserver
       $redirect = RedirectUtils::checkForRedirect($url);
       $rawHeaders = ($redirect['raw_headers'] ?? null);
       if (!empty($redirect) && $redirect['redirect']) {
-        unset($redirect['raw_headers']);
+        //unset($redirect['raw_headers']);
         $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
       }
 

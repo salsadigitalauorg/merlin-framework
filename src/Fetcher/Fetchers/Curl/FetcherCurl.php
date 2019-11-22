@@ -11,6 +11,7 @@ use Migrate\Fetcher\FetcherDefaults;
 use Migrate\Fetcher\FetcherInterface;
 
 use Curl\MultiCurl;
+use Migrate\Reporting\RedirectUtils;
 
 /**
  * Class FetcherCurl
@@ -28,7 +29,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   {
     $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
     $allowRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
-    $maxRedirects   = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
+    $maxRedirects   = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
 
     $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
@@ -79,7 +80,8 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
 
   private function onSuccess() {
     return function($instance) {
-      $this->processContent($instance->url, $instance->response);
+      $redirect = RedirectUtils::checkForRedirectMulticurl($instance);
+      $this->processContent($instance->url, $instance->response, $redirect);
     };
 
   }//end onSuccess()
@@ -87,6 +89,16 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
 
   private function onError() {
     return function ($instance) {
+      /*
+          // We could add failed redirects to the results too but not sure this is useful.
+          $redirect = RedirectUtils::checkForRedirectMulticurl($instance);
+          $isRedirect = ($redirect['redirect'] ?? false);
+          if ($isRedirect) {
+          $entity_type = $this->config->get('entity_type');
+          $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
+          }
+      */
+
       $this->processFailed($instance->url, $instance->errorCode, $instance->errorMessage);
     };
 
@@ -95,55 +107,9 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
 
   private function onComplete() {
     return function ($instance) {
-      $this->checkForRedirect($instance);
     };
 
   }//end onComplete()
-
-
-  /**
-   * Checks if this curl request ended up being a redirect.
-   * @param $instance
-   */
-  private function checkForRedirect($instance) {
-
-    $ch = $instance->curl;
-    $redirect = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT) > 0;
-    if ($redirect) {
-      $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-      $originUri = $instance->url;
-
-      // Fish out the original redirect header to get the status code. Note
-      // this is not smart - it looks for the initial redirect only and
-      // isn't checking for [Ll]ocation: or keeping track of multiple redirects etc.
-      // If you need a more robust way, maybe consider pecl_http has parse_http_headers().
-      $statusCode = null;
-      $headers = (explode("\r\n", $instance->rawResponseHeaders));
-      foreach ($headers as $key => $r) {
-        if (stripos($r, 'HTTP/1.1') === 0) {
-          list(,$statusCode, $status) = explode(' ', $r, 3);
-          $statusCode = intval($statusCode);
-          if ($statusCode >= 300 && $statusCode < 400) {
-            break;
-          } else {
-            // Let it be the last found code.. this would be weird.
-          }
-        }
-      }
-
-      $redirect = [];
-      $redirect[] = [
-          'origin'      => $originUri,
-          'destination' => $destUri,
-          'status_code' => $statusCode,
-      ];
-
-      $entity_type = $this->config->get('entity_type');
-
-      $this->output->mergeRow("{$entity_type}-redirects", 'redirects', $redirect, true);
-    }//end if
-
-}//end checkForRedirect()
 
 
 }//end class

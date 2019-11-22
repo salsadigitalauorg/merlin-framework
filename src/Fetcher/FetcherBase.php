@@ -167,19 +167,16 @@ class FetcherBase implements FetcherInterface
     $io->write('Parsing: '.$url);
 
     // Get raw headers and redirect info.
-    $rawHeaders = ($redirect['raw_headers'] ?? null);
     $isRedirect = ($redirect['redirect'] ?? false);
     if ($isRedirect) {
-      unset($redirect['raw_headers']);
       $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
     }
 
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
       $data = [
-          'url'        => $url,
-          'contents'   => $html,
-          'rawHeaders' => $rawHeaders,
+          'url'      => $url,
+          'contents' => $html,
       ];
 
       if ($isRedirect) {
