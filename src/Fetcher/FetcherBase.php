@@ -273,7 +273,8 @@ class FetcherBase implements FetcherInterface
     if ($this->hashes instanceof ContentHash) {
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
-        $this->output->mergeRow('url-content-duplicates', 'duplicates', $duplicateUrls, true);
+        $config = $this->getConfig();
+        $this->output->mergeRow($config->get('entity_type') . '-content-duplicates', 'duplicates', $duplicateUrls, true);
       }
     }
 
