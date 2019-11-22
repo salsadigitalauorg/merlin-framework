@@ -20,7 +20,7 @@ class CrawlerTest extends LocalPhpServerTestCase
   private $outputDir;
 
 
-  /**testGroupsSplitInFiles
+  /**
    * {@inheritdoc}
    *
    * Start up the local PHP server with the www dir required for theses tests.
@@ -110,10 +110,15 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
+    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-redirects.yml');
+    $redirects = Yaml::parse($redirects);
+
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['urls']));
+    $this->assertEquals(2, count($ymls));
+    $this->assertEquals(20, count($crawled['urls']));
+    $this->assertArrayHasKey('redirects', $redirects);
+    $this->assertEquals(8, count($redirects['redirects']));
 
 
   }//end testAllPages()
@@ -136,28 +141,41 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $ymls = glob($this->outputDir . DIRECTORY_SEPARATOR . '*.yml');
 
-    $group1 = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_group1.yml');
+    $group1File = $this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_group1.yml';
+    $defaultFile = $this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_default.yml';
+    $this->assertFileExists($group1File);
+    $this->assertFileExists($defaultFile);
+
+    $group1 = file_get_contents($group1File);
     $group1 = Yaml::parse($group1);
-    $default = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_default.yml');
+    $default = file_get_contents($defaultFile);
     $default = Yaml::parse($default);
 
-    $this->assertEquals(2, count($ymls));
     $this->assertEquals(1, count($group1['urls']));
-    $this->assertEquals(10, count($default['urls']));
+    $this->assertEquals(19, count($default['urls']));
 
     $expected_default = [
       '/',
       '/search.php',
       '/home.html',
+      //'/about.html', // Should be in group1
       '/index.php?p=1',
       '/index.php?p=2',
       '/index.php?p=3',
       '/duplicate_links.php',
+      '/redirect_links.php',
       '/search.php?query=candy-cat',
       '/search.php?query=pedro-pony',
-      '/search.php?query=peppa-pig'
+      '/search.php?query=peppa-pig',
+      '/redirect_src_301.php?this-is-a-duplicate-url=1',
+      '/redirect_src_301.php',
+      '/redirect_src_301.php?random_content=1',
+      '/redirect_src_301.php?random_content=1&this-is-just-to-create-a-different-link=1',
+      '/redirect_src_302.php',
+      '/redirect_src_302.php?this-is-a-duplicate-url=1',
+      '/redirect_src_302.php?random_content=1',
+      '/redirect_src_302.php?random_content=1&this-is-just-to-create-a-different-link=1'
     ];
 
     $expected_group1 = ['/about.html'];
@@ -182,6 +200,12 @@ class CrawlerTest extends LocalPhpServerTestCase
    */
   public function testCache() {
 
+    // Remove cached files from any previous test
+    $ymlDomain = 'http://localhost:8000';
+    $cache = new Cache($ymlDomain);
+    $cache->clearCache(true);
+
+
     // First test to fetch and cache the content
     $config = __DIR__ . DIRECTORY_SEPARATOR . 'cache_test.yml';
     $this->cmdTester->execute(
@@ -196,14 +220,13 @@ class CrawlerTest extends LocalPhpServerTestCase
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['urls']));
-
+    // We have *TWO* ymls, also we will have 'crawled-urls-redirects.yml'
+    $this->assertEquals(2, count($ymls));
+    $this->assertEquals(20, count($crawled['urls']));
 
     // Remove our output files, stop local server and test again.  The files should magically come from the cache.
     $this->tearDown();
     self::stopServer();
-
 
     // Second test from cache
     $this->cmdTester->execute(
@@ -216,10 +239,11 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
+    // We have *ONE* ymls, because when results cleared and run from cache we DO NOT KNOW redirects anymore!
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
     $this->assertEquals(1, count($ymls));
-    $this->assertEquals(11, count($crawled['urls']));
+    $this->assertEquals(20, count($crawled['urls']));
 
 
     // Remove cached files
@@ -250,16 +274,18 @@ class CrawlerTest extends LocalPhpServerTestCase
       ]
     );
 
-    $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
+    $crawledFile = $this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml';
+    $crawledDupesFile = $this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_duplicates.yml';
+    $this->assertFileExists($crawledFile);
+    $this->assertFileExists($crawledDupesFile);
+
+    $crawled = file_get_contents($crawledFile);
     $crawled = Yaml::parse($crawled);
-    $crawledDupes = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR .'crawled-urls-crawler_test_duplicates.yml');
+    $crawledDupes = file_get_contents($crawledDupesFile);
     $crawledDupes = Yaml::parse($crawledDupes);
 
-    $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
-    $this->assertEquals(2, count($ymls));
-
     $this->assertArrayHasKey('urls', $crawled);
-    $this->assertEquals(8, count($crawled['urls']));
+    $this->assertEquals(14, count($crawled['urls']));
 
     $this->assertArrayHasKey('duplicates', $crawledDupes);
     $this->assertIsArray($crawledDupes['duplicates']);
@@ -300,11 +326,17 @@ class CrawlerTest extends LocalPhpServerTestCase
       '/index.php?p=1',
       '/index.php?p=2',
       '/index.php?p=3',
-      '/duplicate_links.php'
+      '/duplicate_links.php',
+      '/redirect_links.php',
+      '/redirect_src_301.php',
+      '/redirect_src_301.php?random_content=1',
+      '/redirect_src_301.php?random_content=1&this-is-just-to-create-a-different-link=1',
+      '/redirect_src_302.php?random_content=1',
+      '/redirect_src_302.php?random_content=1&this-is-just-to-create-a-different-link=1'
     ];
 
     $this->assertArrayHasKey('urls', $crawled);
-    $this->assertEquals(10, count($crawled['urls']));
+    $this->assertEquals(16, count($crawled['urls']));
 
     foreach ($expected_default as $path) {
       $this->assertContains($path, $crawled['urls']);

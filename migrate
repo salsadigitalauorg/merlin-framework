@@ -15,6 +15,7 @@ use Symfony\Component\Console\Application;
 use Migrate\Command\GenerateCommand;
 use Migrate\Command\CrawlCommand;
 use Migrate\Command\CacheCommand;
+use Migrate\Command\ReportCommand;
 
 /**
  * Defines a useful global function to do a var_dump to error_log
@@ -30,11 +31,11 @@ function var_error_log($object = null)
     error_log($contents);          // log contents of the result of var_dump( $object )
 }
 
-
 $application = new Application;
 
 $application->add(new GenerateCommand);
 $application->add(new CrawlCommand);
 $application->add(new CacheCommand);
+$application->add(new ReportCommand);
 
 $application->run();

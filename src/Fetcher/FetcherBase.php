@@ -6,6 +6,7 @@ use Migrate\Command\GenerateCommand;
 use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Migrate\Parser\ParserInterface;
+use Migrate\Reporting\RedirectUtils;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use function DeepCopy\deep_copy;
@@ -146,12 +147,15 @@ class FetcherBase implements FetcherInterface
 
   /**
    * Processes a URL and its respective html content according to the config map.
-   * @param string $url
-   * @param string $html
+   *
+   * @param string     $url
+   * @param string     $html
+   *
+   * @param array|null $redirect
    *
    * @throws \Exception
    */
-  public function processContent(string $url, string $html) {
+  public function processContent(string $url, string $html, array $redirect=[]) {
 
     $row = new \stdClass;
 
@@ -162,8 +166,15 @@ class FetcherBase implements FetcherInterface
 
     $io->write('Parsing: '.$url);
 
+    // Get raw headers and redirect info.
+    $isRedirect = ($redirect['redirect'] ?? false);
+    if ($isRedirect) {
+      $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
+    }
+
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
+
       // Check for malformed UTF-8 encoding.
       // NOTE: Only checking content, not $url which assuming are OK (!).
       $testJson = json_encode($html);
@@ -175,6 +186,10 @@ class FetcherBase implements FetcherInterface
           'url'      => $url,
           'contents' => $html,
       ];
+
+      if ($isRedirect) {
+        $data['redirect'] = $redirect;
+      }
 
       $cacheJson = json_encode($data);
 
@@ -194,8 +209,9 @@ class FetcherBase implements FetcherInterface
     }
 
     if ($duplicate === false) {
+        $crawler = new Crawler($html, $url);
         while ($field = $parser->getMapping()) {
-          $crawler = new Crawler($html, $url);
+        // $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
             $type->process();
@@ -279,6 +295,34 @@ class FetcherBase implements FetcherInterface
     }
 
   }//end complete()
+
+
+  /**
+   * Returns an instance of a valid Fetcher.
+   * @param string                                            $fetcherClass
+   * @param \Symfony\Component\Console\Output\OutputInterface $io
+   * @param \Migrate\Output\OutputInterface                   $json
+   * @param \Migrate\Parser\ParserInterface                   $config
+   *
+   * @return \Migrate\Fetcher\FetcherBase
+   * @throws \Exception
+   */
+  public static function FetcherFactory(string $fetcherClass, OutputInterface $io,
+                                        \Migrate\Output\OutputInterface $json, ParserInterface $config) {
+
+    if (!class_exists($fetcherClass)) {
+      throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
+    }
+
+    if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
+      throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
+    }
+
+    $fetcher  = new $fetcherClass($io, $json, $config);
+
+    return $fetcher;
+
+  }//end FetcherFactory()
 
 
 }//end class

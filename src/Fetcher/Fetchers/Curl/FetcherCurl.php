@@ -11,6 +11,7 @@ use Migrate\Fetcher\FetcherDefaults;
 use Migrate\Fetcher\FetcherInterface;
 
 use Curl\MultiCurl;
+use Migrate\Reporting\RedirectUtils;
 
 /**
  * Class FetcherCurl
@@ -28,6 +29,8 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   {
     $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
     $allowRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
+    $maxRedirects   = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
+
     $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
 
@@ -40,11 +43,13 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $curl->setConnectTimeout($connectTimeout);
     $curl->setTimeout($timeout);
 
-    $curl->success($this->success());
-    $curl->error($this->error());
+    $curl->success($this->onSuccess());
+    $curl->error($this->onError());
+    $curl->complete($this->onComplete());
 
     if ($allowRedirects) {
       $curl->setOpt(CURLOPT_FOLLOWLOCATION, true);
+      $curl->setOpt(CURLOPT_MAXREDIRS, $maxRedirects);
     }
 
     if ($ignoreSSL) {
@@ -73,20 +78,38 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   }//end start()
 
 
-  private function success() {
+  private function onSuccess() {
     return function($instance) {
-      $this->processContent($instance->url, $instance->response);
+      $redirect = RedirectUtils::checkForRedirectMulticurl($instance);
+      $this->processContent($instance->url, $instance->response, $redirect);
     };
 
-  }//end success()
+  }//end onSuccess()
 
 
-  private function error() {
+  private function onError() {
     return function ($instance) {
+      /*
+          // We could add failed redirects to the results too but not sure this is useful.
+          $redirect = RedirectUtils::checkForRedirectMulticurl($instance);
+          $isRedirect = ($redirect['redirect'] ?? false);
+          if ($isRedirect) {
+          $entity_type = $this->config->get('entity_type');
+          $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
+          }
+      */
+
       $this->processFailed($instance->url, $instance->errorCode, $instance->errorMessage);
     };
 
-  }//end error()
+  }//end onError()
+
+
+  private function onComplete() {
+    return function ($instance) {
+    };
+
+  }//end onComplete()
 
 
 }//end class

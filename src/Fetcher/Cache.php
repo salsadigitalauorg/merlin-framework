@@ -274,4 +274,41 @@ class Cache
   }//end fileForceContents()
 
 
+  /**
+   * Returns some basic stats about the cache, like total files
+   * and total and average size on disk in bytes.
+   * NOTE: This could probably use exec/popen('du').. for performance.
+   */
+  public function getStats() {
+
+    if (!is_dir($this->path)) {
+      return;
+    }
+
+    $files = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($this->path),
+        \RecursiveIteratorIterator::SELF_FIRST
+    );
+    $count = 0;
+    $totalSize = 0;
+    $ignore = ['.DS_Store'];
+
+    foreach ($files as $fileinfo) {
+      if ($fileinfo->isFile() && !in_array($fileinfo->getFilename(), $ignore)) {
+        $totalSize += $fileinfo->getSize();
+        $count++;
+      }
+    }
+
+    $stats = [
+        'file_count'       => $count,
+        'total_size_bytes' => $totalSize,
+        'avg_size_bytes'   => ceil($totalSize / $count),
+    ];
+
+    return $stats;
+
+}//end getStats()
+
+
 }//end class

@@ -18,8 +18,10 @@ $page = intval($page);
       <li><a href="/index.php?p=1#fragment ">Test 1</a></li>
       <li><a href="/index.php?p=2">Test 2</a></li>
       <li><a href="/index.php?p=3">Test 3</a></li>
-      <li><a href="/index.php?p=1">Duplicate link</a></li>
+      <li><a href="/index.php?p=1">Duplicate Link</a></li>
       <li><a href="/duplicate_links.php">Duplicate Links</a></li>
+      <li><a href="/redirect_links.php">Redirect Links</a></li>
+
     </ul>
   </nav>
   <?php
