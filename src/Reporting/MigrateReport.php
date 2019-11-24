@@ -457,7 +457,6 @@ class MigrateReport
 
     $targetDomain = $this->dstDomain;
 
-    // This is a PITA because. we dont have the source URL if we do this. fukCKY.
     $rewriteUrls = ($this->options['rewrite_urls']['rewrite'] ?? false);
     $replacePath = null;
     if ($rewriteUrls) {
