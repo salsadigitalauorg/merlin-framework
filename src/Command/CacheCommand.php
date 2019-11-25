@@ -41,7 +41,9 @@ class CacheCommand extends Command
       ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to the configuration file')
       ->addOption('purge-url', null, (InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL), 'Purge url(s) from cache')
       ->addOption('purge-domain', null, InputOption::VALUE_OPTIONAL, 'Purge entire cache for domain')
-      ->addOption('cache-dir', null, InputOption::VALUE_OPTIONAL, 'Specify cache dir (overrides config file)');
+      ->addOption('cache-dir', null, InputOption::VALUE_OPTIONAL, 'Specify cache dir (overrides config file)')
+      ->addOption('domain', null, InputOption::VALUE_OPTIONAL, 'Specify target domain to use')
+      ->addOption('stats', null, InputOption::VALUE_NONE, 'Print the cache statistics');
 
   }//end configure()
 
@@ -68,11 +70,15 @@ class CacheCommand extends Command
 
       if ($crawlerCache) {
         $this->cacheRoot = $crawlerCache;
-        $configDomain = ($conf['domain'] ?? null);
       } else if ($fetcherCache) {
         $this->cacheRoot = $fetcherCache;
-        $configDomain = ($conf['domain'] ?? null);
       }
+
+      $configDomain = ($conf['domain'] ?? null);
+    }
+
+    if ($input->getOption('domain')) {
+      $configDomain = $input->getOption('domain');
     }
 
     if ($input->getOption('cache-dir')) {
@@ -84,8 +90,12 @@ class CacheCommand extends Command
       exit(1);
     }
 
+    $printStats  = ($input->getOption('stats') ?? false);
     $purgeUrls   = $input->getOption('purge-url');
-    $purgeDomain = ($input->getOption('purge-domain') ?? $configDomain);
+    $purgeDomain = null;
+    if (!empty($input->getOption('purge-domain'))) {
+      $purgeDomain = ($input->getOption('purge-domain') ?? $configDomain);
+    }
 
     switch (true) {
       case $purgeUrls:
@@ -93,6 +103,9 @@ class CacheCommand extends Command
         break;
       case $purgeDomain:
         $this->purgeDomain($purgeDomain);
+        break;
+      case $printStats:
+        $this->printStats($configDomain);
         break;
       default:
         $this->io->writeln("Nothing to do... bye!");
@@ -146,12 +159,16 @@ class CacheCommand extends Command
           $p = parse_url($url);
           $scheme = $p['scheme'];
           $host = $p['host'];
-          $domain = "{$scheme}://{$host}";
+          $targetDomain = "{$scheme}://{$host}";
+          if (!empty($p['port'])) {
+            $targetDomain .= ":".$p['port'];
+          }
         } else {
           // Assume using relative url. We str replace just in case someone uses
           // the full URL from the command line and gets confused about it.
           $url = str_replace($domain, "", $url);
           $url = "{$domain}{$url}";
+          $targetDomain = $domain;
         }
 
         // Check we have a valid url.
@@ -160,7 +177,7 @@ class CacheCommand extends Command
           continue;
         }
 
-        $cache = $this->initCache($domain);
+        $cache = $this->initCache($targetDomain);
         $filename = $cache->getFilename($url);
 
         $this->io->writeln("Purge url:  ".$url);
@@ -193,13 +210,13 @@ class CacheCommand extends Command
   private function purgeDomain($domain) {
 
       if (!empty($domain)) {
+        $cache = $this->initCache($domain);
         $yes = $this->io->ask("Really purge entire cache for {$domain}? [y/n]");
         if (!in_array($yes,['Y', 'y'])) {
           $this->io->writeln('Not purging, safety first! :D');
           exit(0);
         }
 
-        $cache = $this->initCache($domain);
         $path = $cache->getPath();
         if (!is_dir($path)) {
           $this->io->warning("No cache found at: {$path}");
@@ -220,7 +237,33 @@ class CacheCommand extends Command
         exit(1);
       }//end if
 
-}//end purgeDomain()
+  }//end purgeDomain()
+
+
+  /**
+   * Prints out the cache statistics.
+   * @param $domain
+   *
+   * @throws \Exception
+   */
+  private function printStats($domain) {
+    if (empty($domain)) {
+      $this->io->error("Specify a domain to print statistics for.");
+      exit(1);
+    }
+
+    $cache = $this->initCache($domain);
+    $this->io->section("Cache Statistics:");
+    $stats = $cache->getStats();
+    if (!empty($stats)) {
+      foreach ($stats as $k => $v) {
+        $this->io->writeln("{$k}: {$v}");
+      }
+    } else {
+      $this->io->error("No cache found at: {$cache->getPath()}");
+    }
+
+  }//end printStats()
 
 
 }//end class
