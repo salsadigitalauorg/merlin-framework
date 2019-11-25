@@ -102,7 +102,7 @@ class MigrateReport
     $useCache       = ($options['cache_enabled'] ?? true);
     $cacheDir       = ($options['cache_dir'] ?? "/tmp/merlin_cache");
     if ($this instanceof MigrateReportMedia) {
-      // We don't cache documents/imaages/videos et al.
+      // We don't cache documents/images/videos et al.
       $options['cache_enabled'] = false;
       $useCache = false;
     }
@@ -246,7 +246,7 @@ class MigrateReport
 
 
   /**
-   * Callback for URL fetched succesfully.
+   * Callback for URL fetched successfully.
    * @return \Closure
    */
   private function onSuccess() {
