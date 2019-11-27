@@ -33,8 +33,10 @@ class Uuid extends TypeBase implements TypeInterface
                 // We couldn't find the selector.
             }
 
+            $value = $this->processValue($element->text());
+
             if ($element && $element->count() > 0) {
-                $uuid = UuidLib::uuid3(UuidLib::NAMESPACE_DNS, $element->text())->toString();
+                $uuid = UuidLib::uuid3(UuidLib::NAMESPACE_DNS, $value)->toString();
             }
         }
 

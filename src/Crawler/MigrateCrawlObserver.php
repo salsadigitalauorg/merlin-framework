@@ -101,7 +101,7 @@ class MigrateCrawlObserver extends CrawlObserver
     // Exclude from URL list if we have exclusion patterns.
     foreach ($this->json->getConfig()->get('options')['exclude'] as $exclude) {
       if (preg_match($exclude, $url_string)) {
-        $this->io->error("SKIPPING: ${url_string} -- Matches exclude pattern: ${exclude}"); 
+        $this->io->caution("Ignoring URL: ${url_string} -- Matches exclude pattern: ${exclude}");
         return;
       }
     }
@@ -109,7 +109,7 @@ class MigrateCrawlObserver extends CrawlObserver
     // Only include if we have exclusive URL match requirement.
     foreach ($this->json->getConfig()->get('options')['include'] as $include) {
       if (!preg_match($include, $url_string)) {
-        $this->io->error("SKIPPING: ${url_string} -- Does not match include pattern: ${include}");
+        $this->io->caution("Ignoring URL: ${url_string} -- Does not match include pattern: ${include}");
         return FALSE;
       }
     }
