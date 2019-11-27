@@ -9,7 +9,10 @@ options:
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
-  exclude: []             # Regex matches to exclude.
+  exclude: []             # Optional regex matches to exclude (url results).
+  include: []             # Optional regex matches to include (url results).
+  crawler_exclude: []     # Optional regex matches to exclude (do not follow).
+  crawler_include: []     # Optional regex matches to include (only follow).
   path_only: true         # Return only the path from the crawled URL.
   urls: []                # Array of starting point urls.
   verify: false           # Ensure the crawler verifies SSL certificates.
