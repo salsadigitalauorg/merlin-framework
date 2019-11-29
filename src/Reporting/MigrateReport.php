@@ -124,7 +124,6 @@ class MigrateReport
     $outputDir      = ($options['output_dir'] ?? "/tmp");
     $this->outputDir = $outputDir;
 
-
     // Options that might be needed around the place.
     $this->options = $options;
 
@@ -242,8 +241,7 @@ class MigrateReport
         $title = str_replace(["_", "-"], " ", $name);
         $this->reportOptions['title'] = $title;
       }
-    }
-    else {
+    } else {
       // Output filename suffix.  You need this if you plan on running
       // multiple media reports so that the file names are unique, or
       // if you don't use name from source files option.
@@ -266,11 +264,7 @@ class MigrateReport
       $this->setFilenameRoot(null, $outputFileRoot);
     }
 
-
-
-
-
-    }//end setUrlsSource()
+  }//end setUrlsSource()
 
 
   /**
