@@ -98,6 +98,22 @@ class MigrateCrawlObserver extends CrawlObserver
 
     $entity_type = $this->json->getConfig()->get('entity_type');
 
+    // Exclude from URL list if we have exclusion patterns.
+    foreach ($this->json->getConfig()->get('options')['exclude'] as $exclude) {
+      if (preg_match($exclude, $url_string)) {
+        $this->io->caution("Ignoring URL: ${url_string} -- Matches exclude pattern: ${exclude}");
+        return;
+      }
+    }
+
+    // Only include if we have exclusive URL match requirement.
+    foreach ($this->json->getConfig()->get('options')['include'] as $include) {
+      if (!preg_match($include, $url_string)) {
+        $this->io->caution("Ignoring URL: ${url_string} -- Does not match include pattern: ${include}");
+        return FALSE;
+      }
+    }
+
     // Cache data if we are doing that.
     if ($this->cache instanceof Cache && !$crawledFromCache) {
       $html = $response->getBody()->__toString();
@@ -147,7 +163,7 @@ class MigrateCrawlObserver extends CrawlObserver
       // the same way in the non-cached version so we have to handle it a bit differently.
       if ($cacheJson = $this->cache->get($url_string)) {
         $cacheData = json_decode($cacheJson, true);
-        $redirect = $cacheData['redirect'];
+        $redirect = $cacheData['redirect'] ?? null;
         if (!empty($redirect) && $redirect['redirect']) {
           unset($redirect['raw_headers']);
           $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
