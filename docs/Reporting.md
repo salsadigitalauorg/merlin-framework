@@ -54,9 +54,11 @@ reports:
       verify_source_response: false
       adopt_source_name: true
       # filename_suffix: "let_a_thousand_blossoms_bloom"
+      # filename_root: "manually-specify-output-filename"
     
       report_options:
         title: "A custom title"
+        adopt_title_name: true
         save_json: true
         save_html: true
         save_pdf: true
@@ -67,6 +69,11 @@ reports:
     src_domain: http://localhost:8000
     dst_domain: http://localhost:8000
     url_source: path/to/a/media/results-file.json
+    # url_source: path/to/a/pattern/media-*-files.json
+    # url_source:
+    #  - path/to/media/file-1.json
+    #  - path/to/media/file-2.json
+    #  - path/to/media/file-3.json
     
     options:
       verify_source_response: true
@@ -76,6 +83,8 @@ reports:
         domain: https://dfat.gov.au
         rewrite: true
         path: /sites/default/files
+      
+        
 ```
 
 
@@ -87,8 +96,9 @@ The first group of main options are required and set key report variables.  The 
 | --- | --- | --- | --- |
 | **Main Configuration** | | | |
 | `type` | Required `string` | Type (i.e. class) of report. | `'content'` |
+| `url_source` | Required `string` | The source file that contains the URLs to check.  This can be: A path to a single file, an array list of multiple files or a pattern/wildcard match path to multiple files.  |  |
 | `dst_domain` | Required `string` | The destination domain of the migrated content. |  |
-| `src_domain` | optional `string` | The source domain of the migrated content.  Note that if you wish to verify source responses (see options below) you must specify this. | `true` |
+| `src_domain` | optional `string` | The source domain of the migrated content.  Note that if you wish to verify source responses (see options below) you must specify this. |  |
 | `enabled` | optional `bool` | If Merlin should generate this report. | `true` |
 | `options` | optional `array`| Options for the report build. | See Configuration (options) below. |
 | **Network Configuration** | | | |
@@ -109,8 +119,8 @@ These options sit under the `options` array in the configuration.
 | --- | --- | --- | --- |
 | `verify_source_response ` | Optional `bool` | Enables source header checking and compares against destination.  | `false` |
 | `adopt_source_name ` | Optional `bool` | This builds report result files based on the input source filename.  This facilitates automatic file naming and report titling.  If you don't use it you will most likely want to use the `filename_suffix` option. | `true` |
-| `filename_suffix ` | Optional `string` | If you don't use the above `adopt_source_name` option, you will need to manually specify a filename suffix if you have multiple reports of the same type so they don't overwrite each other. |  |
-| `filename_suffix ` | Optional `string` | If you don't use the above `adopt_source_name` option, you will need to manually specify a filename suffix if you have multiple reports of the same type so they don't overwrite each other. |  |
+| `filename_root ` | Optional `string` | Filenames will not be automatically generated but will instead be based on the string specified.<br><br><strong>NOTE:</strong>  This options overrides `adopt_source_name` and `report_options.adopt_title_name`| |
+| `filename_suffix ` | Optional `string` | If you don't use the above `adopt_source_name` option, you will need to manually specify a filename suffix if you have multiple reports of the same type so they don't overwrite each other, either by using this option or `filename_root`. |  |
 | `rewrite_urls ` | Optional `array` | This set of options will rewrite the original source urls according to some rules when requests are made to the destination server.  | See below  |
 | `report_options ` | Optional `array` | Options pertaining to the saved output of the reports. | See below  |
 
@@ -131,6 +141,7 @@ These options sit under the `options` array in the configuration.
 |Directive|Required|Description|Default
 | --- | --- | --- | --- |
 | `title ` | Optional `string` | Report title. | Source file name<br>if `adopt_source_name` is `true`<br>"Migration Report"<br>if `adopt_source_name` is `false` |
+| `adopt_title_name ` | Optional `bool` | Generated filenames will be based on the report title instead of the source input files. | `true` |
 | `save_json ` | Optional `bool` |  Save the report raw results as JSON. | `true` |
 | `save_html ` | Optional `bool` |  Save the HTML version of the report. | `true` |
 | `save_pdf ` | Optional `bool` |  Save the PDF version of the report. | `false` |
