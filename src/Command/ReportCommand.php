@@ -62,11 +62,6 @@ class ReportCommand extends Command
       // The MigrateReport class will do its thing from a config.
       MigrateReport::generateReportsFromConfig($io, $config, $output);
 
-      // If you wanted to do something more manual you would do something like:
-      // $mr = new MigrateReport($io, $dstDomain, $srcDomain, $options);
-      // $data = $mr->verifyUrls($urls);
-      // $mr->writeReportFiles($data);
-      // unset($mr);.
     } else {
       $io->writeln("Config empty! Nothing to do...");
     }
