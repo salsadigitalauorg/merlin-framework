@@ -173,6 +173,10 @@ abstract class TypeBase implements TypeInterface {
 
     foreach ($selector as $currentSelector) {
 
+      if (empty($currentSelector)) {
+        $this->output->mergeRow("warning-empty-selector", $this->config['field'], ["Selector missing!"], true);
+      }
+
       $lastCrawler = $this->crawler;
 
       $results = $this->processSelector($currentSelector);
