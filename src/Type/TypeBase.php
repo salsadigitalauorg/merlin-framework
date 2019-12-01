@@ -9,6 +9,7 @@ use Migrate\Exception\ElementNotFoundException;
 use Migrate\Exception\ValidationException;
 use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
 use Migrate\ProcessController;
+use function DeepCopy\deep_copy;
 
 /**
  * Field type base.
@@ -168,62 +169,124 @@ abstract class TypeBase implements TypeInterface {
 
     $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
 
-    if ($this->supports('xpath') && $selector) {
-      $element = @$this->crawler->evaluate($selector);
-      $xpath = TRUE;
-
-      if ($element instanceof Crawler && $element->count() == 0) {
-        // The DOMCrawler can return an empty DOMNode list or an array
-        // if the selector doesn't match something that xpath can evaluate.
-        $xpath = FALSE;
-        $element = $this->crawler;
-      }
-
-      if (is_array($element)) {
-        // If the evaluate method returns an array we don't have a valid xpath
-        // selector so we reset these values and continue forward!
-        $xpath = FALSE;
-        $element = $this->crawler;
-      }
+    if (!is_array($selector)) {
+      $selectors = [$selector];
+    } else {
+      $selectors = $selector;
     }
 
-    if ($this->supports('xpath') && !$selector && !empty($this->config['xpath'])) {
-      // If a selector hasn't been set we can still allow types to override the xpath
-      // option and use the xpath processing by sepcifing the xpath flag in the config.
-      $xpath = TRUE;
-    }
 
-    if (!$xpath && $selector) {
-      // If we haven't found an element with xpath lets try the DOM.
-      try {
-        $element = $this->crawler->filter($selector);
-      } catch (SyntaxErrorException $syntax) {
-        // If the domcrawler couldn't filter to the selector, default to an
-        // empty crawler.
-        $element = new Crawler();
+    $lastSelectorIdx = count($selectors) - 1;
+    echo "\nLAST: $lastSelectorIdx \n";
+
+    $originalCrawler = deep_copy($element);
+
+    $empties = [];
+
+    foreach ($selectors as $idx => $selector) {
+
+      echo "$idx -- $selector \n";
+
+      if ($this->supports('xpath') && $selector) {
+        $element = @$this->crawler->evaluate($selector);
+        $xpath = true;
+
+        if ($element instanceof Crawler && $element->count() == 0) {
+          // The DOMCrawler can return an empty DOMNode list or an array
+          // if the selector doesn't match something that xpath can evaluate.
+          $xpath = false;
+          $element = $this->crawler;
+        }
+
+        if (is_array($element)) {
+          // If the evaluate method returns an array we don't have a valid xpath
+          // selector so we reset these values and continue forward!
+          $xpath = false;
+          $element = $this->crawler;
+        }
       }
-    }
 
-    $this->crawler = $element;
-
-    if ($this->crawler->count() == 0) {
-      if (!empty($this->config['options']['allow_null'])) {
-        $this->row->{$this->config['field']} = $this->nullValue();
+      if ($this->supports('xpath') && !$selector && !empty($this->config['xpath'])) {
+        // If a selector hasn't been set we can still allow types to override the xpath
+        // option and use the xpath processing by specifying the xpath flag in the config.
+        $xpath = true;
       }
 
-      if (!empty($this->config['options']['mandatory'])) {
-        $this->row->mandatory_fail = TRUE;
-        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
+      if (!$xpath && $selector) {
+        // If we haven't found an element with xpath lets try the DOM.
+        try {
+          $element = $this->crawler->filter($selector);
+        } catch (SyntaxErrorException $syntax) {
+          // If the domcrawler couldn't filter to the selector, default to an
+          // empty crawler.
+          $element = new Crawler();
+
+//          $element = $this->crawler;
+
+          echo "*********I DID THIS";
+          echo $this->crawler->count();
+          echo "*********";
+//die;
+        }
       }
 
-      if (isset($this->config['default'])) {
+
+//      $this->crawler = $element;
+
+      //echo $this->crawler->count()
+
+
+      if ($this->crawler->count() == 0) {
+
+        if ($idx < $lastSelectorIdx) {
+          $this->crawler = $originalCrawler;
+          continue;
+        }
+
+
+        if (!empty($this->config['options']['allow_null'])) {
+          $this->row->{$this->config['field']} = $this->nullValue();
+        }
+
+        if (!empty($this->config['options']['mandatory'])) {
+          $this->row->mandatory_fail = true;
+          $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
+        }
+
+        if (isset($this->config['default'])) {
           $this->processDefault();
+        }
+
+        echo "I THEW AN EXCEPTION>>";
+//          if ($idx === $lastSelectorIdx) {
+        throw new ElementNotFoundException(implode(";", $empties));
+//          }
+
+//      }
+
+      }
+      else {
+        $this->crawler = $element;
       }
 
-      throw new ElementNotFoundException($selector);
+      //return $xpath ? $this->processXpath() : $this->processDom();
+      if ($xpath) {
+        $this->processXpath();
+      } else {
+        $this->processDom();
+      }
+
+//
+//      $element = $originalCrawler;
+//      $this->crawler = $element;
+//      $xpath = false;
+
     }
 
-    return $xpath ? $this->processXpath() : $this->processDom();
+
+
+
+
 
   }//end process()
 

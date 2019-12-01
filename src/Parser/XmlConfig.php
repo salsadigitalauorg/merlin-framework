@@ -41,7 +41,7 @@ class XmlConfig extends ConfigBase
 
         $data['files'] = $files;
 
-        $data = $this->inflateMappings($data);
+//        $data = $this->inflateMappings($data);
 
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);

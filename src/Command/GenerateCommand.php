@@ -236,7 +236,7 @@ class GenerateCommand extends Command
                 } catch (ValidationException $e) {
                     $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getTraceAsString()], true);
                 }
             }
 

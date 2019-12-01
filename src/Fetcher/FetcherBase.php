@@ -221,6 +221,10 @@ class FetcherBase implements FetcherInterface
             $output->mergeRow("{$entity_type}-".$e::FILE, $url, [$e->getMessage()], true);
           } catch (\Exception $e) {
             $output->mergeRow("{$entity_type}-error-unhandled", $url, [$e->getMessage()], true);
+            error_log(
+              $e->getFile() . "(". $e->getLine() ."): " . $e->getMessage() . "\n"
+               . $e->getTraceAsString()
+            );
           }
         }//end while
     }
