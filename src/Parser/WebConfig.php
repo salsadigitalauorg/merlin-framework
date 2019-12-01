@@ -85,7 +85,7 @@ class WebConfig extends ConfigBase
             throw new \Exception("Invalid source file: No mappings found in the source file");
         }
 
-//        $data = $this->inflateMappings($data);
+        $data = $this->inflateMappings($data);
 
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);

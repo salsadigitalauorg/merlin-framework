@@ -111,8 +111,7 @@ abstract class ConfigBase implements ParserInterface
             $data['urls'] = [$data['urls']];
         }
 
-        //$data = $this->inflateMappings($data);
-
+        // $data = $this->inflateMappings($data);
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         $this->totals['urls'] = count($data['urls']);
@@ -223,6 +222,7 @@ abstract class ConfigBase implements ParserInterface
    *
    * field (string), selector (array):
    *    The field will contain the result from the *first* matched selector.
+   *    NOTE: This case is now handled in Type/TypeBase.
    *
    *
    * @param $data
@@ -258,14 +258,7 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-          } else if (is_string($field) && is_array($selector)) {
-            // Reverse is here for first match since we are looping backwards.
-            $selector = array_reverse($selector);
-            foreach ($selector as $idx => $newSelector) {
-              $mappings[] = self::cloneMap($currentMap, $field, $newSelector);
-            }
 
-            unset($mappings[$i]);
           } else if (is_array($field) && is_string($selector)) {
             // Reverse is here for first match since we are looping backwards.
             $field = array_reverse($field);
@@ -274,6 +267,7 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
+
           }//end if
         }//end if
       }//end for

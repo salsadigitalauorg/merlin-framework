@@ -111,12 +111,12 @@ abstract class TypeBase implements TypeInterface {
   {
 
     if (!empty($this->config['processors'])) {
-      return $this->processors::apply(
+    return $this->processors::apply(
         $value,
         $this->config['processors'],
         $this->crawler,
         $this->output
-      );
+    );
     }
 
     return $value;
@@ -130,8 +130,8 @@ abstract class TypeBase implements TypeInterface {
   public function getSupportedSelectors()
   {
     return [
-      'dom',
-      'xpath',
+        'dom',
+        'xpath',
     ];
 
   }//end getSupportedSelectors()
@@ -157,23 +157,25 @@ abstract class TypeBase implements TypeInterface {
   }//end nullValue()
 
 
-
+  /**
+   * {@inheritdoc}
+   *
+   * @throws \Migrate\Exception\ElementNotFoundException
+   * @throws \Migrate\Exception\ValidationException
+   */
   public function process() {
 
     $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
-
 
     if (!is_array($selector)) {
       $selector = [$selector];
     }
 
-
     $failedSelectors = [];
     $selectorCount = count($selector);
 
     foreach ($selector as $currentSelector) {
-
-      if (empty($currentSelector)) {
+      if (empty(trim($currentSelector))) {
         $this->output->mergeRow("warning-empty-selector", $this->config['field'], ["Selector missing!"], true);
       }
 
@@ -181,28 +183,32 @@ abstract class TypeBase implements TypeInterface {
 
       $results = $this->processSelector($currentSelector);
 
-      echo "\n## LOOKING FOR: $currentSelector >";
-
       if ($results === false) {
-        echo "NOT FOUND \n";
         $this->crawler = $lastCrawler;
         $failedSelectors[] = $currentSelector;
+      } else {
+        echo $results;
+        // We found our first match selector, so stop lookin'.
+        break;
       }
-      else echo "\n";
+    }//end foreach
 
-    }
-
+    // If none of the specified selectors matched for this field, report as error.
     if ($failedSelectors && count($failedSelectors) === $selectorCount) {
-      $field = $this->config['field'] ?? null;
+      $field = ($this->config['field'] ?? null);
       $fieldLabel = " for field '{$field}'";
-      throw new ElementNotFoundException("Failed to find any multiple selector{$fieldLabel}: " . implode("; ", $failedSelectors));
+      throw new ElementNotFoundException("Failed to find any multiple selector{$fieldLabel}: ".implode("; ", $failedSelectors));
     }
 
-  }
+  }//end process()
 
 
   /**
-   * {@inheritdoc}
+   * Processes the current selector.
+   * @param $selector
+   *
+   * @return bool
+   * @throws \Migrate\Exception\ValidationException
    */
   private function processSelector($selector)
   {
@@ -255,20 +261,25 @@ abstract class TypeBase implements TypeInterface {
 
       if (!empty($this->config['options']['mandatory'])) {
         $this->row->mandatory_fail = TRUE;
-        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
+        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element using selector '{$selector}' missing in url: {$sourceUri}"], true);
       }
 
       if (isset($this->config['default'])) {
         $this->processDefault();
       }
 
-//      throw new ElementNotFoundException($selector);
       return false;
     }
 
-     return $xpath ? $this->processXpath() : $this->processDom();
+    if ($xpath) {
+      $this->processXpath();
+    } else {
+      $this->processDom();
+    }
 
-  }//end process()
+    return true;
+
+  }//end processSelector()
 
 
   /**
