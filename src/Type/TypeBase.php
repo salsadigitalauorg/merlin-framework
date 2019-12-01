@@ -187,7 +187,6 @@ abstract class TypeBase implements TypeInterface {
         $this->crawler = $lastCrawler;
         $failedSelectors[] = $currentSelector;
       } else {
-        echo $results;
         // We found our first match selector, so stop lookin'.
         break;
       }
