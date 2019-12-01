@@ -211,6 +211,7 @@ class FetcherBase implements FetcherInterface
     if ($duplicate === false) {
         $crawler = new Crawler($html, $url);
         while ($field = $parser->getMapping()) {
+
         // $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
