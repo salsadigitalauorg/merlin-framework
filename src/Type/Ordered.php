@@ -49,17 +49,14 @@ class Ordered extends TypeBase implements TypeInterface {
     $this->crawler->each(
         function(Crawler $node) use ($list, &$results) {
           foreach ($list as $item) {
-
             if (isset($item['by']['selector'])) {
               $result = $node->evaluate($item['by']['selector']);
               if ($result->count() == 0) {
                 continue;
-              }
-              else {
+              } else {
                 $node = $result;
               }
-            }
-            else {
+            } else {
               $attr = $node->attr($item['by']['attr']);
                 if (strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
                   continue;
@@ -69,7 +66,7 @@ class Ordered extends TypeBase implements TypeInterface {
             $row = new \stdClass();
             $this->processItem($row, $node, $item);
             $results[] = $row;
-          }
+          }//end foreach
         }
     );
 

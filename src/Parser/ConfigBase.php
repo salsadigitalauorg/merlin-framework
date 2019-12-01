@@ -258,7 +258,6 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-
           } else if (is_array($field) && is_string($selector)) {
             // Reverse is here for first match since we are looping backwards.
             $field = array_reverse($field);
@@ -267,7 +266,6 @@ abstract class ConfigBase implements ParserInterface
             }
 
             unset($mappings[$i]);
-
           }//end if
         }//end if
       }//end for

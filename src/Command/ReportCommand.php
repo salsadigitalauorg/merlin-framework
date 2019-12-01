@@ -61,7 +61,6 @@ class ReportCommand extends Command
     if (!empty($config)) {
       // The MigrateReport class will do its thing from a config.
       MigrateReport::generateReportsFromConfig($io, $config, $output);
-
     } else {
       $io->writeln("Config empty! Nothing to do...");
     }

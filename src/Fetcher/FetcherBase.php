@@ -174,7 +174,6 @@ class FetcherBase implements FetcherInterface
 
     // Add to cache if we are doing that.
     if ($this->cache instanceof Cache) {
-
       // Check for malformed UTF-8 encoding.
       // NOTE: Only checking content, not $url which assuming are OK (!).
       $testJson = json_encode($html);
@@ -211,7 +210,6 @@ class FetcherBase implements FetcherInterface
     if ($duplicate === false) {
         $crawler = new Crawler($html, $url);
         while ($field = $parser->getMapping()) {
-
         // $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
@@ -223,12 +221,11 @@ class FetcherBase implements FetcherInterface
           } catch (\Exception $e) {
             $output->mergeRow("{$entity_type}-error-unhandled", $url, [$e->getMessage()], true);
             error_log(
-              $e->getFile() . "(". $e->getLine() ."): " . $e->getMessage() . "\n"
-               . $e->getTraceAsString()
+                $e->getFile()."(".$e->getLine()."): ".$e->getMessage()."\n".$e->getTraceAsString()
             );
           }
         }//end while
-    }
+    }//end if
 
     // Reset the parser so we have mappings back at 0.
     $parser->reset();
@@ -295,7 +292,7 @@ class FetcherBase implements FetcherInterface
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
         $config = $this->getConfig();
-        $this->output->mergeRow($config->get('entity_type') . '-content-duplicates', 'duplicates', $duplicateUrls, true);
+        $this->output->mergeRow($config->get('entity_type').'-content-duplicates', 'duplicates', $duplicateUrls, true);
       }
     }
 

@@ -127,12 +127,12 @@ class MigrateCrawlObserver extends CrawlObserver
       if (json_last_error() === JSON_ERROR_UTF8) {
         $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
       }
+
       // Get raw headers and redirect info.
       // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
       $redirect = RedirectUtils::checkForRedirect($url);
       $rawHeaders = ($redirect['raw_headers'] ?? null);
       if (!empty($redirect) && $redirect['redirect']) {
-        //unset($redirect['raw_headers']);
         $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
       }
 
@@ -163,7 +163,7 @@ class MigrateCrawlObserver extends CrawlObserver
       // the same way in the non-cached version so we have to handle it a bit differently.
       if ($cacheJson = $this->cache->get($url_string)) {
         $cacheData = json_decode($cacheJson, true);
-        $redirect = $cacheData['redirect'] ?? null;
+        $redirect = ($cacheData['redirect'] ?? null);
         if (!empty($redirect) && $redirect['redirect']) {
           unset($redirect['raw_headers']);
           $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
