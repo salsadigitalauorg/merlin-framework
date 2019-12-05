@@ -128,7 +128,7 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
         $link = $link->count() > 0 ? $link->text() : 'internal:/';
         // Menu uuid comprised of menu name, link text, link value.
         $uuid_text = $this->config['name'].$text->text().$link;
-        $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_text);
+        $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, strtolower($uuid_text));
 
         if ($this->isRelativeUri($link)) {
           $link = 'internal:'.$link;
