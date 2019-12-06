@@ -186,7 +186,6 @@ class FetcherBase implements FetcherInterface
       $html = preg_replace($raw_prp, $raw_prr, $html);
     }
 
-
     // Get raw headers and redirect info.
     $isRedirect = ($redirect['redirect'] ?? false);
     if ($isRedirect) {
