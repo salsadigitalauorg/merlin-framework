@@ -166,6 +166,27 @@ class FetcherBase implements FetcherInterface
 
     $io->write('Parsing: '.$url);
 
+    // Strips any script tags, which can be problematic when parsed by DOMDocument.
+    $stripScriptTags = ($this->config->get('url_options')['raw_strip_script_tags'] ?? false);
+    if ($stripScriptTags !== false) {
+      $pattern = null;
+      if (filter_var($stripScriptTags, FILTER_VALIDATE_BOOLEAN)) {
+        $pattern = '#<script(.*?)>(.*?)</script>#is';
+      }
+
+      if (!empty($pattern)) {
+        $html = preg_replace($pattern, '', $html);
+      }
+    }
+
+    // Similarly, if we have a raw pattern replace specified, do that.
+    $raw_prp = ($this->config->get('url_options')['raw_pattern_replace']['pattern'] ?? null);
+    $raw_prr = ($this->config->get('url_options')['raw_pattern_replace']['replace'] ?? null);
+    if (is_string($raw_prp) && !empty($raw_prr)) {
+      $html = preg_replace($raw_prp, $raw_prr, $html);
+    }
+
+
     // Get raw headers and redirect info.
     $isRedirect = ($redirect['redirect'] ?? false);
     if ($isRedirect) {
@@ -173,7 +194,7 @@ class FetcherBase implements FetcherInterface
     }
 
     // Add to cache if we are doing that.
-    if ($this->cache instanceof Cache) {
+    if ($this->cache instanceof Cache && !$this->cache->exists($url)) {
       // Check for malformed UTF-8 encoding.
       // NOTE: Only checking content, not $url which assuming are OK (!).
       $testJson = json_encode($html);
