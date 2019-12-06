@@ -110,7 +110,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
-    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_duplicates.yml');
+    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_redirects.yml');
     $redirects = Yaml::parse($redirects);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
@@ -220,7 +220,7 @@ class CrawlerTest extends LocalPhpServerTestCase
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    // We have *TWO* ymls, also we will have 'crawled-urls-redirects.yml'
+    // We have *TWO* ymls, also we will have 'crawled-urls-crawler_test_redirects.yml'
     $this->assertEquals(2, count($ymls));
     $this->assertEquals(20, count($crawled['urls']));
 
@@ -239,10 +239,10 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
-    // We have *ONE* ymls, because when results cleared and run from cache we DO NOT KNOW redirects anymore!
+    // We should have *TWO* ymls because caching also supports redirect info.
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    $this->assertEquals(1, count($ymls));
+    $this->assertEquals(2, count($ymls));
     $this->assertEquals(20, count($crawled['urls']));
 
 

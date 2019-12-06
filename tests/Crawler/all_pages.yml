@@ -11,4 +11,3 @@ options:
   exclude: []             # Regex matches to exclude.
   path_only: true         # Return only the path from the crawled URL.
   cache_enabled: false    # Caches crawled content and uses cache to build results.
-  find_content_duplicates: true # Finds content duplicates
