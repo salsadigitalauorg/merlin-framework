@@ -110,7 +110,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
-    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-redirects.yml');
+    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_duplicates.yml');
     $redirects = Yaml::parse($redirects);
 
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
