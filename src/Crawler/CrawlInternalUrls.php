@@ -61,6 +61,15 @@ class CrawlInternalUrls extends CrawlProfile
             'mpeg',
             'zip',
             'gz',
+            'rtf',
+            'xml',
+            'tiff',
+            'eps',
+            'docm',
+            'dot',
+            'pub',
+            'indd',
+            'ppsx',
         ];
 
     }//end __construct()
@@ -74,13 +83,13 @@ class CrawlInternalUrls extends CrawlProfile
           return FALSE;
         }
 
-        foreach ($this->config['options']['exclude'] as $exclude) {
+        foreach ($this->config['options']['crawler_exclude'] as $exclude) {
           if (preg_match($exclude, $url->__toString())) {
             return FALSE;
           }
         }
 
-        foreach ($this->config['options']['include'] as $include) {
+        foreach ($this->config['options']['crawler_include'] as $include) {
           if (!preg_match($include, $url->__toString())) {
             return FALSE;
           }

@@ -95,15 +95,10 @@ class FetcherTest extends LocalPhpServerTestCase
     $io = new SymfonyStyle($input, $output);
     $json = new Json($io, $config);
 
-    // Instead of creating a fetcher, could potentially use the command class:
-//    $c = new \Migrate\Command\GenerateCommand();
-//    $f = function() use ($config, $json, $io) {
-//      $this->config = $config;
-//      $this->runWeb($json, $io);
-//    };
-//    $f->call($c);
-
+    // We use Spatie to test JS.
     $fetcher = new \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    // TODO: extend to test FetcherCurl too
+    // $fetcher = new \Migrate\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
     $urls = $configData['urls'] ?? [];
     foreach($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);
@@ -437,7 +432,7 @@ class FetcherTest extends LocalPhpServerTestCase
     $data = $this->doRequest("Duplicate Bananas", $config);
 
     // Check we got the right number of duplicate results
-    $duplicateUrls = $data['url-content-duplicates']['duplicates'][0]['urls'] ?? [];
+    $duplicateUrls = $data['phpunit_test-content-duplicates']['duplicates'][0]['urls'] ?? [];
 
     $this->assertNotEmpty($duplicateUrls);
     $this->assertCount(count($config['urls']), $duplicateUrls);

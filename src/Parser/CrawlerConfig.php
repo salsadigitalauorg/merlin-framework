@@ -31,9 +31,13 @@ class CrawlerConfig extends ConfigBase
             'delay'            => 100,
 // Delay between URL retrieval (ms).
             'exclude'          => [],
-// Regex options for crawl exclusion.
+// Optional regex matches to exclude (url results).
             'include'          => [],
-// Regex options for crawl inclusion.
+// Optional regex matches to include (url results).
+            'crawler_include'  => [],
+// Optional regex matches to include (only follow).
+            'crawler_exclude'  => [],
+// Optional regex matches to exclude (do not follow).
             'timeout'          => 10,
 // Timeout for the crawler in seconds.
             'connect_timeout'  => 10,

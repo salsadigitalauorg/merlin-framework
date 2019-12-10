@@ -155,22 +155,13 @@ class GenerateCommand extends Command
     private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
-      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
+      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\Curl\\FetcherCurl");
 
       // Optionally override maximum results (default is unlimited/all).
       $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
       $urls = $limit ? array_slice($this->config->get('urls'), 0, $limit, true) : $this->config->get('urls');
 
-      if (!class_exists($fetcherClass)) {
-        throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
-      }
-
-      if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
-        throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
-      }
-
-      // @var \Migrate\Fetcher\FetcherBase $fetcher
-      $fetcher  = new $fetcherClass($io, $json, $this->config);
+      $fetcher = FetcherBase::FetcherFactory($fetcherClass, $io, $json, $this->config);
 
       // Use cache?
       $cache = null;
@@ -189,8 +180,9 @@ class GenerateCommand extends Command
             $cacheData = json_decode($cacheJson, true);
             if (is_array($cacheData) && key_exists('contents', $cacheData) && !empty($cacheData['contents'])) {
               $contents = $cacheData['contents'];
+              $redirect = ($cacheData['redirect'] ?? []);
               $io->writeln("Fetched (cache): {$url}");
-              $fetcher->processContent($url, $contents);
+              $fetcher->processContent($url, $contents, $redirect);
               $fetcher->incrementCount('fetched_cache');
               continue;
             }
@@ -244,7 +236,7 @@ class GenerateCommand extends Command
                 } catch (ValidationException $e) {
                     $json->mergeRow("{$entity_type}-".$e::FILE, $file, [$e->getMessage()], true);
                 } catch (\Exception $e) {
-                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getMessage()], true);
+                    $json->mergeRow("{$entity_type}-error-unhandled", $file, [$e->getTraceAsString()], true);
                 }
             }
 

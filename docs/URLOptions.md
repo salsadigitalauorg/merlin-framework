@@ -1,13 +1,13 @@
 ---
 id: url-options
-title: URL Options
+title: URL and Fetcher Options
 ---
 
-# Fetch options
+# URL and Fetcher options
 
 URL content is retrieved via a Fetcher.  There are a number of options that can apply to how the content is retreived.  These options are specified by the `fetch_options` array directive in the configuration:
 
-| Option        | Type | Default | Explanation           |
+| Option        | Type | Default | Description           |
 | ------------- | ---- | ------- | ------------- |
 | `concurrency` | int | `10` | How many maximum concurrent requests should be used to fetch content.
 | `delay` | int | `100` | Delay between requests in milliseconds.
@@ -46,7 +46,7 @@ fetch_options:
   # Cache storage root dir (path created if doesn't exist), default /tmp/merlin_cache
   cache_dir: '/tmp/merlin_cache'
   
-  # Fetcher class, default FetcherSpatieCrawler
+  # Fetcher class, default FetcherCurl
   # fetcher_class: '\Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
   fetcher_class: '\Migrate\Fetcher\Fetchers\Curl\FetcherCurl'
   # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
@@ -77,15 +77,17 @@ fetch_options:
 There are a number of options that can apply to the URL list.  These options are specified by the `url_options` array directive in the configuration:
 
 
-| Option        | Explanation           |
-| ------------- | ------------- |
-| `include_query` | Will include the **query** part of the URL in the request.  If set to false, the crawler will only fetch the path component of the URL. |
-| `include_fragment` | Will include the **fragment** part of the URL.  If set to false, the crawler will only fetch the path component of the URL. |
-| `find_content_duplicates ` | Will check for **content** duplicates.  This will create a file called `url-content-duplicates.json` that contains a list of URLs that appear to resolve to the same content.  This is to avoid content duplication in the target system as well as provide a way to easily generate aliases. |
-| `hash_selector` | This is an **XPath** selector that is used to generate the hash of content that is used to detect duplicates.  By default `sha1` is used as the hash algorithm and uses the `<body>` tag of the page as the determining content.|
-| `hash_exclude_nodes ` | This is an array of **XPath** selectors to *exclude* when generating the hash to detect duplicates.  This could include elements that may appear on the page that might be metadata/cache busters or contain timestamps etc that can be safely excluded from building a hash for duplicate detection.  By default all `<script>`, `<!-- Comment -->`, `<style>`, `<input>` and `<head>` tags will be ignored.  |
-| `urls` | This is an associative array of urls and their corresponding `include_query` and `include_fragment` settings (as above) to override the global setting, if required.|
-	
+| Option        | Description   | Default |
+| ------------- | ------------- | ------------- |
+| `include_query` | Will include the **query** part of the URL in the request.  If set to false, the crawler will only fetch the path component of the URL. | boolean `false` |
+| `include_fragment` | Will include the **fragment** part of the URL.  If set to false, the crawler will only fetch the path component of the URL. | boolean `false` |
+| `find_content_duplicates ` | Will check for **content** duplicates.  This will create a file called `url-content-duplicates.json` that contains a list of URLs that appear to resolve to the same content.  This is to avoid content duplication in the target system as well as provide a way to easily generate aliases. | boolean `true` |
+| `hash_selector` | This is an **XPath** selector that is used to generate the hash of content that is used to detect duplicates.  By default `sha1` is used as the hash algorithm and uses the `<body>` tag of the page as the determining content.| string `"//body"` |
+| `hash_exclude_nodes ` | This is an array of **XPath** selectors to *exclude* when generating the hash to detect duplicates.  This could include elements that may appear on the page that might be metadata/cache busters or contain timestamps etc that can be safely excluded from building a hash for duplicate detection.  By default all `<script>`, `<!-- Comment -->`, `<style>`, `<input>` and `<head>` tags will be ignored. | array |
+| `urls` | This is an associative array of urls and their corresponding `include_query` and `include_fragment` settings (as above) to override the global setting, if required.| array |
+| `raw_strip_script_tags` | Uses a regular expression on the raw fetched content to strip script tags before being read by the DOM library.  These script tags can somtimes cause unexpected rewriting by the library if it considers them to be non-conforming markup.  | `false` |
+| `raw_pattern_replace` | Assocative array with keys `pattern` and `replace`.  Uses a regular expression on the raw fetched content to do a search and replace.  You must specify both keys for it to be enabled. | array |		
+ 
  
 ## Example `url_options` configuration
 
@@ -118,6 +120,12 @@ url_options:
     - '//style'
     - '//input'
     - '//head'
+
+  # Strip <script> tags and replace all tables
+  raw_strip_script_tags: true
+  raw_pattern_replace:
+    pattern: '#<table(.*?)>(.*?)</table>#is'
+    replace: '<table class="was-a-table"></table>'  
 ```
 
 ### Example overriding options for specific URLs
