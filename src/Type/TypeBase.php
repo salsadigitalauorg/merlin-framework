@@ -196,7 +196,12 @@ abstract class TypeBase implements TypeInterface {
     if ($failedSelectors && count($failedSelectors) === $selectorCount) {
       $field = ($this->config['field'] ?? null);
       $fieldLabel = " for field '{$field}'";
-      throw new ElementNotFoundException("Failed to find any multiple selector{$fieldLabel}: ".implode("; ", $failedSelectors));
+      $multipleLabel = "";
+      if ($selectorCount > 1) {
+        $multipleLabel = "any multiple ";
+      }
+
+      throw new ElementNotFoundException("Failed to find {$multipleLabel}selector{$fieldLabel}: ".implode("; ", $failedSelectors));
     }
 
   }//end process()
