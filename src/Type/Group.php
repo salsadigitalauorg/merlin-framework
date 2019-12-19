@@ -67,6 +67,7 @@ class Group extends TypeBase implements TypeInterface {
     $results = [];
 
     $items = isset($this->config['each']) ? $this->config['each'] : [];
+    $options = isset($this->config['options']) ? $this->config['options'] : [];
 
     if (empty($items)) {
       throw new \Exception('"each" key required for group.');
@@ -94,12 +95,31 @@ class Group extends TypeBase implements TypeInterface {
         }
     );
 
+    $sortField = ($options['sort_field'] ?? null);
+    if (!empty($sortField)) {
+      $sortDirection = ($options['sort_direction'] ?? 'asc');
+      $this->sortBy($sortField, $results, $sortDirection);
+    }
+
     $this->row->{$this->config['field']} = [
         'type'     => 'group',
         'children' => $results,
     ];
 
   }//end process()
+
+
+  /**
+   * Sorts an array by the value of a specified field (key).
+   * @param        $field
+   * @param        $array
+   * @param string $direction
+   */
+  public function sortBy($field, &$array, $direction='asc') {
+    $direction = $direction === 'asc' ? SORT_ASC : SORT_DESC;
+    array_multisort(array_map('strtolower', array_column($array, $field)), $direction, $array);
+
+  }//end sortBy()
 
 
 }//end class

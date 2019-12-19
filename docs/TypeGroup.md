@@ -16,9 +16,14 @@ The group type creates a nested structure that is created from elements within a
 
 ## Building the Group
 
-The group type is intended to used with a selector such as a class that contain elements that contain other child elements that will be turned into a nested structure. 
+The group type is intended to be used with a selector that returns multiple elements (e.g. a class name) that contain other child elements that will be turned into a nested data structure.
 
 The group type requires the `each` property.  This is an array of fields that will build up each item in the group.
+
+
+## Options
+
+Instead of the dom node position determing the position of the item within the group, the results can be optionally sorted by any field you specify in a basic ascending/descending manner.  This is achieved by setting the optons `sort_field` (the name of the field to sort by) and `sort_direction` to (`asc` (default) or `desc`).
 
 
 ## Example Usage
@@ -29,6 +34,12 @@ mappings:
     field: contacts
     type: group
     selector: '//*[@id="main"]//div[contains(@class, "m-contacts")]'
+    
+    # Reults can be sorted a particular field:
+    # options:
+    #   sort_field: "field_title"              
+    #   sort_direction: "desc"
+    
     each:
       -
         field: field_title
