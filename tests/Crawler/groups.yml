@@ -12,7 +12,7 @@ options:
   path_only: true         # Return only the path from the crawled URL.
   cache_enabled: false    # Caches crawled content and uses cache to build results.
 
-  group_by:               # Group options to allow segmenting URLs basede on some business rules.
+  group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
       id: group1
       type: path
