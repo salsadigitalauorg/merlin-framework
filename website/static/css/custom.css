@@ -1,9 +1,139 @@
-/* your custom css */
+/* Merlin Branding */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700|Poppins:500,700,900&display=swap');
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+}
+
+code {
+  background-color: #EAECF2;
+}
+
+blockquote {
+  border-left: 8px solid #FFBA31;
+  background-color: #FFF0D9;
+}
+
+blockquote code {
+  background-color: #FFFFFF;
+}
+
+p {
+  line-height: 1.75em;
+  margin-bottom: 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+  font-weight: 900;
+}
+
+h2 {
+  font-size: 1.75em;
+}
+
+h3 {
+  font-size: 1.4em;
+}
+
+.projectTitle {
+  font-weight: 900;
+}
+
+.navigationSlider .slidingNav ul li a {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+.nav-footer .sitemap h5 {
+  font-size: 1em;
+}
+
+.nav-footer .sitemap a {
+  font-size: 14px;
+}
+
+.nav-footer .sitemap .nav-home {
+  height: 2em;
+  margin: 0 50px 0 0;
+  opacity: 0.4;
+  padding: 0;
+  width: 85px;
+}
+
+.fixedHeaderContainer {
+  /* background-color: #0A2A51; */
+  border-bottom: 2px solid #EAECF2;
+  background-color: #FFFFFF;
+}
+
+.navigationSlider .slidingNav ul li > a:focus, .navigationSlider .slidingNav ul li > a:hover, .navigationSlider .slidingNav ul li.siteNavItemActive > a, .navigationSlider .slidingNav ul li.siteNavGroupActive > a {
+  background-color: #FFFFFF;
+  color: #0A2A51;
+}
+
+.nav-footer {
+  background-color: #0A2A51;
+}
+
+.fixedHeaderContainer a {
+  height: 48px;
+}
+
+.fixedHeaderContainer header img {
+  height: 2em;
+  margin-right: 10px;
+}
+
+.fixedHeaderContainer header .headerTitleWithLogo {
+  display: none;
+}
+
+.hljs, .docsNavContainer .toc .navBreadcrumb {
+  background-color: #EAECF2;
+}
+
+.toc .toggleNav ul li a {
+  background-position: right 2em center;
+  transition: background-position 0.2s ease-in-out;
+}
+
+.toc .toggleNav ul li a:hover {
+  background-image: url('../img/arrow.svg');
+  background-position: right 0.5em center;
+  background-repeat: no-repeat;
+  background-size: auto 1em;
+  background-color: #EAECF2;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-left: -1em;
+}
 
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
 }
 
 @media only screen and (min-width: 1024px) {
+  .navPusher {
+    min-height: calc(100vh - 66px);
+    padding-top: 66px;
+  }
+
+  .docsNavContainer {
+    height: calc(100vh - 66px);
+    top: 66px;
+  }
+
+  .navigationSlider .slidingNav ul li a {
+    height: 48px;
+  }
+
+  .navigationSlider .slidingNav ul li a {
+    color: #0A2A51;
+  }
 }
 
 @media only screen and (max-width: 1023px) {

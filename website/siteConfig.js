@@ -36,29 +36,28 @@ const siteConfig = {
   users,
 
   /* path to images for header/footer */
-  headerIcon: 'img/favicon.ico',
-  footerIcon: 'img/favicon.ico',
+  headerIcon: 'img/merlin_logo.svg',
+  footerIcon: 'img/merlin_logo_white.svg',
   favicon: 'img/favicon.ico',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#0a198f',
-    secondaryColor: '#071164',
+    primaryColor: '#0A2A51',
+    secondaryColor: '#FFBA31',
   },
 
   /* Custom fonts for website */
-  /*
+
   fonts: {
     myFont: [
-      "Times New Roman",
-      "Serif"
+      "Poppins",
+      "Sans Serif"
     ],
     myOtherFont: [
       "-apple-system",
       "system-ui"
     ]
   },
-  */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
   copyright: `Copyright © ${new Date().getFullYear()} Merlin`,
