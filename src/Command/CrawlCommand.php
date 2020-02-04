@@ -1,22 +1,22 @@
 <?php
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Migrate\Parser\CrawlerConfig;
+use Merlin\Parser\CrawlerConfig;
 use RollingCurl\RollingCurl;
-use Migrate\Parser\ParserInterface;
-use Migrate\Output\Yaml;
-use Migrate\Output\OutputInterface as MigrateOutputInterface;
+use Merlin\Parser\ParserInterface;
+use Merlin\Output\Yaml;
+use Merlin\Output\OutputInterface as MerlinOutputInterface;
 use RollingCurl\Request;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
-use Migrate\MigrateCrawlObserver;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
+use Merlin\MerlinCrawlObserver;
 use Spatie\Crawler\Crawler as SpatieCrawler;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\HandlerStack;
@@ -87,9 +87,9 @@ class CrawlCommand extends Command
         $baseUrl = $this->config['domain'];
 
         $crawler = SpatieCrawler::create($clientOptions)
-          ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
-          ->SetCrawlQueue(new \Migrate\Crawler\MigrateCrawlQueue($this->config))
-          ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
+          ->setCrawlObserver(new \Merlin\Crawler\MerlinCrawlObserver($io, $yaml))
+          ->SetCrawlQueue(new \Merlin\Crawler\MerlinCrawlQueue($this->config))
+          ->setCrawlProfile(new \Merlin\Crawler\CrawlInternalUrls($this->config));
 
         // Optionally override concurrency (default is 10).
         if (!empty($concurrency = @$this->config['options']['concurrency'])) {

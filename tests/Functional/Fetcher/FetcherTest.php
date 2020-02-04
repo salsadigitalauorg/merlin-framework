@@ -1,15 +1,15 @@
 <?php
 
-use Migrate\Output\Json;
-use Migrate\Parser\Config;
-use Migrate\Parser\WebConfig;
+use Merlin\Output\Json;
+use Merlin\Parser\Config;
+use Merlin\Parser\WebConfig;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
-use Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
+use Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
 
 class FetcherTest extends TestCase
 {
@@ -69,7 +69,7 @@ class FetcherTest extends TestCase
 
   /**
    * Sets a config data attribute (normally protected property)
-   * @param \Migrate\Parser\WebConfig $config
+   * @param \Merlin\Parser\WebConfig $config
    * @param                           $property
    * @param                           $value
    */
@@ -109,14 +109,14 @@ class FetcherTest extends TestCase
     $json = new Json($io, $config);
 
     // Instead of creating a fetcher, could potentially use the command class:
-//    $c = new \Migrate\Command\GenerateCommand();
+//    $c = new \Merlin\Command\GenerateCommand();
 //    $f = function() use ($config, $json, $io) {
 //      $this->config = $config;
 //      $this->runWeb($json, $io);
 //    };
 //    $f->call($c);
 
-    $fetcher = new \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
     $urls = $configData['urls'] ?? [];
     foreach($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);

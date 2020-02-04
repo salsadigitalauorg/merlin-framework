@@ -29,7 +29,7 @@ The framework requires PHP (latest recommended, but tested on most versions of 7
 # Running a migration
 To run a migration simply run the tool with the input configuration .yml file, and a path to the output, e.g:
 
-`php migrate generate -c /path/to/config.yml -o /path/to/output`
+`php merlin generate -c /path/to/config.yml -o /path/to/output`
 
 You will see output as follows:
 ```

@@ -1,30 +1,30 @@
 <?php
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
-use Migrate\Command\GenerateCommand;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
-use Migrate\Parser\ParserInterface;
+use Merlin\Command\GenerateCommand;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
+use Merlin\Parser\ParserInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 class FetcherBase implements FetcherInterface
 {
 
-  /** @var \Migrate\Parser\ParserInterface */
+  /** @var \Merlin\Parser\ParserInterface */
   protected $config;
 
-  /** @var \Migrate\Output\OutputInterface */
+  /** @var \Merlin\Output\OutputInterface */
   protected $output;
 
   /** @var \Symfony\Component\Console\Output\OutputInterface */
   protected $io;
 
-  /** @var \Migrate\Fetcher\ContentHash */
+  /** @var \Merlin\Fetcher\ContentHash */
   protected $hashes;
 
-  /** @var \Migrate\Fetcher\Cache */
+  /** @var \Merlin\Fetcher\Cache */
   protected $cache;
 
   /** @var array */
@@ -35,10 +35,10 @@ class FetcherBase implements FetcherInterface
    * FetcherBase constructor.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $io
-   * @param \Migrate\Output\OutputInterface                   $json
-   * @param \Migrate\Parser\ParserInterface                   $config
+   * @param \Merlin\Output\OutputInterface                   $json
+   * @param \Merlin\Parser\ParserInterface                   $config
    */
-  public function __construct(OutputInterface $io, \Migrate\Output\OutputInterface $json, ParserInterface $config)
+  public function __construct(OutputInterface $io, \Merlin\Output\OutputInterface $json, ParserInterface $config)
   {
     $this->io = $io;
     $this->output = $json;
@@ -85,7 +85,7 @@ class FetcherBase implements FetcherInterface
 
   /**
    * Sets the cache instance for this fetcher to use to cache fetched content.
-   * @param \Migrate\Fetcher\Cache $cache
+   * @param \Merlin\Fetcher\Cache $cache
    */
   public function setCache(Cache $cache) {
     $this->cache = $cache;
@@ -94,7 +94,7 @@ class FetcherBase implements FetcherInterface
 
 
   /**
-   * @return \Migrate\Parser\ParserInterface
+   * @return \Merlin\Parser\ParserInterface
    */
   public function getConfig() {
     return $this->config;
@@ -112,7 +112,7 @@ class FetcherBase implements FetcherInterface
 
 
   /**
-   * @return \Migrate\Output\OutputInterface
+   * @return \Merlin\Output\OutputInterface
    */
   public function getOutput() {
     return $this->output;

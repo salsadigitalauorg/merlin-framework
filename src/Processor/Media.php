@@ -1,13 +1,13 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Ramsey\Uuid\Uuid;
-use Migrate\Output\OutputInterface;
-use Migrate\Utility\Callback;
-use Migrate\Utility\MediaTrait;
-use Migrate\ProcessController;
+use Merlin\Output\OutputInterface;
+use Merlin\Utility\Callback;
+use Merlin\Utility\MediaTrait;
+use Merlin\ProcessController;
 
 /**
  * A media processor.

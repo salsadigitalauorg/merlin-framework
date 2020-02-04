@@ -4,7 +4,7 @@
  * Basic file-based caching for storing the fetched HTML content.
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
 class Cache
 {

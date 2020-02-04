@@ -4,16 +4,16 @@
  * Provides a hash map based on the hash of content and url(s).
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
-use Migrate\Parser\ParserInterface;
+use Merlin\Parser\ParserInterface;
 use RollingCurl\Request;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Maintains a map of content hashes to URLs.
  * Class ContentHash
- * @package Migrate\Output
+ * @package Merlin\Output
  */
 class ContentHash
 {

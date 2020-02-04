@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+
+<?php
+
+/**
+ * @file
+ * Application entrypoint for the migration framework.
+ */
+
+ini_set('memory_limit', -1);
+
+if (!defined('MERLIN_COMPOSER_INSTALL'))
+{
+  foreach ([__DIR__ . '/../../vendor/autload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
+    if (file_exists($file))
+    {
+      define('MERLIN_COMPOSER_INSTALL', $file);
+      break;
+    }
+  }
+}
+
+unset($file);
+
+/**
+ * Defines a useful global function to do a var_dump to error_log
+ */
+function var_error_log($object = null)
+{
+  ob_start();                    // start buffer capture
+  var_dump($object);             // dump the values
+  $contents = ob_get_contents(); // put the buffer into a variable
+  ob_end_clean();                // end capture
+  error_log($contents);          // log contents of the result of var_dump( $object )
+}
+
+require MERLIN_COMPOSER_INSTALL;
+
+$application = new Symfony\Component\Console\Application;
+$application->add(new Merlin\Command\MerlinCommand);
+$application->add(new Merlin\Command\CrawlCommand);
+$application->run();

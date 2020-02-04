@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Tests\Functional\Processor;
+namespace Merlin\Tests\Functional\Processor;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Processor\Media;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Processor\Media;
 
 /**
  * Ensure that the media trait correctly functions.

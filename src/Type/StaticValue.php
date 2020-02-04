@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 /**
  * Output a static value to the migration JSON.

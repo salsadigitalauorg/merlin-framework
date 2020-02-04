@@ -1,12 +1,12 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Spatie\Crawler\CrawlUrl;
 use Spatie\Crawler\Exception\UrlNotFoundByIndex;
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
 
-class MigrateCrawlQueue implements CrawlQueue
+class MerlinCrawlQueue implements CrawlQueue
 {
     /** @var \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection */
     protected $urls;

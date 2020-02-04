@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Consolidation\Comments\Comments;
 use Spatie\Crawler\CrawlObserver;
@@ -9,12 +9,12 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 
-class MigrateCrawlObserver extends CrawlObserver
+class MerlinCrawlObserver extends CrawlObserver
 {
     /** @var \Symfony\Component\Console\Style\SymfonyStyle */
     protected $io;
 
-    /** @var \Migrate\Output\OutputBase */
+    /** @var \Merlin\Output\OutputBase */
     protected $json;
 
     /** @var integer */
@@ -76,7 +76,7 @@ class MigrateCrawlObserver extends CrawlObserver
             }
 
             $class_name = str_replace('_', '', ucwords($config['type'], '_'));
-            $class = "\\Migrate\\Crawler\\Group\\".ucfirst($class_name);
+            $class = "\\Merlin\\Crawler\\Group\\".ucfirst($class_name);
 
             if (!class_exists($class)) {
                 // An unknown type.
@@ -127,7 +127,7 @@ class MigrateCrawlObserver extends CrawlObserver
      */
     private function mergeUrlsIntoConfigFiles() {
 
-        // /** @var \Migrate\Parser\Config $config */
+        // /** @var \Merlin\Parser\Config $config */
         $config = $this->json->getConfig();
 
         // Check if any of our groups have merge config file names specified.

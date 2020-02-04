@@ -1,7 +1,7 @@
 <?php
 
 
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use PHPUnit\Framework\TestCase;
 
 class CacheTest  extends TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Crawler\Group;
+namespace Merlin\Crawler\Group;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Psr\Http\Message\ResponseInterface;

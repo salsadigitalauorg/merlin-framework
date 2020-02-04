@@ -1,8 +1,8 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\ProcessController;
+use Merlin\ProcessController;
 
 /**
  * Define a type that produces more than one output.

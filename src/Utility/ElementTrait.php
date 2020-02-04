@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Utility;
+namespace Merlin\Utility;
 
 use Symfony\Component\DomCrawler\Crawler;
 

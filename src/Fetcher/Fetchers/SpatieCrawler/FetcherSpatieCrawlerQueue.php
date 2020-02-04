@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
+namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
 use Spatie\Crawler\CrawlUrl;

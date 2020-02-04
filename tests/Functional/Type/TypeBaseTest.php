@@ -1,13 +1,13 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\TypeBase;
-use Migrate\Processor\ProcessorInterface;
-use Migrate\Processor\Nl2br;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\TypeBase;
+use Merlin\Processor\ProcessorInterface;
+use Merlin\Processor\Nl2br;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
 
 class TypeBaseTest extends CrawlerTestCase {
 

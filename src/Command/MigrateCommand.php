@@ -1,15 +1,15 @@
 <?php
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
 use GuzzleHttp\RequestOptions;
-use Migrate\Fetcher\Cache;
-use Migrate\Fetcher\FetcherBase;
-use Migrate\Fetcher\FetcherSpatieCrawler;
-use Migrate\Fetcher\FetcherSpatieCrawlerObserver;
-use Migrate\Fetcher\Process;
-use Migrate\Fetcher\FetcherSpatieCrawlerQueue;
-use Migrate\Fetcher\ContentHash;
+use Merlin\Fetcher\Cache;
+use Merlin\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherSpatieCrawler;
+use Merlin\Fetcher\FetcherSpatieCrawlerObserver;
+use Merlin\Fetcher\Process;
+use Merlin\Fetcher\FetcherSpatieCrawlerQueue;
+use Merlin\Fetcher\ContentHash;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlUrl;
@@ -17,18 +17,18 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Migrate\Parser\Config;
+use Merlin\Parser\Config;
 use RollingCurl\RollingCurl;
-use Migrate\Parser\ParserInterface;
-use Migrate\Output\Json;
-use Migrate\Output\OutputInterface as MigrateOutputInterface;
+use Merlin\Parser\ParserInterface;
+use Merlin\Output\Json;
+use Merlin\Output\OutputInterface as MerlinOutputInterface;
 use RollingCurl\Request;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
 
-class GenerateCommand extends Command
+class MerlinCommand extends Command
 {
 
     /**
@@ -36,7 +36,7 @@ class GenerateCommand extends Command
      *
      * @var string
      */
-    protected static $defaultName = 'generate';
+    protected static $defaultName = 'migrate';
 
     /**
      * Configuration associated with a run.
@@ -69,19 +69,19 @@ class GenerateCommand extends Command
      *   The field type.
      * @param Symfony\Component\DomCrawler\Crawler $crawler
      *   The HTML object.
-     * @param Migrate\Output\OutputInterface       $output
+     * @param Merlin\Output\OutputInterface       $output
      *   The output object for the command.
      * @param \stdClass                            $row
      *   The row object.
      * @param array                                $config
      *   The field configuration.
      *
-     * @return Migrate\Type\FieldTypeInterface
+     * @return Merlin\Type\FieldTypeInterface
      */
-    public static function TypeFactory($type='text', Crawler $crawler, MigrateOutputInterface $output, &$row, array $config=[])
+    public static function TypeFactory($type='text', Crawler $crawler, MerlinOutputInterface $output, &$row, array $config=[])
     {
         $type  = str_replace('_', '', ucwords($type, '_'));
-        $class = "Migrate\\Type\\".ucfirst($type);
+        $class = "Merlin\\Type\\".ucfirst($type);
 
         if (!class_exists($class)) {
             throw new \Exception("Invalid field type: $type is not defined. Field: ".json_encode($config));
@@ -140,25 +140,25 @@ class GenerateCommand extends Command
   /**
    * Run web-based parsing via a delegated Fetcher.
    *
-   * @param \Migrate\Output\OutputInterface                   $json
+   * @param \Merlin\Output\OutputInterface                   $json
    * @param \Symfony\Component\Console\Output\OutputInterface $io
    *
    * @throws \Exception
    */
-    private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io) {
+    private function runWeb(\Merlin\Output\OutputInterface $json, OutputInterface $io) {
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
-      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
+      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Merlin\\Fetcher\\Fetchers\\SpatieCrawler\\FetcherSpatieCrawler");
 
       if (!class_exists($fetcherClass)) {
         throw new \Exception("Specified Fetcher class: $fetcherClass does not exist!");
       }
 
-      if (!is_subclass_of($fetcherClass, '\\Migrate\\Fetcher\\FetcherBase')) {
+      if (!is_subclass_of($fetcherClass, '\\Merlin\\Fetcher\\FetcherBase')) {
         throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
       }
 
-      // @var \Migrate\Fetcher\FetcherBase $fetcher
+      // @var \Merlin\Fetcher\FetcherBase $fetcher
       $fetcher  = new $fetcherClass($io, $json, $this->config);
 
       // Use cache?

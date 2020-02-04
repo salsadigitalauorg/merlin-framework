@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
-use Migrate\Parser\WebConfig;
+use Merlin\Parser\WebConfig;
 
 /**
  * Ensure that URLs are correctly migrated from both files and config using the urls and urls_file properties.

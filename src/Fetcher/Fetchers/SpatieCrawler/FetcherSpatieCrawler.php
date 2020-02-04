@@ -4,19 +4,19 @@
  * Fetcher based on the Spatie Crawler.
  */
 
-namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
+namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use GuzzleHttp\RequestOptions;
-use Migrate\Fetcher\FetcherDefaults;
+use Merlin\Fetcher\FetcherDefaults;
 use Spatie\Browsershot\Browsershot;
 use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlUrl;
-use Migrate\Fetcher\FetcherBase;
-use Migrate\Fetcher\FetcherInterface;
+use Merlin\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherInterface;
 
 /**
  * Class FetcherSpatieCrawler
- * @package Migrate\Fetcher\Fetchers\SpatieCrawler
+ * @package Merlin\Fetcher\Fetchers\SpatieCrawler
  */
 class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
 {
@@ -24,10 +24,10 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
   /** @var \Spatie\Crawler\Crawler */
   private $crawler;
 
-  /** @var \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawlerQueue */
+  /** @var \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawlerQueue */
   private $queue;
 
-  /** @var \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawlerObserver */
+  /** @var \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawlerObserver */
   private $observer;
 
 

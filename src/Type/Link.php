@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\ElementTrait;
+use Merlin\Utility\ElementTrait;
 
 /**
  * Generate link output from a selector.

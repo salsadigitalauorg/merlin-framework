@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
-use Migrate\Parser\XmlConfig;
-use Migrate\Parser\WebConfig;
+use Merlin\Parser\XmlConfig;
+use Merlin\Parser\WebConfig;
 
 /**
  * Configuration parser

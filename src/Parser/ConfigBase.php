@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
 abstract class ConfigBase implements ParserInterface
 {

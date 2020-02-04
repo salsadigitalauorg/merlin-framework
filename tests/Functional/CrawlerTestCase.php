@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional;
+namespace Merlin\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputBase;
+use Merlin\Output\OutputBase;
 
 /**
  * A standardised way to access the crawler with HTML.
