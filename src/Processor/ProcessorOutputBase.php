@@ -1,8 +1,8 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
-use Migrate\Output\OutputInterface;
+use Merlin\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -18,7 +18,7 @@ abstract class ProcessorOutputBase implements ProcessorInterface
     /** @var array */
     public $config;
 
-    /** @var \Migrate\Output\OutputInterface  */
+    /** @var \Merlin\Output\OutputInterface  */
     public $output;
 
     /** @var \Symfony\Component\DomCrawler\Crawler  */
@@ -30,7 +30,7 @@ abstract class ProcessorOutputBase implements ProcessorInterface
      *
      * @param                                       $config
      * @param \Symfony\Component\DomCrawler\Crawler $crawler
-     * @param \Migrate\Output\OutputInterface       $output
+     * @param \Merlin\Output\OutputInterface       $output
      */
     public function __construct($config, Crawler $crawler, OutputInterface $output)
     {

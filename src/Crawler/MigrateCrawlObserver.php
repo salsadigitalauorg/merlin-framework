@@ -1,12 +1,11 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Consolidation\Comments\Comments;
-use GuzzleHttp\Psr7\Request;
-use Migrate\Fetcher\Cache;
-use Migrate\Fetcher\ContentHash;
-use Migrate\Reporting\RedirectUtils;
+use Merlin\Fetcher\Cache;
+use Merlin\Fetcher\ContentHash;
+use Merlin\Reporting\RedirectUtils;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -18,16 +17,16 @@ class MigrateCrawlObserver extends CrawlObserver
   /** @var \Symfony\Component\Console\Style\SymfonyStyle */
   protected $io;
 
-  /** @var \Migrate\Output\OutputBase */
+  /** @var \Merlin\Output\OutputBase */
   protected $json;
 
   /** @var integer */
   protected $count = 0;
 
-  /** @var \Migrate\Fetcher\Cache  */
+  /** @var \Merlin\Fetcher\Cache  */
   private $cache;
 
-  /** @var \Migrate\Fetcher\ContentHash */
+  /** @var \Merlin\Fetcher\ContentHash */
   private $hashes;
 
 
@@ -72,7 +71,7 @@ class MigrateCrawlObserver extends CrawlObserver
    *
    * @param bool                                $crawledFromCache
    *
-   * @return \Migrate\Output\OutputBase
+   * @return \Merlin\Output\OutputBase
    */
   public function crawled(
     UriInterface $url,
@@ -191,7 +190,7 @@ class MigrateCrawlObserver extends CrawlObserver
       }
 
       $class_name = str_replace('_', '', ucwords($config['type'], '_'));
-      $class = "\\Migrate\\Crawler\\Group\\".ucfirst($class_name);
+      $class = "\\Merlin\\Crawler\\Group\\".ucfirst($class_name);
 
       if (!class_exists($class)) {
         // An unknown type.
@@ -253,7 +252,7 @@ class MigrateCrawlObserver extends CrawlObserver
    */
   private function mergeUrlsIntoConfigFiles() {
 
-    // /** @var \Migrate\Parser\Config $config */
+    // /** @var \Merlin\Parser\Config $config */
     $config = $this->json->getConfig();
     $entity_type = $config->get('entity_type');
 
@@ -351,7 +350,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
 
   /**
-   * @return \Migrate\Fetcher\Cache
+   * @return \Merlin\Fetcher\Cache
    */
   public function getCache() {
     return $this->cache;
@@ -360,7 +359,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
 
   /**
-   * @return \Migrate\Fetcher\ContentHash
+   * @return \Merlin\Fetcher\ContentHash
    */
   public function getHashes() {
     return $this->hashes;

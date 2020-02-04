@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 /**
  * Boolean type will output TRUE or FALSE based on condition.

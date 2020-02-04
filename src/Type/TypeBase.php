@@ -1,14 +1,14 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Utility\Callback;
+use Merlin\Utility\Callback;
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputInterface;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
+use Merlin\Output\OutputInterface;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
 use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
-use Migrate\ProcessController;
+use Merlin\ProcessController;
 
 /**
  * Field type base.
@@ -27,7 +27,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * The output object.
    *
-   * @var Migrate\Output\OutputInterface
+   * @var Merlin\Output\OutputInterface
    */
   protected $output;
 
@@ -50,7 +50,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * The process conntroller.
    *
-   * @var Migrate\ProcessControrller
+   * @var Merlin\ProcessControrller
    */
   protected $processors;
 
@@ -60,7 +60,7 @@ abstract class TypeBase implements TypeInterface {
    *
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The element filtered to the selector.
-   * @param Migrate\Output\OutputInterface
+   * @param Merlin\Output\OutputInterface
    *   The output object.
    * @param mixed &$row
    *   The row.
@@ -160,8 +160,8 @@ abstract class TypeBase implements TypeInterface {
   /**
    * {@inheritdoc}
    *
-   * @throws \Migrate\Exception\ElementNotFoundException
-   * @throws \Migrate\Exception\ValidationException
+   * @throws \Merlin\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ValidationException
    */
   public function process() {
 
@@ -207,7 +207,7 @@ abstract class TypeBase implements TypeInterface {
    * @param $selector
    *
    * @return bool
-   * @throws \Migrate\Exception\ValidationException
+   * @throws \Merlin\Exception\ValidationException
    */
   private function processSelector($selector)
   {
@@ -308,7 +308,7 @@ abstract class TypeBase implements TypeInterface {
    *
    * Sets any default if defined and selector was not found.  Some types may override default below.
    *
-   * @throws \Migrate\Exception\ValidationException
+   * @throws \Merlin\Exception\ValidationException
    */
   public function processDefault() {
 

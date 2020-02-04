@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\RegexValidatorTrait;
-use Migrate\Exception\ValidationException;
+use Merlin\Utility\RegexValidatorTrait;
+use Merlin\Exception\ValidationException;
 
 /**
  * Filter taxonomy terms by attributes.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Output;
+namespace Merlin\Output;
 
 /**
  * The output interface.

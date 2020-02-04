@@ -1,27 +1,27 @@
 <?php
 
-namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
+namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use GuzzleHttp\Exception\RequestException;
-use Migrate\Reporting\RedirectUtils;
+use Merlin\Reporting\RedirectUtils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObserver;
-use Migrate\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherBase;
 
 class FetcherSpatieCrawlerObserver  extends CrawlObserver
 {
   /** @var \Symfony\Component\Console\Style\SymfonyStyle */
   protected $io;
 
-  /** @var \Migrate\Fetcher\FetcherBase */
+  /** @var \Merlin\Fetcher\FetcherBase */
   protected $fetcher;
 
 
   /**
    * FetcherSpatieCrawlerObserver constructor.
    *
-   * @param \Migrate\Fetcher\FetcherBase $fetcher
+   * @param \Merlin\Fetcher\FetcherBase $fetcher
    */
   public function __construct(FetcherBase $fetcher)
   {

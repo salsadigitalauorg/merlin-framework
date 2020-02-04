@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputInterface;
+use Merlin\Output\OutputInterface;
 
 /**
  * Remove specific DOM elements from the markup.

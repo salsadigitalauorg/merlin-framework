@@ -4,11 +4,11 @@
  * Holds the default settings used by the Fetcher classes.
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
 /**
  * Class FetcherDefaults
- * @package Migrate\Fetcher
+ * @package Merlin\Fetcher
  */
 class FetcherDefaults
 {

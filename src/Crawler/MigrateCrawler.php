@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use Spatie\Crawler\Crawler;
 use Generator;
 use Spatie\Crawler\LinkAdder;

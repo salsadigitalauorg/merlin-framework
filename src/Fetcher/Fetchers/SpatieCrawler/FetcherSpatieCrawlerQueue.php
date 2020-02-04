@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
+namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use Spatie\Crawler\CrawlUrl;
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
@@ -29,7 +29,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
   /**
    * @param \Spatie\Crawler\CrawlUrl $url
    *
-   * @return \Migrate\Fetcher\Fetchers\SpatieCrawler\CrawlQueue
+   * @return \Merlin\Fetcher\Fetchers\SpatieCrawler\CrawlQueue
    */
   public function add(CrawlUrl $url): CrawlQueue
   {

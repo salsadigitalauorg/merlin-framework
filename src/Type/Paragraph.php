@@ -1,11 +1,11 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Command\GenerateCommand;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ElementException;
-use Migrate\Exception\ValidationException;
+use Merlin\Command\GenerateCommand;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ElementException;
+use Merlin\Exception\ValidationException;
 
 /**
  * Generate a paragraph nested structure.

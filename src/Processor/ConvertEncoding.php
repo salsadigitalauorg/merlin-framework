@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 /**
  * Convert the character encoding of the row.

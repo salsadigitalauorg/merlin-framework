@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Spatie\Crawler\CrawlUrl;
 use Psr\Http\Message\UriInterface;

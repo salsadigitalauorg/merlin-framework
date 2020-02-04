@@ -1,8 +1,6 @@
 <?php
 
-namespace Migrate\Utility;
-
-use Symfony\Component\DomCrawler\Crawler;
+namespace Merlin\Utility;
 
 trait ElementTrait
 {

@@ -4,10 +4,10 @@
  * Provides some simple cache management for CLI use.
  */
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
 
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class CacheCommand
- * @package Migrate\Command
+ * @package Merlin\Command
  */
 class CacheCommand extends Command
 {
@@ -119,7 +119,7 @@ class CacheCommand extends Command
   /**
    * @param $domain
    *
-   * @return \Migrate\Fetcher\Cache
+   * @return \Merlin\Fetcher\Cache
    * @throws \Exception
    */
   private function initCache($domain) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Text;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Text;
 
 class MandatoryTest extends CrawlerTestCase {
 
@@ -46,7 +46,7 @@ class MandatoryTest extends CrawlerTestCase {
         'field'    => 'title',
         'options'  => [
           'mandatory' => TRUE,
-        ], 
+        ],
         'selector' => '//*/not-found',
       ]
     );

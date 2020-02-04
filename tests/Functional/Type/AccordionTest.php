@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Accordion;
-use Migrate\Exception\ElementNotFoundException;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Accordion;
+use Merlin\Exception\ElementNotFoundException;
 
 class AccordionTest extends CrawlerTestCase {
 

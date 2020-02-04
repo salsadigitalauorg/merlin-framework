@@ -1,32 +1,20 @@
 <?php
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
-use GuzzleHttp\RequestOptions;
-use Migrate\Fetcher\Cache;
-use Migrate\Fetcher\FetcherBase;
-use Migrate\Fetcher\FetcherSpatieCrawler;
-use Migrate\Fetcher\FetcherSpatieCrawlerObserver;
-use Migrate\Fetcher\Process;
-use Migrate\Fetcher\FetcherSpatieCrawlerQueue;
-use Migrate\Fetcher\ContentHash;
-use Spatie\Browsershot\Browsershot;
-use Spatie\Crawler\Crawler as SpatieCrawler;
-use Spatie\Crawler\CrawlUrl;
+use Merlin\Fetcher\Cache;
+use Merlin\Fetcher\FetcherBase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Migrate\Parser\Config;
-use RollingCurl\RollingCurl;
-use Migrate\Parser\ParserInterface;
-use Migrate\Output\Json;
-use Migrate\Output\OutputInterface as MigrateOutputInterface;
-use RollingCurl\Request;
+use Merlin\Parser\Config;
+use Merlin\Output\Json;
+use Merlin\Output\OutputInterface as MigrateOutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
 
 class GenerateCommand extends Command
 {
@@ -70,19 +58,19 @@ class GenerateCommand extends Command
      *   The field type.
      * @param Symfony\Component\DomCrawler\Crawler $crawler
      *   The HTML object.
-     * @param Migrate\Output\OutputInterface       $output
+     * @param Merlin\Output\OutputInterface       $output
      *   The output object for the command.
      * @param \stdClass                            $row
      *   The row object.
      * @param array                                $config
      *   The field configuration.
      *
-     * @return Migrate\Type\FieldTypeInterface
+     * @return Merlin\Type\FieldTypeInterface
      */
     public static function TypeFactory($type='text', Crawler $crawler, MigrateOutputInterface $output, &$row, array $config=[])
     {
         $type  = str_replace('_', '', ucwords($type, '_'));
-        $class = "Migrate\\Type\\".ucfirst($type);
+        $class = "Merlin\\Type\\".ucfirst($type);
 
         if (!class_exists($class)) {
             throw new \Exception("Invalid field type: $type is not defined. Field: ".json_encode($config));
@@ -146,16 +134,16 @@ class GenerateCommand extends Command
     /**
      * Run web-based parsing via a delegated Fetcher.
      *
-     * @param \Migrate\Output\OutputInterface                   $json
+     * @param \Merlin\Output\OutputInterface                   $json
      * @param \Symfony\Component\Console\Output\OutputInterface $io
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      *
      * @throws \Exception
      */
-    private function runWeb(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
+    private function runWeb(\Merlin\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
       $useCache     = ($this->config->get('fetch_options')['cache_enabled'] ?? true);
       $cacheDir     = ($this->config->get('fetch_options')['cache_dir'] ?? "/tmp/merlin_cache");
-      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Migrate\\Fetcher\\Fetchers\\Curl\\FetcherCurl");
+      $fetcherClass = ($this->config->get('fetch_options')['fetcher_class'] ?? "\\Merlin\\Fetcher\\Fetchers\\Curl\\FetcherCurl");
 
       // Optionally override maximum results (default is unlimited/all).
       $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;
@@ -201,13 +189,13 @@ class GenerateCommand extends Command
     /**
      * Run xml-based parsing.
      *
-     * @param \Migrate\Output\OutputInterface                   $json
+     * @param \Merlin\Output\OutputInterface                   $json
      * @param \Symfony\Component\Console\Output\OutputInterface $io
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      *
      * @throws \Exception
      */
-    private function runXml(\Migrate\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
+    private function runXml(\Merlin\Output\OutputInterface $json, OutputInterface $io, InputInterface $input) {
 
         // Optionally override maximum results (default is unlimited/all).
         $limit = $input->getOption('limit') ? $input->getOption('limit') : 0;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Parser\ParserInterface;
+use Merlin\Parser\ParserInterface;
 
 /**
  * Generate an alias for the given row.

@@ -1,8 +1,8 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Command\GenerateCommand;
+use Merlin\Command\GenerateCommand;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Ordered extends TypeBase implements TypeInterface {

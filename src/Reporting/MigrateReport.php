@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Migrate\Reporting;
+namespace Merlin\Reporting;
 
 use Curl\MultiCurl;
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use Dompdf\Dompdf;
 use SamChristy\PieChart\PieChartGD;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
  * Generates reports for a Migration.  This verifies URLs on a
  * target domain, check redirects, compares source response etc.
  * Class MigrateReport
- * @package Migrate\Reporting
+ * @package Merlin\Reporting
  */
 class MigrateReport
 {
@@ -54,7 +54,7 @@ class MigrateReport
   /** @var string Output directory for files and report */
   private $outputDir;
 
-  /** @var \Migrate\Fetcher\Cache Optional cache instance for extra checks */
+  /** @var \Merlin\Fetcher\Cache Optional cache instance for extra checks */
   private $cache;
 
   /** @var array Options for optional thangs. */
@@ -960,7 +960,7 @@ class MigrateReport
    * @param $srcDomain
    * @param $options
    *
-   * @return \Migrate\Reporting\MigrateReport|\Migrate\Reporting\MigrateReportMedia
+   * @return \Merlin\Reporting\MigrateReport|\Merlin\Reporting\MigrateReportMedia
    * @throws \Exception
    */
   public static function MigrateReportFactory($type, $io, $dstDomain, $srcDomain, $options) {

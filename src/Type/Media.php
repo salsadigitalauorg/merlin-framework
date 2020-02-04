@@ -1,12 +1,12 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\MediaTrait;
-use Migrate\Utility\ProcessorOptionsTrait;
-use Migrate\ProcessController;
-use Migrate\Exception\ElementNotFoundException;
+use Merlin\Utility\MediaTrait;
+use Merlin\Utility\ProcessorOptionsTrait;
+use Merlin\ProcessController;
+use Merlin\Exception\ElementNotFoundException;
 
 /**
  * A media processor.

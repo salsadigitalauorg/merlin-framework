@@ -1,30 +1,17 @@
 <?php
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Uri;
-use Migrate\Crawler\MigrateCrawler;
-use Migrate\Crawler\MigrateCrawlerRedirectHandler;
+use Merlin\Crawler\MigrateCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Migrate\Parser\CrawlerConfig;
-use RollingCurl\RollingCurl;
-use Migrate\Parser\ParserInterface;
-use Migrate\Output\Yaml;
-use Migrate\Output\OutputInterface as MigrateOutputInterface;
-use RollingCurl\Request;
-use Symfony\Component\DomCrawler\Crawler;
+use Merlin\Parser\CrawlerConfig;
+use Merlin\Output\Yaml;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
-use Migrate\MigrateCrawlObserver;
 use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Handler\CurlHandler;
 
 class CrawlCommand extends Command
 {
@@ -108,7 +95,7 @@ class CrawlCommand extends Command
     }
 
     // Set crawl queue, preload with URLs if provided.
-    $crawlQueue = new \Migrate\Crawler\MigrateCrawlQueue($this->config);
+    $crawlQueue = new \Merlin\Crawler\MigrateCrawlQueue($this->config);
 
     // Add.
     if (!empty($urls = @$this->config['options']['urls'])) {
@@ -122,9 +109,9 @@ class CrawlCommand extends Command
     }
 
     $crawler = MigrateCrawler::create($clientOptions)
-      ->setCrawlObserver(new \Migrate\Crawler\MigrateCrawlObserver($io, $yaml))
+      ->setCrawlObserver(new \Merlin\Crawler\MigrateCrawlObserver($io, $yaml))
       ->SetCrawlQueue($crawlQueue)
-      ->setCrawlProfile(new \Migrate\Crawler\CrawlInternalUrls($this->config));
+      ->setCrawlProfile(new \Merlin\Crawler\CrawlInternalUrls($this->config));
 
     // Optionally override concurrency (default is 10).
     if (!empty($concurrency = @$this->config['options']['concurrency'])) {

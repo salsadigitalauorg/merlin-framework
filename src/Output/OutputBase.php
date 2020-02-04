@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Output;
+namespace Merlin\Output;
 
 use Symfony\Component\Console\Output\OutputInterface as ConsoleOutput;
 use Symfony\Component\Console\Style\OutputStyle;
-use Migrate\Parser\ParserInterface;
+use Merlin\Parser\ParserInterface;
 
 /**
  * The output base class.
@@ -27,7 +27,7 @@ abstract class OutputBase implements OutputInterface
     /**
      * The configuration object.
      *
-     * @var Migrate\Parser\ParserInterface
+     * @var Merlin\Parser\ParserInterface
      */
     protected $config;
 
@@ -185,7 +185,7 @@ abstract class OutputBase implements OutputInterface
     /**
      * Accessor for the config object.
      *
-     * @return Migrate\Parser\ParserInterface
+     * @return Merlin\Parser\ParserInterface
      */
     public function getConfig()
     {

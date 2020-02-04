@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
 class WebConfig extends ConfigBase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Uuid;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Uuid;
 
 class UuidTest extends CrawlerTestCase {
 

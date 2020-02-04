@@ -11,7 +11,7 @@ URL content is retrieved via a Fetcher.  There are a number of options that can 
 | ------------- | ---- | ------- | ------------- |
 | `concurrency` | int | `10` | How many maximum concurrent requests should be used to fetch content.
 | `delay` | int | `100` | Delay between requests in milliseconds.
-| `cache_enabled` | boolean | `true` | If enabled, URL content is cached on disk for subsequent processing.  
+| `cache_enabled` | boolean | `true` | If enabled, URL content is cached on disk for subsequent processing.
 | `cache_dir` | string | `/tmp/merlin_cache` | Directory to store the cache.  If the path does not exist it will be created.
 | `fetcher_class` | string | `...FetcherSpatieCrawler` <br><br>*The full class path is / Fetcher / Fetchers / SpatieCrawler / FetcherSpatieCrawler*. | The full name-spaced class name of the Fetcher class to use to retrieve content.  In most normal circumstances this can be left alone.
 | `execute_js` | boolean | false | Executes javascript on the page after fetching.  You need to ensure the necessary node dependencies are met and installed.  <br><br>**Note: JS is currently only available when using the default FetcherSpatieCrawler**.
@@ -23,7 +23,7 @@ URL content is retrieved via a Fetcher.  There are a number of options that can 
 Most of the time the default Fetcher class should cover most usage requirements, however, you can specify a custom class name if you need to do something different.  Check `Merlin\Fetcher\Fetchers\*` for examples of how to implement.
 
 ## Example `fetcher_options` configuration
- 
+
 ```
 ---
 domain: http://www.example.com
@@ -33,42 +33,42 @@ urls:
   - /some/path?with=a&query=123
   - /some/path?with=a&query=123#and-a-fragment
 
-fetch_options:  
-  # Default 10   
+fetch_options:
+  # Default 10
   concurrency: 10
-  
+
   # Delay between requests, default 100 milliseconds
   delay: 100
-  
+
   # Cache content (and use previously cached content), default true
   cache_enabled: true
-  
+
   # Cache storage root dir (path created if doesn't exist), default /tmp/merlin_cache
   cache_dir: '/tmp/merlin_cache'
-  
+
   # Fetcher class, default FetcherCurl
-  # fetcher_class: '\Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
-  fetcher_class: '\Migrate\Fetcher\Fetchers\Curl\FetcherCurl'
-  # fetcher_class: '\Migrate\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
-  
+  # fetcher_class: '\Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler'
+  fetcher_class: '\Merlin\Fetcher\Fetchers\Curl\FetcherCurl'
+  # fetcher_class: '\Merlin\Fetcher\Fetchers\RollingCurl\FetcherRollingCurl'
+
   # Execute on-load JS, default false.
   # Currently only available if using the FetcherSpatieCrawler fetcher class
   execute_js: false
-  
+
   # Whether to follow redirects
   follow_redirects: true
-  
+
   # Ignore SSL errors
   ignore_ssl_errors : true
 
   # Timeouts.  When using execute_js, you want to have reasonably long timeouts.
   # Not all timeouts are applicable to all Fetchers.
   timeouts:
-    connect_timeout: 15, 
+    connect_timeout: 15,
     timeout: 60,
     # FetcherSpatieCrawler only
     read_timeout: 30
-    
+
 ```
 
 
@@ -86,9 +86,9 @@ There are a number of options that can apply to the URL list.  These options are
 | `hash_exclude_nodes ` | This is an array of **XPath** selectors to *exclude* when generating the hash to detect duplicates.  This could include elements that may appear on the page that might be metadata/cache busters or contain timestamps etc that can be safely excluded from building a hash for duplicate detection.  By default all `<script>`, `<!-- Comment -->`, `<style>`, `<input>` and `<head>` tags will be ignored. | array |
 | `urls` | This is an associative array of urls and their corresponding `include_query` and `include_fragment` settings (as above) to override the global setting, if required.| array |
 | `raw_strip_script_tags` | Uses a regular expression on the raw fetched content to strip script tags before being read by the DOM library.  These script tags can somtimes cause unexpected rewriting by the library if it considers them to be non-conforming markup.  | `false` |
-| `raw_pattern_replace` | Assocative array with keys `pattern` and `replace`.  Uses a regular expression on the raw fetched content to do a search and replace.  You must specify both keys for it to be enabled. | array |		
- 
- 
+| `raw_pattern_replace` | Assocative array with keys `pattern` and `replace`.  Uses a regular expression on the raw fetched content to do a search and replace.  You must specify both keys for it to be enabled. | array |
+
+
 ## Example `url_options` configuration
 
 ```
@@ -102,20 +102,20 @@ urls:
 
 url_options:
   # Default false
-  include_query: true       
-  
+  include_query: true
+
   # Default false
   include_fragment: true
-  
+
   # Default true
   find_content_duplicates: true
- 
+
   # Default '//body'
-  hash_selector: '//body' 
- 
-  # Default script, comment, style, input, head  
-  hash_exclude_nodes:      
-    - '//script'  
+  hash_selector: '//body'
+
+  # Default script, comment, style, input, head
+  hash_exclude_nodes:
+    - '//script'
     - '//comment()'
     - '//style'
     - '//input'
@@ -125,7 +125,7 @@ url_options:
   raw_strip_script_tags: true
   raw_pattern_replace:
     pattern: '#<table(.*?)>(.*?)</table>#is'
-    replace: '<table class="was-a-table"></table>'  
+    replace: '<table class="was-a-table"></table>'
 ```
 
 ### Example overriding options for specific URLs
@@ -142,19 +142,19 @@ urls:
   - /some/path?with=a&query=123#and-a-fragment
 
 url_options:
-  include_query: false       
+  include_query: false
   include_fragment: false
   urls:
     -
       url: /some/path?with=a&query=123#and-a-fragment
       include_query: true
-      include_fragment: true  
-  
+      include_fragment: true
+
 ```
 
 ## URLs in separate file(s)
 
-You can also provide a list of URLs in one or more separate file(s). Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` relative paths to the config files. You can provide `urls_file` as a string for just one file or as an array if you have more than one list of URLs. 
+You can also provide a list of URLs in one or more separate file(s). Your configuration can provide both `urls` and `urls_file` properties, or just one. Supply the `urls_file` relative paths to the config files. You can provide `urls_file` as a string for just one file or as an array if you have more than one list of URLs.
 
 ```
 ---

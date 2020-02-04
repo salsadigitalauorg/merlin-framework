@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Reporting;
+namespace Merlin\Reporting;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\RequestInterface;
@@ -12,7 +12,7 @@ use GuzzleHttp\Psr7\Request;
 
 /***
  * Class RedirectUtils
- * @package Migrate\Reporting
+ * @package Merlin\Reporting
  */
 class RedirectUtils
 {

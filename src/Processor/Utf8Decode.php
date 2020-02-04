@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 /**
  * Attempt to decode UTF-8 characters in the string.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 /**
  * Match part of the return value.
