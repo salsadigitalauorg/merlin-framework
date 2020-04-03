@@ -1,18 +1,18 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Parser\Config;
-use Migrate\Parser\ConfigBase;
-use Migrate\Parser\WebConfig;
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Text;
+use Merlin\Parser\Config;
+use Merlin\Parser\ConfigBase;
+use Merlin\Parser\WebConfig;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Text;
 
 
 /**
  * Tests multiple selectors are giving the expected output.
  * Class MultipleSelectorsTest
- * @package Migrate\Tests\Functional\Type
+ * @package Merlin\Tests\Functional\Type
  */
 class MultipleSelectorsTest extends CrawlerTestCase
 {
@@ -72,7 +72,7 @@ class MultipleSelectorsTest extends CrawlerTestCase
 
   /**
    * Tests the many fields from many selectors mapping mode
-   * @throws \Migrate\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ElementNotFoundException
    * @throws \ReflectionException
    * @group multiple_selectors
    * @depends testInflateMappings
@@ -135,7 +135,7 @@ class MultipleSelectorsTest extends CrawlerTestCase
 
   /**
    * Tests the many fields from single selector mapping mode
-   * @throws \Migrate\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ElementNotFoundException
    * @throws \ReflectionException
    * @group multiple_selectors
    * @depends testInflateMappings
@@ -201,7 +201,7 @@ class MultipleSelectorsTest extends CrawlerTestCase
 
   /**
    * Tests the single field (first match) from multiple selectors mapping mode
-   * @throws \Migrate\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ElementNotFoundException
    * @throws \ReflectionException
    * @group multiple_selectors
    * @depends testInflateMappings

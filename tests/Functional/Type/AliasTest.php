@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Alias;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Alias;
 
 class AliasTest extends CrawlerTestCase {
 

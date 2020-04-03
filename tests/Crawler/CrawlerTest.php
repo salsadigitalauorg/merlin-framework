@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Crawler;
+namespace Merlin\Tests\Crawler;
 
-use Migrate\Fetcher\Cache;
-use Migrate\Tests\Functional\LocalPhpServerTestCase;
-use Migrate\Command\CrawlCommand;
+use Merlin\Fetcher\Cache;
+use Merlin\Tests\Functional\LocalPhpServerTestCase;
+use Merlin\Command\CrawlCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;

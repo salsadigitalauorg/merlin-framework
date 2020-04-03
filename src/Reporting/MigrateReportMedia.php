@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Reporting;
+namespace Merlin\Reporting;
 
 
 class MigrateReportMedia extends MigrateReport

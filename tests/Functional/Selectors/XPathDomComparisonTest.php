@@ -1,12 +1,12 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Link;
-use Migrate\Type\LongText;
-use Migrate\Type\Ordered;
-use Migrate\Type\Text;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Link;
+use Merlin\Type\LongText;
+use Merlin\Type\Ordered;
+use Merlin\Type\Text;
 
 
 /**
@@ -49,7 +49,7 @@ class XPathDomComparisonTest extends CrawlerTestCase
     );
 
     $type_xpath->process();
-    
+
     // Compare DOM and XPath
     $this->assertEquals($row_dom->field, $row_xpath->field);
   }

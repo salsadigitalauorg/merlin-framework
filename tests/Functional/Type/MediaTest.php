@@ -1,11 +1,11 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\Media;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Output\OutputBase;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\Media;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Output\OutputBase;
 
 class MediaTest extends CrawlerTestCase
 {

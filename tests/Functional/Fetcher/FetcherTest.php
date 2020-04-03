@@ -1,16 +1,16 @@
 <?php
 
-use Migrate\Output\Json;
-use Migrate\Parser\Config;
-use Migrate\Parser\WebConfig;
-use Migrate\Tests\Functional\LocalPhpServerTestCase;
+use Merlin\Output\Json;
+use Merlin\Parser\Config;
+use Merlin\Parser\WebConfig;
+use Merlin\Tests\Functional\LocalPhpServerTestCase;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
-use Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
+use Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
 
 class FetcherTest extends LocalPhpServerTestCase
 {
@@ -56,7 +56,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
   /**
    * Sets a config data attribute (normally protected property)
-   * @param \Migrate\Parser\WebConfig $config
+   * @param \Merlin\Parser\WebConfig $config
    * @param                           $property
    * @param                           $value
    */
@@ -96,9 +96,9 @@ class FetcherTest extends LocalPhpServerTestCase
     $json = new Json($io, $config);
 
     // We use Spatie to test JS.
-    $fetcher = new \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
     // TODO: extend to test FetcherCurl too
-    // $fetcher = new \Migrate\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
+    // $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
     $urls = $configData['urls'] ?? [];
     foreach($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);

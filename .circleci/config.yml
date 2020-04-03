@@ -67,7 +67,7 @@ jobs:
             /tmp/phar-builder.phar package ./composer.json \
               --output-dir=/tmp \
               --name=merlin-framework.phar \
-              --entry-point=migrate \
+              --entry-point=merlin \
               --gzip
 
       - run: go get github.com/aktau/github-release

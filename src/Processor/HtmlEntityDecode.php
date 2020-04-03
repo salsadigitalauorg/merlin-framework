@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 /**
  * Dcecode any HTML entities of the row.

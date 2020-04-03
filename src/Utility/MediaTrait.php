@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Utility;
+namespace Merlin\Utility;
 
 use Ramsey\Uuid\Uuid;
 use GuzzleHttp\Psr7;

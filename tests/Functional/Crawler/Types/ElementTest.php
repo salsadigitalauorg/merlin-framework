@@ -1,11 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Crawler\Type;
+namespace Merlin\Tests\Functional\Crawler\Type;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Migrate\Crawler\Group\Path;
-use Migrate\Crawler\Group\Element;
+use Merlin\Crawler\Group\Element;
 
 /**
  * Class to represent the Psr7 Guzzle response object.

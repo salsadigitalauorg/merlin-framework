@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
 /**
  * Row value processor interface.

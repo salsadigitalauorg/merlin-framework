@@ -9,7 +9,26 @@
     {
       "name": "Steve Worley",
       "email": "steven.worley@salsadigital.com.au"
+    },
+    {
+      "name": "Nick Georgiou",
+      "email": "nick.georgiou@salsadigital.com.au"
+    },
+    {
+      "name": "Andrew Rowlands",
+      "email": "andrew.rowlands@salsadigital.com.au"
     }
+  ],
+  "homepage": "https://salsadigitalauorg.github.io/merlin-framework/",
+  "support": {
+    "issues": "https://github.com/salsadigitalauorg/merlin-framework/issues",
+    "docs": "https://salsadigitalauorg.github.io/merlin-framework/",
+    "source": "https://github.com/salsadigitalauorg/merlin-framework"
+  },
+  "type": "library",
+  "keywords": [
+    "merlin",
+    "migration"
   ],
   "require": {
     "symfony/yaml": "~4.2.0",
@@ -33,9 +52,18 @@
     "phpunit/phpunit": "^7.5",
     "squizlabs/php_codesniffer": "^3.4"
   },
+  "prefer-stable": true,
   "autoload": {
-    "psr-4": {
-      "Migrate\\": "src/"
-    }
-  }
+    "classmap": [
+      "src/"
+    ]
+  },
+  "config": {
+    "platform": {
+      "php": "7.2.0"
+    },
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "bin": ["merlin"]
 }

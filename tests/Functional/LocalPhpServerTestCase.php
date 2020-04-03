@@ -6,7 +6,7 @@
  * checks can be performed.
  */
 
-namespace Migrate\Tests\Functional;
+namespace Merlin\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;

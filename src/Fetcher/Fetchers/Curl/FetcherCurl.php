@@ -4,18 +4,17 @@
  * Fetcher based on multi curl.
  */
 
-namespace Migrate\Fetcher\Fetchers\Curl;
+namespace Merlin\Fetcher\Fetchers\Curl;
 
-use Migrate\Fetcher\FetcherBase;
-use Migrate\Fetcher\FetcherDefaults;
-use Migrate\Fetcher\FetcherInterface;
-
+use Merlin\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherDefaults;
+use Merlin\Fetcher\FetcherInterface;
 use Curl\MultiCurl;
-use Migrate\Reporting\RedirectUtils;
+use Merlin\Reporting\RedirectUtils;
 
 /**
  * Class FetcherCurl
- * @package Migrate\Fetcher\Fetchers\Curl
+ * @package Merlin\Fetcher\Fetchers\Curl
  */
 class FetcherCurl extends FetcherBase implements FetcherInterface
 {

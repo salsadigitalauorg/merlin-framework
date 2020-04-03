@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate;
+namespace Merlin;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputInterface;
+use Merlin\Output\OutputInterface;
 
 class ProcessController {
 
@@ -15,12 +15,12 @@ class ProcessController {
    *   The configuration array to build a process object.
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The DOM.
-   * @param Migrate\Output\OutputInterface $output
+   * @param Merlin\Output\OutputInterface $output
    *   The output file.
    * @param string $processor
    *   (Optional) The process name
    *
-   * @return Migrate\Processor\ProcessorInterface
+   * @return Merlin\Processor\ProcessorInterface
    *   An instantiated processor object.
    */
   public static function get(array $config, Crawler $crawler, OutputInterface $output, $processor=NULL) {
@@ -30,7 +30,7 @@ class ProcessController {
     }
 
     $processor = str_replace('_', '', ucwords($processor, '_'));
-    $class = "Migrate\\Processor\\".ucfirst($processor);
+    $class = "Merlin\\Processor\\".ucfirst($processor);
 
     if (!class_exists($class)) {
       throw new \Exception("No handler for {$processor}: ".json_encode($config));
@@ -48,7 +48,7 @@ class ProcessController {
    *   The config array for a processor.
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The DOM.
-   * @param Migrate\Output\OutputInterface $output
+   * @param Merlin\Output\OutputInterface $output
    *   The output file.
    *
    * @return array
@@ -79,7 +79,7 @@ class ProcessController {
    *   The configuration array for all processors to apply.
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The DOM.
-   * @param Migrate\Output\OutputInterface $output
+   * @param Merlin\Output\OutputInterface $output
    *   The output file.
    *
    * @return string

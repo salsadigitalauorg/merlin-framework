@@ -4,18 +4,18 @@
  * @deprecated
  */
 
-namespace Migrate\Fetcher\Fetchers\RollingCurl;
+namespace Merlin\Fetcher\Fetchers\RollingCurl;
 
-use Migrate\Fetcher\FetcherBase;
-use Migrate\Fetcher\FetcherDefaults;
-use Migrate\Fetcher\FetcherInterface;
+use Merlin\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherDefaults;
+use Merlin\Fetcher\FetcherInterface;
 use RollingCurl\Request;
 use RollingCurl\RollingCurl;
 
 /**
  * Class FetcherRollingCurl
  * @deprecated
- * @package Migrate\Fetcher\Fetchers\RollingCurl
+ * @package Merlin\Fetcher\Fetchers\RollingCurl
  */
 class FetcherRollingCurl extends FetcherBase implements FetcherInterface
 {
