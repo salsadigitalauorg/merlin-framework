@@ -22,7 +22,7 @@ class HomeSplash extends React.Component {
     const docUrl = doc => `${baseUrl}${docsPart}${langPart}${doc}`;
 
     const SplashContainer = props => (
-      <div className="homeContainer">
+      <div className="container">
         <div className="homeSplashFade">
           <div className="wrapper homeWrapper">{props.children}</div>
         </div>
@@ -60,15 +60,12 @@ class HomeSplash extends React.Component {
 
     return (
       <SplashContainer>
-        <Logo img_src={`${baseUrl}img/undraw_monitor.svg`} />
-        <div className="inner">
-          <ProjectTitle siteConfig={siteConfig} />
-          <PromoSection>
-            <Button href="#try">Try It Out</Button>
-            <Button href={docUrl('doc1.html')}>Example Link</Button>
-            <Button href={docUrl('doc2.html')}>Example Link 2</Button>
-          </PromoSection>
+        <div className="index-hero">
+          <h2 className="index-hero-project-tagline">Merlin helps you build structured representations of markup to help migrating between systems.</h2>
         </div>
+        <PromoSection>
+          <Button href={docUrl('getting-started')}>Get started</Button>
+        </PromoSection>
       </SplashContainer>
     );
   }
@@ -85,7 +82,7 @@ class Index extends React.Component {
         id={props.id}
         background={props.background}>
         <GridBlock
-          align="center"
+          align={props.align}
           contents={props.children}
           layout={props.layout}
         />
@@ -102,7 +99,7 @@ class Index extends React.Component {
     );
 
     const TryOut = () => (
-      <Block id="try">
+      <Block id="try" align="left">
         {[
           {
             content:
@@ -132,34 +129,34 @@ class Index extends React.Component {
     );
 
     const LearnHow = () => (
-      <Block background="light">
+      <Block background="light" align="left">
         {[
           {
-            content:
-              'Each new Docusaurus project has **randomly-generated** theme colors.',
+            content: '<a class="button" href="/docs/getting-started">Get started</a>',
             image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
             imageAlign: 'right',
-            title: 'Randomly Generated Theme Colors',
+            title: 'Merlin lets you build structured representations of markup to help migrating between systems.',
           },
         ]}
       </Block>
     );
 
     const Features = () => (
-      <Block layout="fourColumn">
+      <Block layout="fourColumn" align="center">
         {[
           {
-            content: 'This is the content of my feature',
-            image: `${baseUrl}img/undraw_react.svg`,
+            content: 'YAML configuration files drive Merlin and provide an easy interface to customise how your structure is built.',
+            image: `${baseUrl}img/undraw_code_thinking_1jeh.svg`,
             imageAlign: 'top',
-            title: 'Feature One',
+            title: 'Powered by Yaml',
           },
+
           {
-            content: 'The content of my second feature',
-            image: `${baseUrl}img/undraw_operating_system.svg`,
+            content: 'Open source tools ',
+            image: `${baseUrl}img/undraw_open_source.svg`,
             imageAlign: 'top',
-            title: 'Feature Two',
-          },
+            title: 'Open Sourced',
+          }
         ]}
       </Block>
     );
@@ -195,7 +192,7 @@ class Index extends React.Component {
 
     return (
       <div>
-        <HomeSplash siteConfig={siteConfig} language={language} />
+        <LearnHow />
       </div>
     );
   }

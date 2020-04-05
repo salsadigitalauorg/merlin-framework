@@ -36,19 +36,19 @@ class Footer extends React.Component {
             )}
           </a>
           <div>
-            <h5>Docs</h5>
-            <a href={this.docUrl('doc1.html', this.props.language)}>
-              Getting Started (or other categories)
+            {/* <h5>Docs</h5>
+            <a href={this.docUrl('getting-started', this.props.language)}>
+              Getting Started
             </a>
-            <a href={this.docUrl('doc2.html', this.props.language)}>
-              Guides (or other categories)
+            <a href={this.docUrl('crawler', this.props.language)}>
+              Crawler
             </a>
-            <a href={this.docUrl('doc3.html', this.props.language)}>
-              API Reference (or other categories)
-            </a>
+            <a href={this.docUrl('examples', this.props.language)}>
+              Examples
+            </a> */}
           </div>
           <div>
-            <h5>Community</h5>
+            {/* <h5>Community</h5>
             <a href={this.pageUrl('users.html', this.props.language)}>
               User Showcase
             </a>
@@ -64,10 +64,20 @@ class Footer extends React.Component {
               target="_blank"
               rel="noreferrer noopener">
               Twitter
-            </a>
+            </a> */}
           </div>
           <div>
-            <h5>More</h5>
+            <h5>Docs</h5>
+            <a href={this.docUrl('getting-started', this.props.language)}>
+              Getting Started
+            </a>
+            <a href={this.docUrl('crawler', this.props.language)}>
+              Crawler
+            </a>
+            <a href={this.docUrl('examples', this.props.language)}>
+              Examples
+            </a>
+            {/* <h5>More</h5>
             <a href={`${this.props.config.baseUrl}blog`}>Blog</a>
             <a href="https://github.com/">GitHub</a>
             <a
@@ -79,7 +89,7 @@ class Footer extends React.Component {
               data-count-aria-label="# stargazers on GitHub"
               aria-label="Star this project on GitHub">
               Star
-            </a>
+            </a> */}
           </div>
         </section>
 
