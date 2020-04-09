@@ -1,0 +1,12 @@
+---
+domain: http://localhost:8000
+entity_type: crawler_test
+options:
+  follow_redirects: true  # Allow internal redirects.
+  ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
+  maximum_total: 50       # Optionally restrict total number of crawled URLs.
+  concurrency: 2          # Restrict concurrent crawlers.
+  rewrite_domain: true    # Standardises base domain.
+  delay: 10               # Pause between requests in ms.
+  cache_enabled: true     # Caches crawled content and uses cache to build results.
+  find_content_duplicates: false   # Generate list of urls containing duplicate content.

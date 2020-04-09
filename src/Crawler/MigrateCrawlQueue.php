@@ -1,160 +1,171 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Spatie\Crawler\CrawlUrl;
+use Psr\Http\Message\UriInterface;
+use Spatie\Crawler\Exception\InvalidUrl;
 use Spatie\Crawler\Exception\UrlNotFoundByIndex;
 use Spatie\Crawler\CrawlQueue\CrawlQueue;
 
+
 class MigrateCrawlQueue implements CrawlQueue
 {
-    /** @var \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection */
-    protected $urls;
 
-    /** @var \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection */
-    protected $pendingUrls;
+  /**
+   * All known URLs, indexed by URL string.
+   *
+   * @var CrawlUrl[]
+   */
+  protected $urls = [];
 
-    /** @var array */
-    protected $config;
+  /**
+   * Pending URLs, indexed by URL string.
+   *
+   * @var CrawlUrl[]
+   */
+  protected $pendingUrls = [];
 
-
-    public function __construct($config)
-    {
-        $this->urls = collect();
-        $this->config = $config;
-        $this->pendingUrls = collect();
-
-    }//end __construct()
-
-
-    public function getUrls()
-    {
-        return $this->urls;
-
-    }//end getUrls()
+  /** @var array */
+  protected $config;
 
 
-    public function getPendingUrls()
-    {
-        return $this->pendingUrls;
+  /**
+   * MigrateCrawlQueue constructor.
+   *
+   * @param $config
+   */
+  public function __construct($config)
+  {
+    $this->config = $config;
 
-    }//end getPendingUrls()
-
-
-    public function add(CrawlUrl $url): CrawlQueue
-    {
-
-        // Standardise URL to consistent base domain.
-        if ($this->config['options']['rewrite_domain']) {
-          if (!preg_match("#^{$this->config['domain']}#", $url->url->__toString())) {
-            $query = parse_url($url->url->__toString(), PHP_URL_QUERY);
-            $return_url = !empty($query) ? $url->url->getPath()."?{$query}" : $url->url->getPath();
-
-            $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/').$return_url);
-          }
-        }
-
-        if ($this->has($url)) {
-            return $this;
-        }
-
-        $this->urls->push($url);
-
-        $url->setId($this->urls->keys()->last());
-        $this->pendingUrls->push($url);
-
-        return $this;
-
-    }//end add()
+  }//end __construct()
 
 
-    public function hasPendingUrls(): bool
-    {
-        return (bool) $this->pendingUrls->count();
+  /**
+   * @param \Spatie\Crawler\CrawlUrl $url
+   *
+   * @return \Spatie\Crawler\CrawlQueue\CrawlQueue
+   */
+  public function add(CrawlUrl $url): CrawlQueue
+  {
 
-    }//end hasPendingUrls()
+    $urlString = (string) $url->url;
 
+    // Standardise URL to consistent base domain.
+    if ($this->config['options']['rewrite_domain']) {
+      if (!preg_match("#^{$this->config['domain']}#", $urlString)) {
+        $query = parse_url($urlString, PHP_URL_QUERY);
+        $return_url = !empty($query) ? $url->url->getPath()."?{$query}" : $url->url->getPath();
 
-    /**
-     * @param mixed $id
-     *
-     * @return \Spatie\Crawler\CrawlUrl|null
-     */
-    public function getUrlById($id): CrawlUrl
-    {
-        if (! isset($this->urls->values()[$id])) {
-            throw new UrlNotFoundByIndex("#{$id} crawl url not found in collection");
-        }
+        $url->url = new \GuzzleHttp\Psr7\Uri(rtrim($this->config['domain'], '/').$return_url);
+      }
+    }
 
-        return $this->urls->values()[$id];
+    $urlString = (string) $url->url;
 
-    }//end getUrlById()
+    if (!isset($this->urls[$urlString])) {
+      $url->setId($urlString);
+      $this->urls[$urlString] = $url;
+      $this->pendingUrls[$urlString] = $url;
+    }
 
+    return $this;
 
-    public function hasAlreadyBeenProcessed(CrawlUrl $url): bool
-    {
-        return ! $this->contains($this->pendingUrls, $url) && $this->contains($this->urls, $url);
-
-    }//end hasAlreadyBeenProcessed()
-
-
-    public function markAsProcessed(CrawlUrl $crawlUrl)
-    {
-        $this->pendingUrls = $this->pendingUrls
-            ->reject(
-                function (CrawlUrl $crawlUrlItem) use ($crawlUrl) {
-                return (string) $crawlUrlItem->url === (string) $crawlUrl->url;
-                }
-            );
-
-    }//end markAsProcessed()
+  }//end add()
 
 
-    /**
-     * @param CrawlUrl|\Psr\Http\Message\UriInterface $crawlUrl
-     *
-     * @return bool
-     */
-    public function has($crawlUrl): bool
-    {
-        if (! $crawlUrl instanceof CrawlUrl) {
-            $crawlUrl = CrawlUrl::create($crawlUrl);
-        }
+  /**
+   * @return bool
+   */
+  public function hasPendingUrls(): bool
+  {
+    return (bool) $this->pendingUrls;
 
-        if ($this->contains($this->urls, $crawlUrl)) {
-            return true;
-        }
-
-        return false;
-
-    }//end has()
+  }//end hasPendingUrls()
 
 
-    /** @return \Spatie\Crawler\CrawlUrl|null */
-    public function getFirstPendingUrl()
-    {
-        return $this->pendingUrls->first();
+  /**
+   * @param $id
+   *
+   * @return \Spatie\Crawler\CrawlUrl
+   */
+  public function getUrlById($id): CrawlUrl
+  {
+    if (!isset($this->urls[$id])) {
+      throw new UrlNotFoundByIndex("Crawl url {$id} not found in collection.");
+    }
 
-    }//end getFirstPendingUrl()
+    return $this->urls[$id];
+
+  }//end getUrlById()
 
 
-    /**
-     * @param \Illuminate\Support\Collection|\Tightenco\Collect\Support\Collection $collection
-     * @param \Spatie\Crawler\CrawlUrl                                             $searchCrawlUrl
-     *
-     * @return bool
-     */
-    protected function contains($collection, CrawlUrl $searchCrawlUrl): bool
-    {
-        foreach ($collection as $crawlUrl) {
-            if ((string) $crawlUrl->url === (string) $searchCrawlUrl->url) {
-                return true;
-            }
-        }
+  /**
+   * @param \Spatie\Crawler\CrawlUrl $url
+   *
+   * @return bool
+   */
+  public function hasAlreadyBeenProcessed(CrawlUrl $url): bool
+  {
+    $url = (string) $url->url;
+    if (isset($this->pendingUrls[$url])) {
+      return false;
+    }
 
-        return false;
+    if (isset($this->urls[$url])) {
+      return true;
+    }
 
-    }//end contains()
+    return false;
+
+  }//end hasAlreadyBeenProcessed()
+
+
+  /**
+   * @param \Spatie\Crawler\CrawlUrl $crawlUrl
+   */
+  public function markAsProcessed(CrawlUrl $crawlUrl)
+  {
+    $url = (string) $crawlUrl->url;
+    unset($this->pendingUrls[$url]);
+
+  }//end markAsProcessed()
+
+
+  /**
+   * @param $crawlUrl
+   *
+   * @return bool
+   * @throws \Spatie\Crawler\Exception\InvalidUrl
+   */
+  public function has($crawlUrl): bool
+  {
+    if ($crawlUrl instanceof CrawlUrl) {
+      $url = (string) $crawlUrl->url;
+    } else if ($crawlUrl instanceof UriInterface) {
+      $url = (string) $crawlUrl;
+    } else {
+      throw InvalidUrl::unexpectedType($crawlUrl);
+    }
+
+    return isset($this->urls[$url]);
+
+  }//end has()
+
+
+  /**
+   * @return \Spatie\Crawler\CrawlUrl|null
+   */
+  public function getFirstPendingUrl(): ?CrawlUrl
+  {
+    foreach ($this->pendingUrls as $pendingUrl) {
+      return $pendingUrl;
+    }
+
+    return null;
+
+  }//end getFirstPendingUrl()
 
 
 }//end class

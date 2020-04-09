@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Command\GenerateCommand;
+use Merlin\Command\GenerateCommand;
 use Ramsey\Uuid\Uuid;
 
 /**

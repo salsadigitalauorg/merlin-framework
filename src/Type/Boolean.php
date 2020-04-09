@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 /**
  * Boolean type will output TRUE or FALSE based on condition.
@@ -8,7 +8,10 @@ namespace Migrate\Type;
  * @example:
  *   field: field_checkbox
  *   type: boolean
- *   condition: //@xpath-selector
+ *   selector: //@xpath-selector
+ *   options:
+ *     success_value: 'yes'
+ *     fail_value: 'no'
  */
 class Boolean extends TypeBase implements TypeInterface
 {
@@ -25,6 +28,14 @@ class Boolean extends TypeBase implements TypeInterface
         $element = @$this->crawler->evaluate($selector);
         if (is_array($element)) {
             $element = $this->crawler->filter($selector);
+        }
+
+        if (isset($options['success_value']) && $element->count() > 0) {
+          return $this->addValueToRow($options['success_value']);
+        }
+
+        if (isset($options['fail_value']) && $element->count() == 0) {
+          return $this->addValueToRow($options['fail_value']);
         }
 
         $this->addValueToRow($element->count() > 0);

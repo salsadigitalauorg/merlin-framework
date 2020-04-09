@@ -3,8 +3,6 @@ id: crawler
 title: URL Crawler
 ---
 
-# URL Crawler
-
 Merlin comes with a URL crawler to help generate URL lists prior to a migration.
 
 ## URL Grouping
@@ -54,6 +52,7 @@ options:
 ```
 ---
 domain: https://example.com/
+entity_type: standard_page
 
 options:
   follow_redirects: true  # Allow internal redirects.
@@ -62,13 +61,32 @@ options:
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
-  exclude: []             # Regex matches to exclude.
+  exclude: []             # Optional regex matches to exclude (url results).
+  include: []             # Optional regex matches to include (url results).
+  crawler_exclude: []     # Optional regex matches to exclude (do not follow).
+  crawler_include: []     # Optional regex matches to include (only follow).
   path_only: true         # Return only the path from the crawled URL.
-  group_by: []            # Group options to allow segmenting URLs basede on some business rules.
+
+  # Optionally provide one or more URLs as the starting point. This can be provided
+  # as a string or an array.
+  urls:                   
+    - /sports/cricket
+  
+  # Group options to allow segmenting URLs based on some business rules.
+  group_by: []             
+  
+  # Caches crawled content and uses cache to build results.
+  cache_enabled: true     
+ 
+  # Generates a list of urls containing duplicate content.  Only the first
+  # crawled duplicate will appear in the crawled url or grouped url results. 
+  find_content_duplicates: true   
 ```
 
 Simply provide a configuration input file and output folder for generated assets and run with:
-`php migrate crawl -c /path/to/config.yml -o /path/to/output`
+```
+php migrate crawl -c /path/to/config.yml -o /path/to/output
+```
 
 You will see output as follows:
 
@@ -106,3 +124,13 @@ Generating /tmp/crawl-error.yml Done!
 
 Completed in 29.005132913589
 ```
+
+## Flag Options
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to crawl (overrides the `maximum_total` config option if specified) | `0` (Crawl all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |

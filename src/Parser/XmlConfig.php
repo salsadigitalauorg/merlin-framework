@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
 class XmlConfig extends ConfigBase
 {
@@ -40,6 +40,8 @@ class XmlConfig extends ConfigBase
         }
 
         $data['files'] = $files;
+
+        $data = $this->inflateMappings($data);
 
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);

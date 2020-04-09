@@ -7,11 +7,11 @@
  * A Fetcher class should extend Fetcher/FetcherBase and implement this interface.
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
 /**
  * Interface FetcherInterface
- * @package Migrate\Fetcher
+ * @package Merlin\Fetcher
  */
 interface FetcherInterface
 {

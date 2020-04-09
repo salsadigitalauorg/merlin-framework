@@ -1,7 +1,7 @@
 <?php
 
 
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use PHPUnit\Framework\TestCase;
 
 class CacheTest  extends TestCase
@@ -46,7 +46,6 @@ class CacheTest  extends TestCase
     $this->cache->unlink($url);
     $this->assertFileNotExists($filename);
   }//end testBasicCacheRead()
-
 
 
 }//end class

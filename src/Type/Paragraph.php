@@ -1,11 +1,11 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Command\GenerateCommand;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ElementException;
-use Migrate\Exception\ValidationException;
+use Merlin\Command\GenerateCommand;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ElementException;
+use Merlin\Exception\ValidationException;
 
 /**
  * Generate a paragraph nested structure.
@@ -31,19 +31,22 @@ class Paragraph extends TypeBase implements TypeInterface
      */
     public function processChildren(&$row)
     {
+
+        $entity_type = $this->config['type'].'-'.$this->config['paragraph_type'];
+
         $children = isset($this->config['children']) ? $this->config['children'] : [];
         foreach ($children as $child) {
             $type = GenerateCommand::TypeFactory($child['type'], $this->crawler, $this->output, $row, $child);
             try {
                 $type->process();
             } catch (ElementNotFoundException $e) {
-                $this->output->mergeRow($e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
+                $this->output->mergeRow("{$entity_type}-".$e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
             } catch (ElementException $e) {
-                $this->output->mergeRow($e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
+                $this->output->mergeRow("{$entity_type}-".$e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
             } catch (ValidationException $e) {
-                $this->output->mergeRow($e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
+                $this->output->mergeRow("{$entity_type}-".$e::FILE, $this->crawler->getUri(), [$e->getMessage()], true);
             } catch (\Exception $e) {
-                $this->output->mergeRow('error-unhandled', $this->crawler->getUri(), [$e->getMessage()], true);
+                $this->output->mergeRow("{$entity_type}-error-unhandled", $this->crawler->getUri(), [$e->getMessage()], true);
             }
         }
 

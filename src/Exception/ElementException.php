@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Exception;
+namespace Merlin\Exception;
 
 /**
  * An exception if there is a problem with an element.

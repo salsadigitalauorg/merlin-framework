@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Processor;
+namespace Merlin\Processor;
 
-use Migrate\Utility\Callback;
+use Merlin\Utility\Callback;
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputInterface;
+use Merlin\Output\OutputInterface;
 
 /**
  * Run a callback function over a value.

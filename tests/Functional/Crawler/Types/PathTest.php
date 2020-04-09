@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Crawler\Type;
+namespace Merlin\Tests\Functional\Crawler\Type;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Migrate\Crawler\Group\Path;
+use Merlin\Crawler\Group\Path;
 
 class PathTest extends TestCase
 {

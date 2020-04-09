@@ -24,7 +24,7 @@ Each configuration file contains a reference to either a website domain and list
 Content from these sources are then passed through mappings, which take selectors (XPath or JQuery-like selectors) to map content from the DOM to the JSON file that gets generated during a run. These data values can also pass through processors to further refine and alter the data.
 
 # Prerequisites
-The framework requires PHP (latest recommended, but tested on most versions of 7.x) and composer. All other dependencies will be pulled in by running a `composer install`
+The framework requires PHP (latest recommended, but tested on most versions of 7.x) and composer. All other dependencies will be pulled in by running a `composer install`.
 
 # Running a migration
 To run a migration simply run the tool with the input configuration .yml file, and a path to the output, e.g:
@@ -64,6 +64,17 @@ Generating /tmp/media-embedded_video-bhc_fact_sheet.json Done!
 
 Completed in 87.295419931412
 ```
+
+## Running migration flags
+Optionally override or specify options when running migrations by using migration flags. At minimum, you need to specify the `-c` flag. All other flags have defaults.
+|Flag|Full Name|Description|Default|
+| --- | --- | --- | --- |
+| `-c` | `--config` | Path to the configuration file | |
+| `-o` | `--output` | Path to the output directory | `__DIR__` |
+| `-d` | `--debug` | Output debug messages | `false` |
+| `-l` | `--limit` | Limit the max number of items to migrate | `0` (Migrate all items) |
+| | `--concurrency` | Number of requests to make in parallel | `10` |
+| | `--no-cache` | Run without cache | `false` (Cache enabled) |
 
 ## Refreshing JSON assets
 

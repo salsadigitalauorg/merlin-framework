@@ -1,6 +1,8 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
+
+use function DeepCopy\deep_copy;
 
 abstract class ConfigBase implements ParserInterface
 {
@@ -32,8 +34,8 @@ abstract class ConfigBase implements ParserInterface
      */
     public function __construct($source)
     {
-        $this->source = $source;
-        $this->parse();
+      $this->source = $source;
+      $this->parse();
 
     }//end __construct()
 
@@ -50,15 +52,11 @@ abstract class ConfigBase implements ParserInterface
         $data = \Spyc::YAMLLoad($this->source);
 
         if (empty($data['entity_type'])) {
-            throw new \Exception("Invalid source file: No content type found in the source file");
+            throw new \Exception("Invalid source file: No content type defined in the source file");
         }
 
         if (empty($data['mappings'])) {
-            throw new \Exception("Invalid source file: No mappings found in the source file");
-        }
-
-        if (!array_key_exists('urls', $data) && !array_key_exists('urls_file', $data)) {
-            throw new \Exception("Need to supply one or both of: urls, urls_file");
+            throw new \Exception("Invalid source file: No mappings defined in the source file");
         }
 
         /*
@@ -67,25 +65,36 @@ abstract class ConfigBase implements ParserInterface
          */
 
         if (!empty($data['urls_file'])) {
-            $urls_file = dirname($this->source).'/'.$data['urls_file'];
+            // If urls_files is provided as a string, make it a single item array to make it easier to handle.
+            $urls_files = is_array($data['urls_file']) ? $data['urls_file'] : [$data['urls_file']];
+            $urls_files_count = count($urls_files);
 
-            if (!file_exists($urls_file)) {
-                throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
+            $urls_from_files = ['urls' => []];
+
+            for ($i = 0; $i < $urls_files_count; $i++) {
+              $urls_file = dirname($this->source).'/'.$urls_files[$i];
+
+              if (!file_exists($urls_file)) {
+                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]}");
+              }
+
+              $urls_from_current_file = \Spyc::YAMLLoad($urls_file);
+
+              if (!is_array($urls_from_current_file['urls'])) {
+                  $urls_from_current_file['urls'] = [$urls_from_current_file['urls']];
+              }
+
+              $urls_from_files['urls'] = array_merge($urls_from_current_file['urls'], $urls_from_files['urls']);
             }
 
-            $urls_from_file = \Spyc::YAMLLoad($urls_file);
-            if (!is_array($urls_from_file['urls'])) {
-                $urls_from_file['urls'] = [$urls_from_file['urls']];
-            }
-
-            $this->totals['urls_from_file'] = count($urls_from_file['urls']);
+            $this->totals['urls_from_file'] = count($urls_from_files['urls']);
 
             if (isset($data['urls'])) {
                 $data_urls_array = is_array($data['urls']) ? $data['urls'] : [$data['urls']];
                 $this->totals['urls_from_config'] = count($data_urls_array);
-                $data['urls'] = array_merge($data_urls_array, $urls_from_file['urls']);
+                $data['urls'] = array_merge($data_urls_array, $urls_from_files['urls']);
             } else {
-                $data['urls'] = $urls_from_file['urls'];
+                $data['urls'] = $urls_from_files['urls'];
             }
 
             unset($data['urls_file']);
@@ -102,9 +111,11 @@ abstract class ConfigBase implements ParserInterface
             $data['urls'] = [$data['urls']];
         }
 
+        // $data = $this->inflateMappings($data);
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         $this->totals['urls'] = count($data['urls']);
+
         return $this;
 
     }//end parse()
@@ -191,6 +202,105 @@ abstract class ConfigBase implements ParserInterface
         return !empty($this->data[$key]) ? $this->data[$key] : false;
 
     }//end get()
+
+
+  /**
+   * This checks for field and/or selectors that are arrays in a config mapping.
+   * If found, it deep clones the config map and appends it ready to process.
+   * This allows you to re-use a config mapping on content that may need the
+   * same processing but appears with different classes on certain pages etc.
+   *
+   * Field and selector can be any combination of a string or array.
+   *
+   * The behaviour is such that:
+   *
+   * field (array), selector (array):
+   *    field[n] will use selector[n] to build results.  Must be the same size.
+   *
+   * field (array), selector (string):
+   *    Multiple fields will appear in results with the result of the selector.
+   *
+   * field (string), selector (array):
+   *    The field will contain the result from the *first* matched selector.
+   *    NOTE: This case is now handled in Type/TypeBase.
+   *
+   *
+   * @param $data
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+    protected function inflateMappings($data) {
+
+      // Expand array maps.
+      $mappings =& $data['mappings'];
+
+      for ($i = count($mappings); --$i >= 0;) {
+        $currentMap = $mappings[$i];
+
+        $field = ($currentMap['field'] ?? null);
+        $selector = ($currentMap['selector'] ?? null);
+
+        if (!empty($field) && !empty($selector)) {
+          if (is_string($field) && is_string($selector)) {
+            // Default case.
+            continue;
+          } else if (is_array($field) && is_array($selector)) {
+            if (count($field) !== count($selector)) {
+              $msg = "If both 'field' and 'selector' are both arrays, their lengths must match.\n";
+              $msg .= " - field: \n".print_r($field,1)." - selector: \n".print_r($selector ,1);
+              throw new \Exception($msg);
+            }
+
+            foreach ($field as $idx => $newField) {
+              $newSelector = $selector[$idx];
+              $mappings[] = self::cloneMap($currentMap, $newField, $newSelector);
+            }
+
+            unset($mappings[$i]);
+          } else if (is_array($field) && is_string($selector)) {
+            // Reverse is here for first match since we are looping backwards.
+            $field = array_reverse($field);
+            foreach ($field as $idx => $newField) {
+              $mappings[] = self::cloneMap($currentMap, $newField, $selector);
+            }
+
+            unset($mappings[$i]);
+          }//end if
+        }//end if
+      }//end for
+
+      $mappings = array_values($mappings);
+
+      return $data;
+
+    }//end inflateMappings()
+
+
+  /**
+   * Returns a deep clone of a config mapping, optionally replacing
+   * @param $existingMap
+   * @param $newField
+   * @param $newSelector
+   *
+   * @return mixed
+   */
+  protected static function cloneMap(array $existingMap, ?string $newField, ?string $newSelector) {
+    $clone = deep_copy($existingMap);
+
+    if (!empty($newField)) {
+      unset($clone['field']);
+      $clone['field'] = $newField;
+    }
+
+    if (!empty($newSelector)) {
+      unset($clone['selector']);
+      $clone['selector'] = $newSelector;
+    }
+
+    return $clone;
+
+  }//end cloneMap()
 
 
 }//end class

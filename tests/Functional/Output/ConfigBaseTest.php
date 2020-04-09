@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Tests\Functional\Output;
+namespace Merlin\Tests\Functional\Output;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
-use Migrate\Parser\ConfigBase;
+use Merlin\Parser\ConfigBase;
 
 /**
  * Ensure that the config base can correctly instantiate.

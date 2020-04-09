@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Output;
+namespace Merlin\Output;
 
 use Symfony\Component\Console\Output\OutputInterface as ConsoleOutput;
 use Symfony\Component\Console\Style\OutputStyle;
-use Migrate\Parser\ParserInterface;
+use Merlin\Parser\ParserInterface;
 
 /**
  * The output base class.
@@ -27,7 +27,7 @@ abstract class OutputBase implements OutputInterface
     /**
      * The configuration object.
      *
-     * @var Migrate\Parser\ParserInterface
+     * @var Merlin\Parser\ParserInterface
      */
     protected $config;
 
@@ -105,9 +105,9 @@ abstract class OutputBase implements OutputInterface
      */
     public function validate(&$data, $file)
     {
-        $uuids = [];
-
         foreach ($data as $key => $row) {
+            $uuids = [];
+
             // Hash of null is c87ee674-4ddc-3efe-a74e-dfe25da5d7b3.
             if (!is_array($row) && isset($row->uuid) && $row->uuid == "c87ee674-4ddc-3efe-a74e-dfe25da5d7b3") {
                 unset($data[$key]);
@@ -185,7 +185,7 @@ abstract class OutputBase implements OutputInterface
     /**
      * Accessor for the config object.
      *
-     * @return Migrate\Parser\ParserInterface
+     * @return Merlin\Parser\ParserInterface
      */
     public function getConfig()
     {

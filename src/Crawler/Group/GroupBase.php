@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Crawler\Group;
+namespace Merlin\Crawler\Group;
 
 /**
  * Standard methods for a Group option.

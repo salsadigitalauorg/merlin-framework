@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Ramsey\Uuid\Uuid;
@@ -15,6 +15,10 @@ use Ramsey\Uuid\Uuid;
  *   options:
  *     link: ./a/@href
  *     text: ./a/text()
+ *     parent:
+ *       selector: '//*[@id="breadcrumb"]/ul/li[@last()]
+ *       text: './a/text()'
+ *       link: './a/@href'
  *   children:
  *     -
  *       type: menu_link
@@ -36,6 +40,19 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
 
     public function processChildren(Crawler $node, array $config=[], array &$result=[], $parent='')
     {
+
+        // Parent override support.
+        if (!empty($config['options']['parent']['selector'])) {
+          $n = $this->crawler->evaluate($config['options']['parent']['selector']);
+
+          if ($n->count() > 0) {
+            $parentText = $n->evaluate($config['options']['parent']['text']);
+            $parentLink = $n->evaluate($config['options']['parent']['link']);
+            $processedLink = $this->processLink($parentText, $parentLink);
+            $parent = $processedLink['uuid'];
+          }
+        }
+
         $node->each(
             function (Crawler $item, $i) use ($config, &$result, $parent) {
                 $text = $item->evaluate($config['options']['text']);
@@ -45,14 +62,9 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
                     return;
                 }
 
-                $link = $link->count() > 0 ? $link->text() : 'internal:/';
-                // Menu uuid comprised of menu name, link text, link value.
-                $uuid_text = $this->config['name'].$text->text().$link;
-                $uuid      = Uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_text);
-
-                if ($this->isRelativeUri($link)) {
-                    $link = 'internal:'.$link;
-                }
+                $processedLink = $this->processLink($text, $link);
+                $link = $processedLink['link'];
+                $uuid = $processedLink['uuid'];
 
                 $result_item = [
                     'uuid'   => $uuid,
@@ -100,6 +112,34 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
         return substr($uri, 0, 1) === '/';
 
     }//end isRelativeUri()
+
+
+    /**
+     * Generate processed link and uuid given text/link elements.
+     *
+     * @param Crawler $text
+     * @param Crawler $link
+     *
+     * @return Array
+     *   Associative array with processed link, uuid
+     */
+    private function processLink($text, $link)
+    {
+        $link = $link->count() > 0 ? $link->text() : 'internal:/';
+        // Menu uuid comprised of menu name, link text, link value.
+        $uuid_text = $this->config['name'].$text->text().$link;
+        $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, strtolower($uuid_text));
+
+        if ($this->isRelativeUri($link)) {
+          $link = 'internal:'.$link;
+        }
+
+        return [
+            'link' => $link,
+            'uuid' => $uuid,
+        ];
+
+    }//end processLink()
 
 
 }//end class

@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Exception;
+namespace Merlin\Exception;
 
 /**
  * The process

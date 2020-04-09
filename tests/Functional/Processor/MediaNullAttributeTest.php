@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Tests\Functional\Processor;
+namespace Merlin\Tests\Functional\Processor;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Processor\Media;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Processor\Media;
 
 /**
  * Ensure that the media trait correctly functions.
@@ -25,6 +25,8 @@ class MediaNullAttributeTest extends CrawlerTestCase
       'data_embed_button' => 'test_media',
       'data_entity_embed_display' => 'view_mode:media.test',
       'data_entity_type' => 'test',
+      'media_plugin' => 'media',
+      'external_assets' => false,
     ];
 
     $crawler = $this->getCrawler();
@@ -50,6 +52,7 @@ class MediaNullAttributeTest extends CrawlerTestCase
       'data_embed_button' => 'test_media',
       'data_entity_embed_display' => 'view_mode:media.test',
       'data_entity_type' => 'test',
+      'external_assets' => false,
     ];
 
     $crawler = $this->getCrawler();

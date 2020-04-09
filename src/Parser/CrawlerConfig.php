@@ -1,9 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
-
-use Migrate\Parser\XmlConfig;
-use Migrate\Parser\WebConfig;
+namespace Merlin\Parser;
 
 /**
  * Configuration parser
@@ -31,7 +28,21 @@ class CrawlerConfig extends ConfigBase
             'delay'            => 100,
 // Delay between URL retrieval (ms).
             'exclude'          => [],
-// Regex options for crawl exclusion.
+// Optional regex matches to exclude (url results).
+            'include'          => [],
+// Optional regex matches to include (url results).
+            'crawler_include'  => [],
+// Optional regex matches to include (only follow).
+            'crawler_exclude'  => [],
+// Optional regex matches to exclude (do not follow).
+            'timeout'          => 10,
+// Timeout for the crawler in seconds.
+            'connect_timeout'  => 10,
+// Connect timeout for the crawler in seconds.
+            'verify'           => false,
+// Enable SSL verification.
+            'cookies'          => true,
+// Enable cookies.
         ];
 
         if (!file_exists($this->source)) {
@@ -41,7 +52,11 @@ class CrawlerConfig extends ConfigBase
         $data = \Spyc::YAMLLoad($this->source);
 
         if (empty($data['domain'])) {
-            throw new \Exception("Invalid source file: No domain found in the source file");
+            throw new \Exception("Invalid source file: No domain defined in the source file");
+        }
+
+        if (empty($data['entity_type'])) {
+            throw new \Exception("Invalid source file: No entity type defined in the source file");
         }
 
         if (empty($data['options'])) {
@@ -66,6 +81,15 @@ class CrawlerConfig extends ConfigBase
         return $this->data;
 
     }//end getConfig()
+
+
+    /**
+     * Forces cache disable.
+     */
+    public function disableCache() {
+        $this->data['options']['cache_enabled'] = false;
+
+    }//end disableCache()
 
 
 }//end class

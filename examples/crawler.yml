@@ -1,16 +1,26 @@
 ---
-domain: http://example.com.au
+domain: https://www.example.com
+entity_type: standard_page
+
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.
-  maximum_total: 0        # Optionally restrict total number of crawled URLs.
+  maximum_total: 20       # Optionally restrict total number of crawled URLs.
   concurrency: 10         # Restrict concurrent crawlers.
   rewrite_domain: true    # Standardises base domain.
   delay: 100              # Pause between requests in ms.
-  exclude: []             # Regex matches to exclude.
+  exclude: []             # Optional regex matches to exclude (url results).
+  include: []             # Optional regex matches to include (url results).
+  crawler_exclude: []     # Optional regex matches to exclude (do not follow).
+  crawler_include: []     # Optional regex matches to include (only follow).
   path_only: true         # Return only the path from the crawled URL.
+  urls: []                # Array of starting point urls.
+  verify: false           # Ensure the crawler verifies SSL certificates.
+  cookies: true           # Enable cookie support for the crawler
+  timeout: 10             # Timeout in seconds for a page download.
+  connect_timeout: 10     # Connect timeout for the crawler.
 
-  group_by:               # Group options to allow segmenting URLs basede on some business rules.
+  group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
       id: group-2016-2014
       type: path
@@ -29,7 +39,7 @@ options:
       options:
         pattern: /2018/*
     -
-      id: group-dom
+      id: group-news
       type: element
       options:
-        selector: h1
+        selector: h1.news-article
