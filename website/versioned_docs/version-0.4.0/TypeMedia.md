@@ -1,7 +1,8 @@
 ---
-id: type-media
+id: version-0.4.0-type-media
 title: Media
 sidebar_label: Media
+original_id: type-media
 ---
 
 Extract a structured representation of a media asset from the DOM.

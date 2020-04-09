@@ -1,6 +1,7 @@
 ---
-id: crawler
+id: version-0.4.0-crawler
 title: URL Crawler
+original_id: crawler
 ---
 
 Merlin comes with a URL crawler to help generate URL lists prior to a migration.

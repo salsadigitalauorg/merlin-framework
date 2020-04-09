@@ -1,7 +1,8 @@
 ---
-id: processor-replace
+id: version-0.4.0-processor-replace
 title: Replace
 sidebar_label: Replace
+original_id: processor-replace
 ---
 
 Regex search/replace.

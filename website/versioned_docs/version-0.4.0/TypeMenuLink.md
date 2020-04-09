@@ -1,7 +1,8 @@
 ---
-id: type-menu-link
+id: version-0.4.0-type-menu-link
 title: Menu Link
 sidebar_label: Menu Link
+original_id: type-menu-link
 ---
 
 Define an iterative menu strructure.

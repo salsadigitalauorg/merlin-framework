@@ -1,7 +1,8 @@
 ---
-id: getting-started
+id: version-0.4.0-getting-started
 title: Getting Started
 weight: -1
+original_id: getting-started
 ---
 
 Merlin Framework provides a standardised method for migrating content from a website (markup) to more structured data.

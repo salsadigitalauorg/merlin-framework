@@ -1,7 +1,8 @@
 ---
-id: processor-remove-empty-tags
+id: version-0.4.0-processor-remove-empty-tags
 title: Remove Empty Tags
 sidebar_label: Remove empty tags
+original_id: processor-remove-empty-tags
 ---
 
 Strips any empty tags from the result (e.g `<div> </div>`).

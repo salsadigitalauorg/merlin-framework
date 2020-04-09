@@ -1,7 +1,8 @@
 ---
-id: processor-strip-tags
+id: version-0.4.0-processor-strip-tags
 title: Strip tags
 sidebar_label: Strip tags
+original_id: processor-strip-tags
 ---
 
 Removes tags and attributes from markup as defined.
