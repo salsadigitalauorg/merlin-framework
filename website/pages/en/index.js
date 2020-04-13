@@ -132,7 +132,7 @@ class Index extends React.Component {
       <Block background="light" align="left">
         {[
           {
-            content: '<a class="button" href="/docs/getting-started">Get started</a>',
+            content: '<a class="button" href="docs/getting-started">Get started</a>',
             image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
             imageAlign: 'right',
             title: 'Merlin lets you build structured representations of markup to help migrating between systems.',
