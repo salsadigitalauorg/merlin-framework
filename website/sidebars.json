@@ -2,40 +2,40 @@
     "docs": {
         "Introduction": [
             "getting-started",
-            "reporting",
             "examples",
-            "crawler",
+            "reporting",
             "url-options",
+            "crawler",
             "cache_tools"
         ],
         "Types": [
-            "type-uuid",
-            "type-reusable-paragraph",
-            "type-menu-link",
-            "type-menu",
-            "type-text",
-            "type-paragraph",
-            "type-accordion",
             "type-alias",
-            "type-taxonomy-term",
+            "type-uuid",
+            "type-menu-link",
             "type-long-text",
-            "type-boolean",
+            "type-paragraph",
             "type-static-value",
-            "type-media",
             "type-link",
+            "type-reusable-paragraph",
             "type-ordered",
+            "type-text",
+            "type-menu",
+            "type-accordion",
+            "type-media",
             "type-taxonomy-filter",
+            "type-taxonomy-term",
+            "type-boolean",
             "type-meta"
         ],
         "Processors": [
-            "processor-html-entity-decode",
-            "processor-convert-encoding",
-            "processor-remove-empty-tags",
-            "processor-nl2br",
+            "processor-remove-dom",
             "processor-replace",
             "processor-strip-tags",
+            "processor-nl2br",
             "processor-whitespace",
-            "processor-remove-dom"
+            "processor-convert-encoding",
+            "processor-html-entity-decode",
+            "processor-remove-empty-tags"
         ]
     }
 }
