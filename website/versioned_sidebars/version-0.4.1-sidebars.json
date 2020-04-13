@@ -2,40 +2,40 @@
   "version-0.4.1-docs": {
     "Introduction": [
       "version-0.4.1-getting-started",
-      "version-0.4.1-examples",
       "version-0.4.1-reporting",
-      "version-0.4.1-url-options",
       "version-0.4.1-crawler",
-      "version-0.4.1-cache_tools"
+      "version-0.4.1-cache_tools",
+      "version-0.4.1-url-options",
+      "version-0.4.1-examples"
     ],
     "Types": [
-      "version-0.4.1-type-alias",
-      "version-0.4.1-type-uuid",
-      "version-0.4.1-type-menu-link",
-      "version-0.4.1-type-long-text",
-      "version-0.4.1-type-paragraph",
-      "version-0.4.1-type-static-value",
-      "version-0.4.1-type-link",
-      "version-0.4.1-type-reusable-paragraph",
-      "version-0.4.1-type-ordered",
-      "version-0.4.1-type-text",
-      "version-0.4.1-type-menu",
       "version-0.4.1-type-accordion",
-      "version-0.4.1-type-media",
-      "version-0.4.1-type-taxonomy-filter",
-      "version-0.4.1-type-taxonomy-term",
       "version-0.4.1-type-boolean",
-      "version-0.4.1-type-meta"
+      "version-0.4.1-type-static-value",
+      "version-0.4.1-type-long-text",
+      "version-0.4.1-type-link",
+      "version-0.4.1-type-menu-link",
+      "version-0.4.1-type-text",
+      "version-0.4.1-type-media",
+      "version-0.4.1-type-taxonomy-term",
+      "version-0.4.1-type-alias",
+      "version-0.4.1-type-paragraph",
+      "version-0.4.1-type-reusable-paragraph",
+      "version-0.4.1-type-uuid",
+      "version-0.4.1-type-taxonomy-filter",
+      "version-0.4.1-type-meta",
+      "version-0.4.1-type-menu",
+      "version-0.4.1-type-ordered"
     ],
     "Processors": [
-      "version-0.4.1-processor-remove-dom",
       "version-0.4.1-processor-replace",
-      "version-0.4.1-processor-strip-tags",
-      "version-0.4.1-processor-nl2br",
-      "version-0.4.1-processor-whitespace",
       "version-0.4.1-processor-convert-encoding",
       "version-0.4.1-processor-html-entity-decode",
-      "version-0.4.1-processor-remove-empty-tags"
+      "version-0.4.1-processor-remove-dom",
+      "version-0.4.1-processor-strip-tags",
+      "version-0.4.1-processor-whitespace",
+      "version-0.4.1-processor-remove-empty-tags",
+      "version-0.4.1-processor-nl2br"
     ]
   }
 }
