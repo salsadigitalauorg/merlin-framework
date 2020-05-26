@@ -119,8 +119,8 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
             // No protocol and no leading slash: relative to this page.
             return true;
         }
-    }//end isRelativeUri()
 
+    }//end isRelativeUri()
 
 
     /**
