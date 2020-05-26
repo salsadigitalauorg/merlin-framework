@@ -1,8 +1,8 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Command\GenerateCommand;
+use Merlin\Command\GenerateCommand;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Ordered extends TypeBase implements TypeInterface {
@@ -48,16 +48,25 @@ class Ordered extends TypeBase implements TypeInterface {
 
     $this->crawler->each(
         function(Crawler $node) use ($list, &$results) {
-        foreach ($list as $item) {
-        $attr = $node->attr($item['by']['attr']);
-        if (strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
-          continue;
-        }
+          foreach ($list as $item) {
+            if (isset($item['by']['selector'])) {
+              $result = $node->evaluate($item['by']['selector']);
+              if ($result->count() == 0) {
+                continue;
+              } else {
+                $node = $result;
+              }
+            } else {
+              $attr = $node->attr($item['by']['attr']);
+                if (strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
+                  continue;
+                }
+            }
 
-        $row = new \stdClass();
-        $this->processItem($row, $node, $item);
-        $results[] = $row;
-        }
+            $row = new \stdClass();
+            $this->processItem($row, $node, $item);
+            $results[] = $row;
+          }//end foreach
         }
     );
 

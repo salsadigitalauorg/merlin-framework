@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\ElementTrait;
+use Merlin\Utility\ElementTrait;
 
 /**
  * Generate link output from a selector.
@@ -57,7 +57,16 @@ class Link extends TypeMultiComponent implements TypeInterface
      */
     public function isRelativeUri($uri='')
     {
-        return substr($uri, 0, 1) === '/';
+        if (strpos($uri,'://') !== false) {
+		        // Protocol: absolute url.
+		        return false;
+        } else if (substr($uri,0,1) != '/') {
+            // Leading '/': absolute to domain name (half relative).
+            return true;
+        } else {
+            // No protocol and no leading slash: relative to this page.
+            return true;
+        }
 
     }//end isRelativeUri()
 

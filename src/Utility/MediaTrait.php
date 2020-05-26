@@ -1,8 +1,9 @@
 <?php
 
-namespace Migrate\Utility;
+namespace Merlin\Utility;
 
 use Ramsey\Uuid\Uuid;
+use GuzzleHttp\Psr7;
 
 /**
  * A trait to be used for media representations throughout the project.
@@ -77,30 +78,26 @@ trait MediaTrait
      */
     protected function getFileUrl($uri)
     {
-        $host      = parse_url($this->crawler->getUri());
-        $base      = "{$host['scheme']}://{$host['host']}";
-        $parsedUri = parse_url($uri);
 
-        if (isset($parsedUri['host'])) {
-            // If the host is in the URI we have an absolute URL
-            // so we should return that.
-            return $uri;
+        if (isset($this->config['extra']['filename_callback'])) {
+            $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
+            return $url;
         }
 
-        if (substr($uri, 0, 1) === '/') {
-            // If the first character is a / we have a relative URI so
-            // we can append the base domain to the URI.
-            return "{$base}{$uri}";
-        } else {
-            if (isset($this->config['extra']['filename_callback'])) {
-                $url = Callback::getResult($this->config['extra']['filename_callback'], $this, $uri);
-                return $url;
-            }
-
-            return "{$base}/{$uri}";
+        // Return absolute URLs without further processing.
+        if (strncasecmp($uri, "http", 4) === 0) {
+            return urldecode($uri);
         }
 
-        throw new \Exception('Invalid file URL for media.');
+        // Resolve relative paths.
+        try {
+            $uri = Psr7\uri_for($uri);
+            $uri = Psr7\UriResolver::resolve(Psr7\uri_for($this->crawler->getUri()), $uri);
+        } catch (Exception $e) {
+            throw new \Exception('Invalid file URL for media.');
+        }
+
+        return urldecode((string) $uri);
 
     }//end getFileUrl()
 
@@ -154,6 +151,36 @@ trait MediaTrait
         return "<a href=\"{$defaultLink}\" {$data}>{$linkText}</a>";
 
     }//end getDrupalLinkitEmbed()
+
+
+    /**
+     * Determine whether media asset is on an external domain.
+     *
+     * @param String $url
+     *   URL of the original asset
+     */
+    protected function checkExternalUrl($url) {
+
+      // Relative urls are ok.
+      if (substr($url, 0, 4) != "http") {
+        return false;
+      }
+
+      $mainConfig = $this->output->getConfig();
+      if (empty($mainConfig)) {
+        return false;
+      }
+
+      $domain = $mainConfig->get('domain');
+
+      $mediaDomain = str_ireplace('www.', '', parse_url($url, PHP_URL_HOST));
+      if (!strpos($domain, $mediaDomain)) {
+        return true;
+      }
+
+      return false;
+
+    }//end checkExternalUrl()
 
 
 }

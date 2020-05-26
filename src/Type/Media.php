@@ -1,12 +1,12 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\MediaTrait;
-use Migrate\Utility\ProcessorOptionsTrait;
-use Migrate\ProcessController;
-use Migrate\Exception\ElementNotFoundException;
+use Merlin\Utility\MediaTrait;
+use Merlin\Utility\ProcessorOptionsTrait;
+use Merlin\ProcessController;
+use Merlin\Exception\ElementNotFoundException;
 
 /**
  * A media processor.
@@ -55,9 +55,10 @@ class Media extends TypeMultiComponent implements TypeInterface {
     $uuids = [];
     extract($this->config['options']);
     $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
+    $external_assets = isset($this->config['options']['external_assets']) ? $this->config['options']['external_assets'] : false;
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids, $type) {
+        function (Crawler $node) use (&$uuids, $type, $external_assets) {
             try {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
@@ -86,6 +87,14 @@ class Media extends TypeMultiComponent implements TypeInterface {
 
             $uuid = $this->getUuid($name, $file);
 
+            // Ignore if external assets are not permitted.
+            if (!$external_assets) {
+                if ($this->checkExternalUrl($file)) {
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Skipping external asset {$file}"], true);
+                    return;
+                }
+            }
+
             $entity = [
                 'file' => $file,
                 'uuid' => $uuid,
@@ -113,9 +122,10 @@ class Media extends TypeMultiComponent implements TypeInterface {
     $uuids = [];
     extract($this->config['options']);
     $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
+    $external_assets = isset($this->config['options']['external_assets']) ? $this->config['options']['external_assets'] : false;
 
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids, $type) {
+        function (Crawler $node) use (&$uuids, $type, $external_assets) {
             $name = $node->attr($this->getOption('name'));
             $file = $node->attr($this->getOption('file'));
             $file = $this->getFileUrl($file);
@@ -127,6 +137,14 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $parts = explode("/", $file);
                 $name = $parts[(count($parts) - 1)];
                 $this->output->mergeRow("warning-{$type}", $file, ["Using fallback name {$name}"], true);
+            }
+
+            // Ignore if external assets are not permitted.
+            if (!$external_assets) {
+                if ($this->checkExternalUrl($file)) {
+                    $this->output->mergeRow("warning-{$this->type}", $file, ["Skipping external asset {$file}"], true);
+                    return;
+                }
             }
 
             $entity = [

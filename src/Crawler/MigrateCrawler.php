@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Migrate\Fetcher\Cache;
+use Merlin\Fetcher\Cache;
 use Spatie\Crawler\Crawler;
 use Generator;
 use Spatie\Crawler\LinkAdder;
@@ -41,7 +41,6 @@ class MigrateCrawler extends Crawler
                 $this->crawlQueue->markAsProcessed($crawlUrl);
 
                 $fakeResponse = new Response(200, [], $contents);
-
                 $observer->crawled($crawlUrl->url, $fakeResponse, $foundOnUrl, true);
 
                 continue 2;
@@ -51,7 +50,7 @@ class MigrateCrawler extends Crawler
         }//end if
       }//end foreach
 
-      if (! $this->crawlProfile->shouldCrawl($crawlUrl->url)) {
+      if (!$this->crawlProfile->shouldCrawl($crawlUrl->url)) {
         $this->crawlQueue->markAsProcessed($crawlUrl);
         continue;
       }

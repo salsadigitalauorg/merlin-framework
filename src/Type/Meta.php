@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\ProcessorOptionsTrait;
-use Migrate\ProcessController;
+use Merlin\Utility\ProcessorOptionsTrait;
+use Merlin\ProcessController;
 
 /**
  * Extract meta tags.

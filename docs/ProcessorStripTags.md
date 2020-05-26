@@ -8,7 +8,7 @@ Removes tags and attributes from markup as defined.
 
 ## Options
 
-- **allowed_tags**`<type: string>`: A string of allowed tags as formatted for [strip_tags](https://www.php.net/manual/en/function.strip-tags.php)
+- **allowed_tags**`<type: string>`: A string of allowed tags as formatted for [strip_tags](https://www.php.net/manual/en/function.strip-tags.php).
 - **remove_attr**`<type: array>`: A list of attributes that should be removed.
 
 ## Usage

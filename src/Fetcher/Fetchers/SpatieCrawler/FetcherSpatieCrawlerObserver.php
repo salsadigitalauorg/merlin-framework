@@ -1,26 +1,27 @@
 <?php
 
-namespace Migrate\Fetcher\Fetchers\SpatieCrawler;
+namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use GuzzleHttp\Exception\RequestException;
+use Merlin\Reporting\RedirectUtils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObserver;
-use Migrate\Fetcher\FetcherBase;
+use Merlin\Fetcher\FetcherBase;
 
 class FetcherSpatieCrawlerObserver  extends CrawlObserver
 {
   /** @var \Symfony\Component\Console\Style\SymfonyStyle */
   protected $io;
 
-  /** @var \Migrate\Fetcher\FetcherBase */
+  /** @var \Merlin\Fetcher\FetcherBase */
   protected $fetcher;
 
 
   /**
    * FetcherSpatieCrawlerObserver constructor.
    *
-   * @param \Migrate\Fetcher\FetcherBase $fetcher
+   * @param \Merlin\Fetcher\FetcherBase $fetcher
    */
   public function __construct(FetcherBase $fetcher)
   {
@@ -63,8 +64,12 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
 
     $this->io->writeln("Fetched ({$status}): {$urlString}");
 
+    // Get raw headers and redirect info.
+    // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
+    $redirect = RedirectUtils::checkForRedirect($urlString);
+
     if (!empty($urlString) && !empty($html)) {
-      $this->fetcher->processContent($urlString, $html);
+      $this->fetcher->processContent($urlString, $html, $redirect);
     }
 
     $this->fetcher->incrementCount('fetched');

@@ -1,16 +1,16 @@
 <?php
 
-use Migrate\Output\Json;
-use Migrate\Parser\Config;
-use Migrate\Parser\WebConfig;
-use Migrate\Tests\Functional\LocalPhpServerTestCase;
+use Merlin\Output\Json;
+use Merlin\Parser\Config;
+use Merlin\Parser\WebConfig;
+use Merlin\Tests\Functional\LocalPhpServerTestCase;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
-use Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
+use Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
 
 class FetcherTest extends LocalPhpServerTestCase
 {
@@ -56,7 +56,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
   /**
    * Sets a config data attribute (normally protected property)
-   * @param \Migrate\Parser\WebConfig $config
+   * @param \Merlin\Parser\WebConfig $config
    * @param                           $property
    * @param                           $value
    */
@@ -95,15 +95,10 @@ class FetcherTest extends LocalPhpServerTestCase
     $io = new SymfonyStyle($input, $output);
     $json = new Json($io, $config);
 
-    // Instead of creating a fetcher, could potentially use the command class:
-//    $c = new \Migrate\Command\GenerateCommand();
-//    $f = function() use ($config, $json, $io) {
-//      $this->config = $config;
-//      $this->runWeb($json, $io);
-//    };
-//    $f->call($c);
-
-    $fetcher = new \Migrate\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    // We use Spatie to test JS.
+    $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    // TODO: extend to test FetcherCurl too
+    // $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
     $urls = $configData['urls'] ?? [];
     foreach($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);
@@ -437,7 +432,7 @@ class FetcherTest extends LocalPhpServerTestCase
     $data = $this->doRequest("Duplicate Bananas", $config);
 
     // Check we got the right number of duplicate results
-    $duplicateUrls = $data['url-content-duplicates']['duplicates'][0]['urls'] ?? [];
+    $duplicateUrls = $data['phpunit_test-content-duplicates']['duplicates'][0]['urls'] ?? [];
 
     $this->assertNotEmpty($duplicateUrls);
     $this->assertCount(count($config['urls']), $duplicateUrls);

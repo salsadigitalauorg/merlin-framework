@@ -4,11 +4,11 @@
  * Holds the default settings used by the Fetcher classes.
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
 /**
  * Class FetcherDefaults
- * @package Migrate\Fetcher
+ * @package Merlin\Fetcher
  */
 class FetcherDefaults
 {
@@ -24,6 +24,9 @@ class FetcherDefaults
 
   /** @var bool Follow server redirects */
   const FOLLOW_REDIRECTS = true;
+
+  /** @var int Maximum number of redirects to follow */
+  const MAX_REDIRECTS = 5;
 
   /** @var int Connect timeout */
   const TIMEOUT_CONNECT = 10;

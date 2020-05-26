@@ -1,10 +1,9 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
-use Migrate\Parser\WebConfig;
+use Merlin\Parser\WebConfig;
 
 /**
  * Ensure that URLs are correctly migrated from both files and config using the urls and urls_file properties.
@@ -20,6 +19,7 @@ class UrlsFileTest extends TestCase
     $this->source = __DIR__.'/config_base.yml';
     $this->source_urls_only = __DIR__.'/config_base_urls_only.yml';
     $this->source_urls_file_only = __DIR__.'/config_base_urls_file_only.yml';
+    $this->source_multiple_urls_files = __DIR__.'/config_base_multiple_urls_files.yml';
     $this->source_no_urls = __DIR__.'/config_base_no_urls.yml';
     $this->source_missing_urls_file = __DIR__.'/config_base_missing_urls_file.yml';
   }
@@ -30,7 +30,7 @@ class UrlsFileTest extends TestCase
    */
   public function testUrls()
   {
-    $sources = ['source', 'source_urls_only', 'source_urls_file_only'];
+    $sources = ['source', 'source_urls_only', 'source_urls_file_only', 'source_multiple_urls_files'];
     foreach ($sources as $source) {
       $base = new WebConfig($this->$source);
       $totals = $base->get('totals');

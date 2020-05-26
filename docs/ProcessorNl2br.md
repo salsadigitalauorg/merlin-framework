@@ -15,5 +15,5 @@ Doesn't provide options.
 ```
 processors:
   -
-    processor: nl1br
+    processor: nl2br
 ```

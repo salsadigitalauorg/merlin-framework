@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Merlin Migrate URL Report</title>
+</head>
+<body>
+
+<style>
+
+  @page { margin: 15px; }
+  body { margin: 15px; }
+
+  body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    font-size: 0.75em;
+  }
+
+  .table-summary tr td:first-child {
+    width: 200px;
+  }
+
+  .table-error-list {
+    width: 100%;
+  }
+  .table-error-list tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 30px;
+  }
+  .table-error-list tr td {
+    padding: 10px;
+  }
+  .table-error-list tr:nth-child(odd) {
+    background: #ECECEC;
+  }
+
+
+  .hr-section {
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+
+  h3.header-section {
+    padding: 10px 10px;
+  }
+
+  pre.wrap {
+    white-space: pre-wrap;
+    font-family: Arial, sans-serif;
+  }
+
+</style>
+
+<div>
+  <div style="float:left;">
+    <h2 style="text-transform: uppercase">{{ title }}</h2>
+    <table border="0" cellspacing="8">
+      <tr>
+        <td><strong>Domain: </strong></td><td>{{ domain }}</td>
+      </tr>
+      <tr>
+        <td><strong>Date: </strong></td><td> {{ date }}</td>
+      </tr>
+    </table>
+    <br>
+  </div>
+
+  <div style="float:right; padding: 20px;">
+    <img src="{{ b64logo }}" style="width:200px">
+  </div>
+
+</div>
+
+<div style="clear:both"><hr class="hr-section"></div>
+
+<h3>Summary</h3>
+<div>
+  <div style="float:left; width:50%;">
+    <table border="0" cellspacing="8" class="table-summary">
+      {% for row in summary %}
+      <tr><td>{{ row.label }}</td><td>{{ row.value }}</td></tr>
+      {% endfor %}
+    </table>
+
+    <h3>Cache Statistics</h3>
+    {% if cache_stats is not empty %}
+      <table border="0" cellspacing="8" class="table-summary">
+        <tr><td>Total files:</td><td>{{ cache_stats.file_count }}</td></tr>
+        <tr><td>Total bytes:</td><td>{{ cache_stats.total_size_bytes }}</td></tr>
+        <tr><td>Average bytes:</td><td>{{ cache_stats.avg_size_bytes }}</td></tr>
+      </table>
+    {% else %}
+      <table border="0" cellspacing="8" class="table-summary">
+        <tr><td colspan="2">Cache not enabled/applicable.</td></tr>
+      </table>
+    {% endif %}
+  </div>
+  <div style="float:right; width:50%">
+    <img src="{{ b64pie1 }}" style="width:100%; max-width: 480px;">
+  </div>
+</div>
+
+<div style="clear:both"><hr class="hr-section"></div>
+
+<!-- SECTION SUCCESS -->
+<h3 class="header-section" style="background:#afffd0">Success</h3>
+<div>Individual urls that returned a 200 OK status are not listed in the HTML or PDF reports, but can be found in the report data files.</div>
+<div style="clear:both"><hr class="hr-section"></div>
+
+
+<!-- SECTION REDIRECT -->
+{% if redirects is not empty %}
+  <h3 class="header-section" style="background:#afffd0">Redirects</h3>
+  <table border="0" cellspacing="0" class="table-error-list">
+    {% for redirect in redirects %}
+    <tr>
+      <td>{{ loop.index }}.</td>
+      <td>
+        <strong>Original URL</strong>
+        <pre class="wrap">
+        {{ redirect.url_original }}
+        </pre>
+        <strong>Effective URL</strong>
+        <pre class="wrap">
+        {{ redirect.url_effective }}
+        </pre>
+        <strong>Status Codes</strong>
+        <pre class="wrap">
+        Original URL: {{ redirect.status_code_original }}; Effective URL:  {{ redirect.status_code }}
+        </pre>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div style="clear:both"><hr class="hr-section"></div>
+{% endif %}
+
+
+<!-- SECTION WARNINGS -->
+{% if warnings is not empty %}
+  <h3 class="header-section" style="background:#ffcb6b">Warnings ({{ warnings | length }})</h3>
+  <table border="0" cellspacing="0" class="table-error-list">
+    {% for row in warnings %}
+      <tr>
+        <td>{{ loop.index }}.</td>
+        <td><pre class="wrap">{{ row }}</pre></td>
+      </tr>
+      {% endfor %}
+  </table>
+  <div style="clear:both"><hr class="hr-section"></div>
+{% endif %}
+
+<!-- SECTION HTTP ERRORS -->
+{% if errors_http is not empty %}
+  <h3 class="header-section" style="background:#ff0000;color:#ffffff">HTTP Errors ({{ errors_http | length }})</h3>
+  <table border="0" cellspacing="0" class="table-error-list">
+    {% for row in errors_http %}
+    <tr>
+      <td>{{ loop.index }}.</td>
+      <td><pre class="wrap">{{ row }}</pre></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div style="clear:both"><hr class="hr-section"></div>
+{% endif %}
+
+<!-- SECTION HTTP ERRORS -->
+{% if errors_general is not empty %}
+  <h3 class="header-section" style="background:#ff0000;color:#ffffff">Other Errors ({{ errors_general | length }})</h3>
+  <table border="0" cellspacing="0" class="table-error-list">
+    {% for row in errors_general %}
+    <tr>
+      <td>{{ loop.index }}.</td>
+      <td><pre class="wrap">{{ row }}</pre></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div style="clear:both"><hr class="hr-section"></div>
+{% endif %}
+
+
+
+</body>
+</html>

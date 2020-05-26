@@ -4,7 +4,7 @@
  * Basic file-based caching for storing the fetched HTML content.
  */
 
-namespace Migrate\Fetcher;
+namespace Merlin\Fetcher;
 
 class Cache
 {
@@ -142,18 +142,25 @@ class Cache
 
   /**
    * Deletes a cache file from disk.
+   *
    * @param $url
+   *
+   * @return bool
    */
   public function unlink($url) {
+
+    $success = false;
     $filename = $this->getFilename($url);
     if (is_file($filename)) {
-      unlink($filename);
+      $success = unlink($filename);
     }
 
     $fileUrl = $this->getFilename($url).".url";
     if (is_file($fileUrl)) {
-      unlink($fileUrl);
+      $success = unlink($fileUrl);
     }
+
+    return $success;
 
   }//end unlink()
 
@@ -265,6 +272,43 @@ class Cache
     }
 
   }//end fileForceContents()
+
+
+  /**
+   * Returns some basic stats about the cache, like total files
+   * and total and average size on disk in bytes.
+   * NOTE: This could probably use exec/popen('du').. for performance.
+   */
+  public function getStats() {
+
+    if (!is_dir($this->path)) {
+      return;
+    }
+
+    $files = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($this->path),
+        \RecursiveIteratorIterator::SELF_FIRST
+    );
+    $count = 0;
+    $totalSize = 0;
+    $ignore = ['.DS_Store'];
+
+    foreach ($files as $fileinfo) {
+      if ($fileinfo->isFile() && !in_array($fileinfo->getFilename(), $ignore)) {
+        $totalSize += $fileinfo->getSize();
+        $count++;
+      }
+    }
+
+    $stats = [
+        'file_count'       => $count,
+        'total_size_bytes' => $totalSize,
+        'avg_size_bytes'   => ceil($totalSize / $count),
+    ];
+
+    return $stats;
+
+}//end getStats()
 
 
 }//end class

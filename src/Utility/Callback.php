@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Utility;
+namespace Merlin\Utility;
 
 /**
  * Utility to allow callbacks to be passed from YML.

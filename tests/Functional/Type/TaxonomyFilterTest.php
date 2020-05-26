@@ -1,11 +1,11 @@
 <?php
 
-namespace Migrate\Tests\Functional\Type;
+namespace Merlin\Tests\Functional\Type;
 
-use Migrate\Tests\Functional\CrawlerTestCase;
-use Migrate\Type\TaxonomyFilter;
-use Migrate\Exception\ValidationException;
-use Migrate\Exception\ElementNotFoundException;
+use Merlin\Tests\Functional\CrawlerTestCase;
+use Merlin\Type\TaxonomyFilter;
+use Merlin\Exception\ValidationException;
+use Merlin\Exception\ElementNotFoundException;
 
 /**
  * Tests for the taxonomy filter.

@@ -1,9 +1,9 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Exception\ElementNotFoundException;
+use Merlin\Exception\ElementNotFoundException;
 
 /**
  * Generate a structure for an accordion.

@@ -1,5 +1,6 @@
 ---
 domain: http://localhost:8000
+entity_type: crawler_test
 options:
   follow_redirects: true  # Allow internal redirects.
   ignore_robotstxt: true  # Ignore robots.txt rules around crawlability.

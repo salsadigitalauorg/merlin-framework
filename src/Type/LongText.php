@@ -1,10 +1,10 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Utility\ElementTrait;
+use Merlin\Utility\ElementTrait;
 
 /**
  * The long text processor.

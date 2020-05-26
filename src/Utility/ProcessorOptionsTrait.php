@@ -3,7 +3,7 @@
  * The options trait for processors.
  */
 
-namespace Migrate\Utility;
+namespace Merlin\Utility;
 
 /**
  * Allow processors to access options in a repeatable way.

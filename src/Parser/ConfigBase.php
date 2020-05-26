@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
 use function DeepCopy\deep_copy;
 
@@ -52,11 +52,11 @@ abstract class ConfigBase implements ParserInterface
         $data = \Spyc::YAMLLoad($this->source);
 
         if (empty($data['entity_type'])) {
-            throw new \Exception("Invalid source file: No content type found in the source file");
+            throw new \Exception("Invalid source file: No content type defined in the source file");
         }
 
         if (empty($data['mappings'])) {
-            throw new \Exception("Invalid source file: No mappings found in the source file");
+            throw new \Exception("Invalid source file: No mappings defined in the source file");
         }
 
         /*
@@ -65,25 +65,36 @@ abstract class ConfigBase implements ParserInterface
          */
 
         if (!empty($data['urls_file'])) {
-            $urls_file = dirname($this->source).'/'.$data['urls_file'];
+            // If urls_files is provided as a string, make it a single item array to make it easier to handle.
+            $urls_files = is_array($data['urls_file']) ? $data['urls_file'] : [$data['urls_file']];
+            $urls_files_count = count($urls_files);
 
-            if (!file_exists($urls_file)) {
-                throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
+            $urls_from_files = ['urls' => []];
+
+            for ($i = 0; $i < $urls_files_count; $i++) {
+              $urls_file = dirname($this->source).'/'.$urls_files[$i];
+
+              if (!file_exists($urls_file)) {
+                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]}");
+              }
+
+              $urls_from_current_file = \Spyc::YAMLLoad($urls_file);
+
+              if (!is_array($urls_from_current_file['urls'])) {
+                  $urls_from_current_file['urls'] = [$urls_from_current_file['urls']];
+              }
+
+              $urls_from_files['urls'] = array_merge($urls_from_current_file['urls'], $urls_from_files['urls']);
             }
 
-            $urls_from_file = \Spyc::YAMLLoad($urls_file);
-            if (!is_array($urls_from_file['urls'])) {
-                $urls_from_file['urls'] = [$urls_from_file['urls']];
-            }
-
-            $this->totals['urls_from_file'] = count($urls_from_file['urls']);
+            $this->totals['urls_from_file'] = count($urls_from_files['urls']);
 
             if (isset($data['urls'])) {
                 $data_urls_array = is_array($data['urls']) ? $data['urls'] : [$data['urls']];
                 $this->totals['urls_from_config'] = count($data_urls_array);
-                $data['urls'] = array_merge($data_urls_array, $urls_from_file['urls']);
+                $data['urls'] = array_merge($data_urls_array, $urls_from_files['urls']);
             } else {
-                $data['urls'] = $urls_from_file['urls'];
+                $data['urls'] = $urls_from_files['urls'];
             }
 
             unset($data['urls_file']);
@@ -100,8 +111,7 @@ abstract class ConfigBase implements ParserInterface
             $data['urls'] = [$data['urls']];
         }
 
-        $data = $this->inflateMappings($data);
-
+        // $data = $this->inflateMappings($data);
         $this->data = $data;
         $this->totals['mappings'] = count($data['mappings']);
         $this->totals['urls'] = count($data['urls']);
@@ -212,6 +222,7 @@ abstract class ConfigBase implements ParserInterface
    *
    * field (string), selector (array):
    *    The field will contain the result from the *first* matched selector.
+   *    NOTE: This case is now handled in Type/TypeBase.
    *
    *
    * @param $data
@@ -244,14 +255,6 @@ abstract class ConfigBase implements ParserInterface
             foreach ($field as $idx => $newField) {
               $newSelector = $selector[$idx];
               $mappings[] = self::cloneMap($currentMap, $newField, $newSelector);
-            }
-
-            unset($mappings[$i]);
-          } else if (is_string($field) && is_array($selector)) {
-            // Reverse is here for first match since we are looping backwards.
-            $selector = array_reverse($selector);
-            foreach ($selector as $idx => $newSelector) {
-              $mappings[] = self::cloneMap($currentMap, $field, $newSelector);
             }
 
             unset($mappings[$i]);

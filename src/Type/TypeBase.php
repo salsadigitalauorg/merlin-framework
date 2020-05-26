@@ -1,14 +1,14 @@
 <?php
 
-namespace Migrate\Type;
+namespace Merlin\Type;
 
-use Migrate\Utility\Callback;
+use Merlin\Utility\Callback;
 use Symfony\Component\DomCrawler\Crawler;
-use Migrate\Output\OutputInterface;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
+use Merlin\Output\OutputInterface;
+use Merlin\Exception\ElementNotFoundException;
+use Merlin\Exception\ValidationException;
 use Symfony\Component\CssSelector\Exception\SyntaxErrorException;
-use Migrate\ProcessController;
+use Merlin\ProcessController;
 
 /**
  * Field type base.
@@ -27,7 +27,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * The output object.
    *
-   * @var Migrate\Output\OutputInterface
+   * @var Merlin\Output\OutputInterface
    */
   protected $output;
 
@@ -50,7 +50,7 @@ abstract class TypeBase implements TypeInterface {
   /**
    * The process conntroller.
    *
-   * @var Migrate\ProcessControrller
+   * @var Merlin\ProcessControrller
    */
   protected $processors;
 
@@ -60,7 +60,7 @@ abstract class TypeBase implements TypeInterface {
    *
    * @param Symfony\Component\DomCrawler\Crawler $crawler
    *   The element filtered to the selector.
-   * @param Migrate\Output\OutputInterface
+   * @param Merlin\Output\OutputInterface
    *   The output object.
    * @param mixed &$row
    *   The row.
@@ -159,14 +159,61 @@ abstract class TypeBase implements TypeInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Merlin\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ValidationException
    */
-  public function process()
+  public function process() {
+
+    $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
+
+    if (!is_array($selector)) {
+      $selector = [$selector];
+    }
+
+    $failedSelectors = [];
+    $selectorCount = count($selector);
+
+    foreach ($selector as $currentSelector) {
+      if (empty(trim($currentSelector))) {
+        $this->output->mergeRow("warning-empty-selector", $this->config['field'], ["Selector missing!"], true);
+      }
+
+      $lastCrawler = $this->crawler;
+
+      $results = $this->processSelector($currentSelector);
+
+      if ($results === false) {
+        $this->crawler = $lastCrawler;
+        $failedSelectors[] = $currentSelector;
+      } else {
+        // We found our first match selector, so stop lookin'.
+        break;
+      }
+    }//end foreach
+
+    // If none of the specified selectors matched for this field, report as error.
+    if ($failedSelectors && count($failedSelectors) === $selectorCount) {
+      $field = ($this->config['field'] ?? null);
+      $fieldLabel = " for field '{$field}'";
+      throw new ElementNotFoundException("Failed to find any multiple selector{$fieldLabel}: ".implode("; ", $failedSelectors));
+    }
+
+  }//end process()
+
+
+  /**
+   * Processes the current selector.
+   * @param $selector
+   *
+   * @return bool
+   * @throws \Merlin\Exception\ValidationException
+   */
+  private function processSelector($selector)
   {
     $xpath = FALSE;
     $element = $this->crawler;
     $sourceUri = $element->getUri();
-
-    $selector = isset($this->config['selector']) ? $this->config['selector'] : FALSE;
 
     if ($this->supports('xpath') && $selector) {
       $element = @$this->crawler->evaluate($selector);
@@ -213,19 +260,25 @@ abstract class TypeBase implements TypeInterface {
 
       if (!empty($this->config['options']['mandatory'])) {
         $this->row->mandatory_fail = TRUE;
-        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element missing in url: {$sourceUri}"], true);
+        $this->output->mergeRow("warning-mandatory", $this->config['field'], ["Mandatory element using selector '{$selector}' missing in url: {$sourceUri}"], true);
       }
 
       if (isset($this->config['default'])) {
-          $this->processDefault();
+        $this->processDefault();
       }
 
-      throw new ElementNotFoundException($selector);
+      return false;
     }
 
-    return $xpath ? $this->processXpath() : $this->processDom();
+    if ($xpath) {
+      $this->processXpath();
+    } else {
+      $this->processDom();
+    }
 
-  }//end process()
+    return true;
+
+  }//end processSelector()
 
 
   /**
@@ -255,24 +308,24 @@ abstract class TypeBase implements TypeInterface {
    *
    * Sets any default if defined and selector was not found.  Some types may override default below.
    *
-   * @throws \Migrate\Exception\ValidationException
+   * @throws \Merlin\Exception\ValidationException
    */
   public function processDefault() {
 
-      if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
-          $value = Callback::getResult($this->config['default']['function'], $this->crawler);
-      } else if (is_array($this->config['default']) && key_exists('fields', $this->config['default'])) {
-          $results = [];
-          foreach ($this->config['default']['fields'] as $field => $data) {
-              $results[$field] = $data;
-          }
-
-          $value = $results;
-      } else {
-          $value = $this->config['default'];
+    if (is_array($this->config['default']) && key_exists('function', $this->config['default'])) {
+      $value = Callback::getResult($this->config['default']['function'], $this->crawler);
+    } else if (is_array($this->config['default']) && key_exists('fields', $this->config['default'])) {
+      $results = [];
+      foreach ($this->config['default']['fields'] as $field => $data) {
+        $results[$field] = $data;
       }
 
-      $this->addValueToRow($value);
+      $value = $results;
+    } else {
+      $value = $this->config['default'];
+    }
+
+    $this->addValueToRow($value);
 
   }//end processDefault()
 

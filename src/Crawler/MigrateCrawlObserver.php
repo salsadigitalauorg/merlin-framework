@@ -1,11 +1,11 @@
 <?php
 
-namespace Migrate\Crawler;
+namespace Merlin\Crawler;
 
 use Consolidation\Comments\Comments;
-use GuzzleHttp\Psr7\Request;
-use Migrate\Fetcher\Cache;
-use Migrate\Fetcher\ContentHash;
+use Merlin\Fetcher\Cache;
+use Merlin\Fetcher\ContentHash;
+use Merlin\Reporting\RedirectUtils;
 use Spatie\Crawler\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -17,16 +17,16 @@ class MigrateCrawlObserver extends CrawlObserver
   /** @var \Symfony\Component\Console\Style\SymfonyStyle */
   protected $io;
 
-  /** @var \Migrate\Output\OutputBase */
+  /** @var \Merlin\Output\OutputBase */
   protected $json;
 
   /** @var integer */
   protected $count = 0;
 
-  /** @var \Migrate\Fetcher\Cache  */
+  /** @var \Merlin\Fetcher\Cache  */
   private $cache;
 
-  /** @var \Migrate\Fetcher\ContentHash */
+  /** @var \Merlin\Fetcher\ContentHash */
   private $hashes;
 
 
@@ -39,7 +39,8 @@ class MigrateCrawlObserver extends CrawlObserver
     $useCache = ($config->get('options')['cache_enabled'] ?? true);
     if ($useCache) {
       $domain = $json->getConfig()->get('domain');
-      $this->cache = new Cache($domain);
+      $cacheDir = ($config->get('options')['cache_dir'] ?? "/tmp/merlin_cache");
+      $this->cache = new Cache($domain, $cacheDir);
     }
 
     $findDuplicates = ($config->get('options')['find_content_duplicates'] ?? false);
@@ -70,7 +71,7 @@ class MigrateCrawlObserver extends CrawlObserver
    *
    * @param bool                                $crawledFromCache
    *
-   * @return \Migrate\Output\OutputBase
+   * @return \Merlin\Output\OutputBase
    */
   public function crawled(
     UriInterface $url,
@@ -94,25 +95,85 @@ class MigrateCrawlObserver extends CrawlObserver
     $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
     $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
 
-    // Cache data if we are doing that.
-    if ($this->cache instanceof Cache && !$crawledFromCache) {
-      $html = $response->getBody()->__toString();
+    $entity_type = $this->json->getConfig()->get('entity_type');
 
-      $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
-      $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
-
-      $data = [
-          'url'        => $cacheUrl,
-          'foundOnUrl' => $cacheFoundOnUrl,
-          'contents'   => $html,
-      ];
-
-      $cacheJson = json_encode($data);
-      $this->cache->put($url_string, $cacheJson);
-      $this->io->writeln("$url_string - content put in cache.");
+    // Exclude from URL list if we have exclusion patterns.
+    foreach ($this->json->getConfig()->get('options')['exclude'] as $exclude) {
+      if (preg_match($exclude, $url_string)) {
+        $this->io->writeln("<comment>Ignoring URL:</comment> ${url_string} -- Matches exclude pattern: ${exclude}");
+        return;
+      }
     }
 
-    // Check if duplicate if we are doing that.
+    // Only include if we have exclusive URL match requirement.
+    foreach ($this->json->getConfig()->get('options')['include'] as $include) {
+      if (!preg_match($include, $url_string)) {
+        $this->io->writeln("<comment>Ignoring URL:</comment> ${url_string} -- Does not match include pattern: ${include}");
+        return FALSE;
+      }
+    }
+
+    // Get raw headers and redirect info if not from cache.
+    if (!$crawledFromCache) {
+      // TODO: Determine if it is possible to pass in the original data into crawled() somehow for cache.
+      $redirect = RedirectUtils::checkForRedirect($url);
+      $rawHeaders = ($redirect['raw_headers'] ?? null);
+      if (!empty($redirect) && $redirect['redirect']) {
+        $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+      }
+
+      // Cache data if we are doing that.
+      if ($this->cache instanceof Cache) {
+        $html = $response->getBody()->__toString();
+
+        $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
+        $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
+
+        // Check for malformed UTF-8 encoding.
+        // NOTE: Only checking content, not $cacheUrl or $cacheFoundOnUrl which assuming are OK (!).
+        $testJson = json_encode($html);
+        if (json_last_error() === JSON_ERROR_UTF8) {
+          $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+        }
+
+        $data = [
+            'url'        => $cacheUrl,
+            'foundOnUrl' => $cacheFoundOnUrl,
+            'contents'   => $html,
+            'rawHeaders' => $rawHeaders,
+        ];
+
+        if ($redirect['redirect']) {
+          $data['redirect'] = $redirect;
+        }
+
+        $cacheJson = json_encode($data);
+
+        // Check for any more strange happenings and record it.
+        if (json_last_error()) {
+          $jsonErrMsg = json_last_error_msg();
+          $this->json->mergeRow("error-json-cache-fail", 'urls', ["{$cacheUrl} -- json_error: {$jsonErrMsg}"], true);
+        }
+
+        $this->cache->put($url_string, $cacheJson);
+        $this->io->writeln("$url_string - content put in cache.");
+      }//end if
+    } else {
+         if ($this->cache instanceof Cache) {
+        // Check for cached redirect data.  We do this because the getCrawlRequests() method
+        // in MigrateCrawler doesn't pass this information as it is impossible to obtain in
+        // the same way in the non-cached version so we have to handle it a bit differently.
+        if ($cacheJson = $this->cache->get($url_string)) {
+          $cacheData = json_decode($cacheJson, true);
+          $redirect = ($cacheData['redirect'] ?? null);
+          if (!empty($redirect) && $redirect['redirect']) {
+            $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+          }
+        }
+      }
+    }//end if
+
+      // Check if duplicate if we are doing that.
     if ($this->hashes instanceof ContentHash) {
       $html = $response->getBody()->__toString();
       if ($this->hashes->put($url_string, $html)) {
@@ -129,7 +190,7 @@ class MigrateCrawlObserver extends CrawlObserver
       }
 
       $class_name = str_replace('_', '', ucwords($config['type'], '_'));
-      $class = "\\Migrate\\Crawler\\Group\\".ucfirst($class_name);
+      $class = "\\Merlin\\Crawler\\Group\\".ucfirst($class_name);
 
       if (!class_exists($class)) {
         // An unknown type.
@@ -140,13 +201,13 @@ class MigrateCrawlObserver extends CrawlObserver
 
       if ($type->match($url_string, $response)) {
         // Only match on the first option.
-        $this->json->mergeRow("crawled-urls-{$type->getId()}", $type->getId(), [$return_url], true);
+        $this->json->mergeRow("crawled-urls-{$entity_type}_{$type->getId()}", 'urls', [$return_url], true);
         return;
       }
     }//end foreach
 
     // Add this to the default group if it doesn't match.
-    $this->json->mergeRow('crawled-urls-default', 'default', [$return_url], true);
+    $this->json->mergeRow("crawled-urls-{$entity_type}_default", 'urls', [$return_url], true);
 
   }//end crawled()
 
@@ -156,7 +217,8 @@ class MigrateCrawlObserver extends CrawlObserver
     RequestException $requestException,
     ?UriInterface $foundOnUrl=null
   ) {
-    $this->json->mergeRow('crawl-error', $url->__toString(), [$requestException->getMessage()], true);
+    $entity_type = $this->json->getConfig()->get('entity_type');
+    $this->json->mergeRow("crawl-error-{$entity_type}", $url->__toString(), [$requestException->getMessage()], true);
     $this->io->error("Error: ${url} -- Found on url: ${foundOnUrl}");
 
   }//end crawlFailed()
@@ -169,12 +231,13 @@ class MigrateCrawlObserver extends CrawlObserver
   {
 
     $this->mergeUrlsIntoConfigFiles();
+    $entity_type = $this->json->getConfig()->get('entity_type');
 
     // Build the duplicates file.
     if ($this->hashes instanceof ContentHash) {
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
-        $this->json->mergeRow('crawled-urls-duplicates', 'duplicates', $duplicateUrls, true);
+        $this->json->mergeRow("crawled-urls-{$entity_type}_duplicates", 'duplicates', $duplicateUrls, true);
       }
     }
 
@@ -189,8 +252,9 @@ class MigrateCrawlObserver extends CrawlObserver
    */
   private function mergeUrlsIntoConfigFiles() {
 
-    // /** @var \Migrate\Parser\Config $config */
+    // /** @var \Merlin\Parser\Config $config */
     $config = $this->json->getConfig();
+    $entity_type = $config->get('entity_type');
 
     // Check if any of our groups have merge config file names specified.
     $groups = isset($config->get('options')['group_by']) ? $config->get('options')['group_by'] : [];
@@ -237,7 +301,7 @@ class MigrateCrawlObserver extends CrawlObserver
         $dstConfigFile = $srcPathInfo['dirname'].DIRECTORY_SEPARATOR.$srcConfigFilename."_merged_urls.yml";
 
         $data = $this->json->getData();
-        $urls = ($data["crawled-urls-{$id}"][$id] ?? []);
+        $urls = ($data["crawled-urls-{$entity_type}_{$id}"][$id] ?? []);
 
         if (is_file($srcConfigFile)) {
           if (empty($urls)) {
@@ -286,7 +350,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
 
   /**
-   * @return \Migrate\Fetcher\Cache
+   * @return \Merlin\Fetcher\Cache
    */
   public function getCache() {
     return $this->cache;
@@ -295,7 +359,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
 
   /**
-   * @return \Migrate\Fetcher\ContentHash
+   * @return \Merlin\Fetcher\ContentHash
    */
   public function getHashes() {
     return $this->hashes;

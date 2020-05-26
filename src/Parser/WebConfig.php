@@ -1,6 +1,6 @@
 <?php
 
-namespace Migrate\Parser;
+namespace Merlin\Parser;
 
 class WebConfig extends ConfigBase
 {
@@ -31,25 +31,36 @@ class WebConfig extends ConfigBase
          */
 
         if (!empty($data['urls_file'])) {
-            $urls_file = dirname($this->source).'/'.$data['urls_file'];
+            // If urls_files is provided as a string, make it a single item array to make it easier to handle.
+            $urls_files = is_array($data['urls_file']) ? $data['urls_file'] : [$data['urls_file']];
+            $urls_files_count = count($urls_files);
 
-            if (!file_exists($urls_file)) {
-                throw new \Exception("Invalid URLs file provided: cannot locate {$data['urls_file']}");
+            $urls_from_files = ['urls' => []];
+
+            for ($i = 0; $i < $urls_files_count; $i++) {
+                $urls_file = dirname($this->source).'/'.$urls_files[$i];
+
+                if (!file_exists($urls_file)) {
+                    throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]}");
+                }
+
+                $urls_from_current_file = \Spyc::YAMLLoad($urls_file);
+
+                if (!is_array($urls_from_current_file['urls'])) {
+                    $urls_from_current_file['urls'] = [$urls_from_current_file['urls']];
+                }
+
+                $urls_from_files['urls'] = array_merge($urls_from_current_file['urls'], $urls_from_files['urls']);
             }
 
-            $urls_from_file = \Spyc::YAMLLoad($urls_file);
-            if (!is_array($urls_from_file['urls'])) {
-                $urls_from_file['urls'] = [$urls_from_file['urls']];
-            }
-
-            $this->totals['urls_from_file'] = count($urls_from_file['urls']);
+            $this->totals['urls_from_file'] = count($urls_from_files['urls']);
 
             if (isset($data['urls'])) {
                 $data_urls_array = is_array($data['urls']) ? $data['urls'] : [$data['urls']];
                 $this->totals['urls_from_config'] = count($data_urls_array);
-                $data['urls'] = array_merge($data_urls_array, $urls_from_file['urls']);
+                $data['urls'] = array_merge($data_urls_array, $urls_from_files['urls']);
             } else {
-                $data['urls'] = $urls_from_file['urls'];
+                $data['urls'] = $urls_from_files['urls'];
             }
 
             unset($data['urls_file']);

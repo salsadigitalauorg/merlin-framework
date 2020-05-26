@@ -1,27 +1,17 @@
 <?php
 
-namespace Migrate\Command;
+namespace Merlin\Command;
 
-use Migrate\Crawler\MigrateCrawler;
+use Merlin\Crawler\MigrateCrawler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Migrate\Parser\CrawlerConfig;
-use RollingCurl\RollingCurl;
-use Migrate\Parser\ParserInterface;
-use Migrate\Output\Yaml;
-use Migrate\Output\OutputInterface as MigrateOutputInterface;
-use RollingCurl\Request;
-use Symfony\Component\DomCrawler\Crawler;
+use Merlin\Parser\CrawlerConfig;
+use Merlin\Output\Yaml;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Migrate\Exception\ElementNotFoundException;
-use Migrate\Exception\ValidationException;
-use Migrate\MigrateCrawlObserver;
 use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Handler\CurlHandler;
 
 class CrawlCommand extends Command
 {
@@ -79,7 +69,7 @@ class CrawlCommand extends Command
         $start   = microtime(true);
         $yaml    = new Yaml($io, $config);
 
-        $headers = ['User-Agent' => 'Merlin'];
+        $headers = ['User-Agent' => 'Merlin (+https://github.com/salsadigitalauorg/merlin-framework)'];
 
         // Add headers listed in config, if any are provided
         if (!empty($this->config['options']['headers'])) {
