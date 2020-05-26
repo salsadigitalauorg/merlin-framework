@@ -9,7 +9,12 @@ ini_set('memory_limit', -1);
  * Application entrypoint for the migration framework.
  */
 
-require __DIR__ . '/vendor/autoload.php';
+foreach ([__DIR__ . '/vendor/autoload.php', __DIR__ . '/../../../vendor/autoload.php'] as $file) {
+  if (file_exists($file)) {
+    require $file;
+    break;
+  }
+}
 
 use Symfony\Component\Console\Application;
 use Merlin\Command\GenerateCommand;

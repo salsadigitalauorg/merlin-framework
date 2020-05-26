@@ -1,6 +1,6 @@
 {
-  "name": "salsadigital/migrate",
-  "description": "OpenSource migraiton tool for Drupal 8",
+  "name": "salsadigital/merlin-framework",
+  "description": "Open source migration framework (markup to structured data)",
   "authors": [
     {
       "name": "Stuart Rowlands",

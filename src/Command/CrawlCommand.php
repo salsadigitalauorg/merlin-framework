@@ -37,7 +37,7 @@ class CrawlCommand extends Command
   protected function configure()
   {
     $this
-      ->setDescription('Build migration datasets from configuration objects')
+      ->setDescription('Crawl a website and generate a list of URLs')
       ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
       ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
       ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)

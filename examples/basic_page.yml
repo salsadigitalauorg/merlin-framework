@@ -1,10 +1,16 @@
 ---
 domain: https://www.example.com
 
+# You may specify an array of URLs.
 urls:
   - /about-us
   - /about-us/news
-  # ... etc
+
+# You may specify an array of files containing URLs.
+# This should likely be the output of the crawler.
+urls_file:
+  - crawled-urls-news_default.yml
+
 
 entity_type: basic_page
 mappings:
