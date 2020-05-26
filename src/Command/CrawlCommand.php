@@ -80,7 +80,7 @@ class CrawlCommand extends Command
 
     $headers = ['User-Agent' => 'Merlin (+https://github.com/salsadigitalauorg/merlin-framework)'];
 
-    // Add headers listed in config, if any are provided
+    // Add headers listed in config, if any are provided.
     if (!empty($this->config['options']['headers'])) {
       $headers = array_merge($headers, $this->config['options']['headers']);
     }
