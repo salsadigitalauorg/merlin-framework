@@ -110,17 +110,17 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
     public function isRelativeUri($uri='')
     {
         if (strpos($uri,'://') !== false) {
-		    // Protocol: absolute url.
-		    return false;
-		} else if (substr($uri,0,1) != '/') {
-		    // Leading '/': absolute to domain name (half relative).
-		    return true;
-		} else {
-		    // No protocol and no leading slash: relative to this page.
-		    return true;
-		}
-
+            // Protocol: absolute url.
+            return false;
+        } else if (substr($uri,0,1) != '/') {
+            // Leading '/': absolute to domain name (half relative).
+            return true;
+        } else {
+            // No protocol and no leading slash: relative to this page.
+            return true;
+        }
     }//end isRelativeUri()
+
 
 
     /**
@@ -140,11 +140,11 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
         $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, strtolower($uuid_text));
 
         if ($this->isRelativeUri($link)) {
-          if (substr($link, 0, 1) !== '/') {
-		    $link = "internal:/".$link;
-		  } else {
-		    $link = "internal:".$link;
-		  }
+            if (substr($link, 0, 1) !== '/') {
+                $link = "internal:/".$link;
+            } else {
+                $link = "internal:".$link;
+            }
         }
 
         return [

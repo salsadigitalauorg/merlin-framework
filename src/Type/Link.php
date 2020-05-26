@@ -58,16 +58,15 @@ class Link extends TypeMultiComponent implements TypeInterface
     public function isRelativeUri($uri='')
     {
         if (strpos($uri,'://') !== false) {
-		    // Protocol: absolute url.
-		    return false;
-		} else if (substr($uri,0,1) != '/') {
-		    // Leading '/': absolute to domain name (half relative).
-		    return true;
-		} else {
-		    // No protocol and no leading slash: relative to this page.
-		    return true;
-		}
-
+		        // Protocol: absolute url.
+		        return false;
+        } else if (substr($uri,0,1) != '/') {
+            // Leading '/': absolute to domain name (half relative).
+            return true;
+        } else {
+            // No protocol and no leading slash: relative to this page.
+            return true;
+        }
     }//end isRelativeUri()
 
 
