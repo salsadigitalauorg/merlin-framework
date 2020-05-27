@@ -28,13 +28,13 @@ curl -s https://github.com/salsadigitalauorg/merlin-framework/releases \
 
 Merlin can be installed as a composer dependency as well, this changes how the application is excuted for your project.
 
-**Add the repositroy**
+**Add the repository**
 
 ```
 "repositories": [
   {
     "type": "vcs",
-    "url": "https://github.com/salsadigitalauorg/merlin-framework
+    "url": "https://github.com/salsadigitalauorg/merlin-framework"
   }
 ]
 ```
@@ -42,22 +42,26 @@ Merlin can be installed as a composer dependency as well, this changes how the a
 **Add the dependency**
 
 ```
-"require-dev": {
-  "salsadigitalorgau/merlin-framework": "^1.0"
-}
+composer require salsadigitalorgau/merlin-framework
 ```
 
 ## Usage
 
-To run the framework you need to speecify a configuration yaml file, and a path to the output, e.g:
+There are two primary commands: `crawl` and `generate`.
+
+`crawl` will run crawl a domain and find URLs on a domain for migration. [Read the crawler docs](https://salsadigitalauorg.github.io/merlin-framework/docs/crawler) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/crawler.yml) for more information.
+`generate` will generate structured output based on mapping configuration. [Read the migration docs](https://salsadigitalauorg.github.io/merlin-framework/docs/examples) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/basic_page.yml) for more information.
+
+To run the framework you need to specify a command (e.g crawl or generate), a configuration yaml file, and a path to the output, e.g:
 
 ```
-merlin -c <path/to/config.yml> -o <path/to/output>
+merlin crawl -c <path/to/crawler-config.yml> -o <path/to/output>
+merlin generate -c <path/to/migrate-config.yml> -o <path/to/output>
 ```
 
 ### Configuration files
 
-The configuration file should be treated as a schema file, this contians the paths, domains and mapping information to transform a HTML representation of content into structured JSON.
+The configuration file should be treated as a schema file, this contains the paths, domains and mapping information to transform a HTML representation of content into structured JSON.
 
 Example configuration files can be found in the [examples](https://github.com/salsadigitalauorg/merlin-framework/tree/master/examples).
 
