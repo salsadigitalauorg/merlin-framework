@@ -37,7 +37,7 @@ class CrawlCommand extends Command
   protected function configure()
   {
     $this
-      ->setDescription('Build migration datasets from configuration objects')
+      ->setDescription('Crawl a website and generate a list of URLs')
       ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
       ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
       ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
@@ -78,13 +78,20 @@ class CrawlCommand extends Command
       ];
     }
 
+    $headers = ['User-Agent' => 'Merlin (+https://github.com/salsadigitalauorg/merlin-framework)'];
+
+    // Add headers listed in config, if any are provided.
+    if (!empty($this->config['options']['headers'])) {
+      $headers = array_merge($headers, $this->config['options']['headers']);
+    }
+
     $clientOptions = [
         RequestOptions::COOKIES         => $this->config['options']['cookies'],
         RequestOptions::CONNECT_TIMEOUT => $this->config['options']['connect_timeout'],
         RequestOptions::TIMEOUT         => $this->config['options']['timeout'],
         RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
         RequestOptions::VERIFY          => $this->config['options']['verify'],
-        RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
+        RequestOptions::HEADERS         => $headers,
     ];
 
     $baseUrl = $this->config['domain'];

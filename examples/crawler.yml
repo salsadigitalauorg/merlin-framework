@@ -19,6 +19,9 @@ options:
   cookies: true           # Enable cookie support for the crawler
   timeout: 10             # Timeout in seconds for a page download.
   connect_timeout: 10     # Connect timeout for the crawler.
+  headers:                # Provide headers to send with requests
+    Accept-Charset: text/html
+    Authorization: 'Basic dGVzdDpKV1QgZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBaQ0k2TWpJc0ltWnBjbk4wVG1GdFpTSTZiblZzYkN3aWJHRnpkRTVoYldVaU9tNTFiR3dzSW1WdFlXbHNJam9pYm1samEwQm1hWEpsWTJGdWJtOXVMbU52YlNJc0luQmhjM04zYjNKa0lqb2lKREppSkRFd0pGSnRZemt3U2tOekx6VkVXVmRJTGtneGFGcDBSaTVIVms5SlEwMUhkREJHYldwUlFXNHlVRE5qV2sxUU5VbFRTbEZGTmtOTElpd2lZM0psWVhSbFpFRjBJam9pTWpBeE9DMHdOaTB4TWxReE16b3pNRG94TUM0d01EQmFJaXdpZFhCa1lYUmxaRUYwSWpvaU1qQXhPQzB3TmkweE1sUXhNem96TURveE1DNHdNREJhSWl3aWFXRjBJam94TlRJNE9EWTBNekU1ZlEucmZlUFpBZUpMTFl5dVRGUmRWUlZRTEdJWmdEWTJpRjV5aFZBMnpBWURKNCA='
 
   group_by:               # Group options to allow segmenting URLs based on some business rules.
     -
