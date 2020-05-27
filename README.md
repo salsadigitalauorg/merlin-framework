@@ -42,15 +42,15 @@ Merlin can be installed as a composer dependency as well, this changes how the a
 **Add the dependency**
 
 ```
-composer require salsadigitalorgau/merlin-framework
+composer require salsadigitalauorg/merlin-framework
 ```
 
 ## Usage
 
 There are two primary commands: `crawl` and `generate`.
 
-`crawl` will run crawl a domain and find URLs on a domain for migration. [Read the crawler docs](https://salsadigitalauorg.github.io/merlin-framework/docs/crawler) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/crawler.yml) for more information.
-`generate` will generate structured output based on mapping configuration. [Read the migration docs](https://salsadigitalauorg.github.io/merlin-framework/docs/examples) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/basic_page.yml) for more information.
+  * `crawl` will run crawl a domain and find URLs on a domain for migration. [Read the crawler docs](https://salsadigitalauorg.github.io/merlin-framework/docs/crawler) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/crawler.yml) for more information.
+  * `generate` will generate structured output based on mapping configuration. [Read the migration docs](https://salsadigitalauorg.github.io/merlin-framework/docs/examples) and check the [example](https://github.com/salsadigitalauorg/merlin-framework/blob/master/examples/basic_page.yml) for more information.
 
 To run the framework you need to specify a command (e.g crawl or generate), a configuration yaml file, and a path to the output, e.g:
 
