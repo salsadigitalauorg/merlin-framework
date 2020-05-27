@@ -1,0 +1,41 @@
+{
+  "version-0.4.2-docs": {
+    "Introduction": [
+      "version-0.4.2-getting-started",
+      "version-0.4.2-examples",
+      "version-0.4.2-url-options",
+      "version-0.4.2-reporting",
+      "version-0.4.2-crawler",
+      "version-0.4.2-cache_tools"
+    ],
+    "Types": [
+      "version-0.4.2-type-accordion",
+      "version-0.4.2-type-media",
+      "version-0.4.2-type-meta",
+      "version-0.4.2-type-menu-link",
+      "version-0.4.2-type-link",
+      "version-0.4.2-type-uuid",
+      "version-0.4.2-type-static-value",
+      "version-0.4.2-type-alias",
+      "version-0.4.2-type-text",
+      "version-0.4.2-type-taxonomy-filter",
+      "version-0.4.2-type-ordered",
+      "version-0.4.2-type-paragraph",
+      "version-0.4.2-type-boolean",
+      "version-0.4.2-type-menu",
+      "version-0.4.2-type-reusable-paragraph",
+      "version-0.4.2-type-taxonomy-term",
+      "version-0.4.2-type-long-text"
+    ],
+    "Processors": [
+      "version-0.4.2-processor-whitespace",
+      "version-0.4.2-processor-strip-tags",
+      "version-0.4.2-processor-replace",
+      "version-0.4.2-processor-html-entity-decode",
+      "version-0.4.2-processor-remove-dom",
+      "version-0.4.2-processor-nl2br",
+      "version-0.4.2-processor-remove-empty-tags",
+      "version-0.4.2-processor-convert-encoding"
+    ]
+  }
+}
