@@ -28,13 +28,13 @@ curl -s https://github.com/salsadigitalauorg/merlin-framework/releases \
 
 Merlin can be installed as a composer dependency as well, this changes how the application is excuted for your project.
 
-**Add the repositroy**
+**Add the repository**
 
 ```
 "repositories": [
   {
     "type": "vcs",
-    "url": "https://github.com/salsadigitalauorg/merlin-framework
+    "url": "https://github.com/salsadigitalauorg/merlin-framework"
   }
 ]
 ```
@@ -42,9 +42,7 @@ Merlin can be installed as a composer dependency as well, this changes how the a
 **Add the dependency**
 
 ```
-"require-dev": {
-  "salsadigitalorgau/merlin-framework": "^1.0"
-}
+composer require salsadigitalorgau/merlin-framework
 ```
 
 ## Usage
@@ -63,7 +61,7 @@ merlin generate -c <path/to/migrate-config.yml> -o <path/to/output>
 
 ### Configuration files
 
-The configuration file should be treated as a schema file, this contians the paths, domains and mapping information to transform a HTML representation of content into structured JSON.
+The configuration file should be treated as a schema file, this contains the paths, domains and mapping information to transform a HTML representation of content into structured JSON.
 
 Example configuration files can be found in the [examples](https://github.com/salsadigitalauorg/merlin-framework/tree/master/examples).
 
