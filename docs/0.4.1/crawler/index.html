@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>URL Crawler · Merlin</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;p&gt;Merlin comes with a URL crawler to help generate URL lists prior to a migration.&lt;/p&gt;
+"/><meta name="docsearch:version" content="0.4.1"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="URL Crawler · Merlin"/><meta property="og:type" content="website"/><meta property="og:url" content="https://salsadigitalauorg.github.io/merlin-framework/"/><meta property="og:description" content="&lt;p&gt;Merlin comes with a URL crawler to help generate URL lists prior to a migration.&lt;/p&gt;
+"/><meta property="og:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/merlin-framework/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/merlin-framework/js/scrollSpy.js"></script><link rel="stylesheet" href="/merlin-framework/css/main.css"/><script src="/merlin-framework/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/merlin-framework/"><img class="logo" src="/merlin-framework/img/merlin_logo.svg" alt="Merlin"/><h2 class="headerTitleWithLogo">Merlin</h2></a><a href="/merlin-framework/versions"><h3>0.4.1</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/merlin-framework/docs/0.4.1/getting-started" target="_self">Docs</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Introduction</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/getting-started">Getting Started</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/reporting">Migration Reporting</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/merlin-framework/docs/0.4.1/crawler">URL Crawler</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/cache_tools">Cache Tools</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/url-options">URL and Fetcher Options</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/examples">Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Types</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-accordion">Accordion</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-boolean">Boolean</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-static-value">Static Value</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-long-text">Long Text</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-link">Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-menu-link">Menu Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-text">Text</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-media">Media</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-taxonomy-term">Taxonomy Term</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-alias">Alias</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-paragraph">Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-reusable-paragraph">Reusable Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-uuid">Uuid</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-taxonomy-filter">Taxonomy Filter</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-meta">Meta</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-menu">Menu</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/type-ordered">Ordered</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Processors</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-replace">Replace</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-convert-encoding">Convert Encoding</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-html-entity-decode">Html Entity Decode</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-remove-dom">Remove elements</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-strip-tags">Strip tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-whitespace">Whitespace</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-remove-empty-tags">Remove empty tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/0.4.1/processor-nl2br">nl2br</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">URL Crawler</h1></header><article><div><span><p>Merlin comes with a URL crawler to help generate URL lists prior to a migration.</p>
+<h2><a class="anchor" aria-hidden="true" id="url-grouping"></a><a href="#url-grouping" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>URL Grouping</h2>
+<p>Merlin can assist in grouping URLs by specifying grouping options in the crawler config. This is useful to crawl an entire website and generate separate lists of URLs based on a set of criteria (either regex, or selectors in the DOM).</p>
+<p>All groupings should have an <code>id</code> key as this will be used to key the result set.</p>
+<h3><a class="anchor" aria-hidden="true" id="available-types"></a><a href="#available-types" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Available types</h3>
+<h4><a class="anchor" aria-hidden="true" id="path"></a><a href="#path" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Path</h4>
+<p>Group URLs based on their path. This grouping method allows you to specify wildcard path patterns to match certain groups. You can use one or more patterns when defining this rule. The matching method allows wildcard (<code>*</code>) in the URL, this can be used to match the whole path or parts in the path.</p>
+<pre><code class="hljs">type: path
+options:
+  <span class="hljs-built_in">pattern</span>: /single-<span class="hljs-built_in">pattern</span>
+  # <span class="hljs-built_in">pattern</span>:
+  #    - /multiple-patterns/*
+  #    - /works/*/<span class="hljs-built_in">with</span>/wildcards/*/<span class="hljs-built_in">in</span>/<span class="hljs-built_in">pattern</span>
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="element"></a><a href="#element" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Element</h4>
+<p>Group URLs by the existence of a DOM element. The selector option can be a valid CSS selector or Xpath selector.</p>
+<pre><code class="hljs"><span class="hljs-symbol">type:</span> element
+<span class="hljs-symbol">options:</span>
+<span class="hljs-symbol">  selector:</span> <span class="hljs-comment">//*/h1</span>
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="value"></a><a href="#value" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Value</h4>
+<p>Group URLs by the value of a given element or attribute. If the <code>attribute</code> key is not present it will use the text value of DOM node when doing the comparison. Pattern can be a simple string or a valid regular expression.</p>
+<pre><code class="hljs"><span class="hljs-symbol">type:</span> element
+<span class="hljs-symbol">options:</span>
+<span class="hljs-symbol">  selector:</span> <span class="hljs-comment">//*/h1</span>
+<span class="hljs-symbol">  pattern:</span> /\w+{<span class="hljs-number">4</span>}/
+<span class="hljs-symbol">  attribute:</span> data-type
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="configuration-example"></a><a href="#configuration-example" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration example</h2>
+<pre><code class="hljs"><span class="hljs-meta">---</span>
+<span class="hljs-attr">domain:</span> <span class="hljs-attr">https://example.com/</span>
+<span class="hljs-attr">entity_type:</span> <span class="hljs-string">standard_page</span>
+
+<span class="hljs-attr">options:</span>
+<span class="hljs-attr">  follow_redirects:</span> <span class="hljs-literal">true</span>  <span class="hljs-comment"># Allow internal redirects.</span>
+<span class="hljs-attr">  ignore_robotstxt:</span> <span class="hljs-literal">true</span>  <span class="hljs-comment"># Ignore robots.txt rules around crawlability.</span>
+<span class="hljs-attr">  maximum_total:</span> <span class="hljs-number">0</span>        <span class="hljs-comment"># Optionally restrict total number of crawled URLs.</span>
+<span class="hljs-attr">  concurrency:</span> <span class="hljs-number">10</span>         <span class="hljs-comment"># Restrict concurrent crawlers.</span>
+<span class="hljs-attr">  rewrite_domain:</span> <span class="hljs-literal">true</span>    <span class="hljs-comment"># Standardises base domain.</span>
+<span class="hljs-attr">  delay:</span> <span class="hljs-number">100</span>              <span class="hljs-comment"># Pause between requests in ms.</span>
+<span class="hljs-attr">  exclude:</span> <span class="hljs-string">[]</span>             <span class="hljs-comment"># Optional regex matches to exclude (url results).</span>
+<span class="hljs-attr">  include:</span> <span class="hljs-string">[]</span>             <span class="hljs-comment"># Optional regex matches to include (url results).</span>
+<span class="hljs-attr">  crawler_exclude:</span> <span class="hljs-string">[]</span>     <span class="hljs-comment"># Optional regex matches to exclude (do not follow).</span>
+<span class="hljs-attr">  crawler_include:</span> <span class="hljs-string">[]</span>     <span class="hljs-comment"># Optional regex matches to include (only follow).</span>
+<span class="hljs-attr">  path_only:</span> <span class="hljs-literal">true</span>         <span class="hljs-comment"># Return only the path from the crawled URL.</span>
+
+  <span class="hljs-comment"># Optionally provide one or more URLs as the starting point. This can be provided</span>
+  <span class="hljs-comment"># as a string or an array.</span>
+<span class="hljs-attr">  urls:</span>                   
+<span class="hljs-bullet">    -</span> <span class="hljs-string">/sports/cricket</span>
+  
+  <span class="hljs-comment"># Group options to allow segmenting URLs based on some business rules.</span>
+<span class="hljs-attr">  group_by:</span> <span class="hljs-string">[]</span>             
+  
+  <span class="hljs-comment"># Caches crawled content and uses cache to build results.</span>
+<span class="hljs-attr">  cache_enabled:</span> <span class="hljs-literal">true</span>     
+ 
+  <span class="hljs-comment"># Generates a list of urls containing duplicate content.  Only the first</span>
+  <span class="hljs-comment"># crawled duplicate will appear in the crawled url or grouped url results. </span>
+<span class="hljs-attr">  find_content_duplicates:</span> <span class="hljs-literal">true</span>   
+</code></pre>
+<p>Simply provide a configuration input file and output folder for generated assets and run with:</p>
+<pre><code class="hljs">php migrate crawl -c /<span class="hljs-built_in">path</span>/to/<span class="hljs-built_in">config</span>.yml -o /<span class="hljs-built_in">path</span>/to/<span class="hljs-built_in">output</span>
+</code></pre>
+<p>You will see output as follows:</p>
+<pre><code class="hljs">===================
+Preparing the configuration
+---------------------------
+
+Setting concurrency <span class="hljs-keyword">to</span> <span class="hljs-number">10</span>
+
+ [OK] Starting crawl!
+
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/sports/cricket
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/sports/basketball
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/sports/baseball
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/products/classic-teamwear
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/sports/afl
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/sports
+http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/products
+... etc
+
+ [ERROR] Error: http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/design -- Found <span class="hljs-keyword">on</span> ur<span class="hljs-variable">l:</span> http<span class="hljs-variable">s:</span>//example.<span class="hljs-keyword">com</span>/
+
+ [OK] Done!
+ [OK] <span class="hljs-number">432</span> total URLs.
+
+Generating <span class="hljs-keyword">files</span>
+----------------
+
+Generating /tmp/crawled-urls.yml Done!
+Generating /tmp/crawl-error.yml Done!
+
+ [OK] Done!
+
+Completed in <span class="hljs-number">29.005132913589</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="flag-options"></a><a href="#flag-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Flag Options</h2>
+<table>
+<thead>
+<tr><th>Flag</th><th>Full Name</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>-c</code></td><td><code>--config</code></td><td>Path to the configuration file</td><td></td></tr>
+<tr><td><code>-o</code></td><td><code>--output</code></td><td>Path to the output directory</td><td><code>__DIR__</code></td></tr>
+<tr><td><code>-d</code></td><td><code>--debug</code></td><td>Output debug messages</td><td><code>false</code></td></tr>
+<tr><td><code>-l</code></td><td><code>--limit</code></td><td>Limit the max number of items to crawl (overrides the <code>maximum_total</code> config option if specified)</td><td><code>0</code> (Crawl all items)</td></tr>
+<tr><td></td><td><code>--concurrency</code></td><td>Number of requests to make in parallel</td><td><code>10</code></td></tr>
+<tr><td></td><td><code>--no-cache</code></td><td>Run without cache</td><td><code>false</code> (Cache enabled)</td></tr>
+</tbody>
+</table>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/merlin-framework/docs/0.4.1/reporting"><span class="arrow-prev">← </span><span>Migration Reporting</span></a><a class="docs-next button" href="/merlin-framework/docs/0.4.1/cache_tools"><span>Cache Tools</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#url-grouping">URL Grouping</a><ul class="toc-headings"><li><a href="#available-types">Available types</a></li></ul></li><li><a href="#configuration-example">Configuration example</a></li><li><a href="#flag-options">Flag Options</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/merlin-framework/" class="nav-home"><img src="/merlin-framework/img/merlin_logo_white.svg" alt="Merlin" width="100" height="50"/></a><div></div><div></div><div><h5>Docs</h5><a href="/merlin-framework/docs/getting-started">Getting Started</a><a href="/merlin-framework/docs/crawler">Crawler</a><a href="/merlin-framework/docs/examples">Examples</a></div></section><section class="copyright">Copyright © 2020 Merlin</section></footer></div></body></html>
