@@ -9,7 +9,7 @@ ini_set('memory_limit', -1);
  * Application entrypoint for the migration framework.
  */
 
-foreach ([__DIR__ . '/vendor/autoload.php', __DIR__ . '/../../../vendor/autoload.php'] as $file) {
+foreach ([__DIR__ . '/../../../vendor/autoload.php', __DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
   if (file_exists($file)) {
     require $file;
     break;
