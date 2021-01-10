@@ -12,6 +12,9 @@ namespace Merlin\Processor;
  *       - id
  *       - class
  *       - style
+ *     allowed_classes:
+ *       - class1
+ *       - wildcard-* matching
  */
 class StripTags implements ProcessorInterface
 {
@@ -29,8 +32,17 @@ class StripTags implements ProcessorInterface
     {
         $this->allowed_tags = isset($config['allowed_tags']) ? $config['allowed_tags'] : null;
         $this->remove_attr  = isset($config['remove_attr']) ? $config['remove_attr'] : [];
+        $this->allowed_classes = isset($config['allowed_classes']) ? $config['allowed_classes'] : [];
 
     }//end __construct()
+
+
+    private function wildcard_match($source, $pattern) {
+      $pattern = preg_quote($pattern,'/');
+      $pattern = str_replace('\*' , '.*', $pattern);
+      return preg_match('/^'.$pattern.'$/i' , $source);
+
+    }//end wildcard_match()
 
 
     /**
@@ -49,9 +61,45 @@ class StripTags implements ProcessorInterface
         }
 
         $dom = new \DOMDocument('1.0', 'utf-8');
-        @$dom->loadHtml($string, (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
+        @$dom->loadHtml(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
 
         $xpath = new \DOMXPath($dom);
+
+        // Keep classes.
+        if (!empty($this->allowed_classes)) {
+          $nodes_with_class = $xpath->query('//*[@class]');
+          foreach ($nodes_with_class as $n) {
+            // @var \DOMNode $n
+            if ($n->nodeType === XML_ELEMENT_NODE) {
+              // @var \DOMElement $n
+              $class = $n->getAttribute("class");
+              $classes = explode(" ", $class);
+              $nc = [];
+              foreach ($classes as $c) {
+                foreach ($this->allowed_classes as $allowed_class) {
+                  if (strstr($allowed_class, '*')) {
+                    if ($this->wildcard_match($c, $allowed_class)) {
+                      $nc[] = $c;
+                    }
+                  } else {
+                    if (trim($c) == trim($allowed_class)) {
+                      $nc[] = $c;
+                    }
+                  }
+                }
+              }
+
+              $n->setAttribute("class", implode(" ", $nc));
+            }//end if
+          }//end foreach
+
+          // Remove 'class' from the remove attr list if we are keeping classes.
+          if (($key = array_search('class', $this->remove_attr)) !== false) {
+            unset($this->remove_attr[$key]);
+          }
+        }//end if
+
+        // Remove attributes.
         foreach ($this->remove_attr as $attr) {
             $node_list = $xpath->query('//*[@'.$attr.']');
             foreach ($node_list as $node) {
