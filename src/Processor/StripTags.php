@@ -49,7 +49,7 @@ class StripTags implements ProcessorInterface
         }
 
         $dom = new \DOMDocument('1.0', 'utf-8');
-        @$dom->loadHtml($string, (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
+        @$dom->loadHtml(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
 
         $xpath = new \DOMXPath($dom);
         foreach ($this->remove_attr as $attr) {
