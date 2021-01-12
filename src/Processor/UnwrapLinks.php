@@ -3,18 +3,10 @@
 namespace Merlin\Processor;
 
 /**
- * Strip tags and remove attributes from the markup.
+ * ALPHA Unwrap elements in link and insert link within element where appropriate.
  *
- * @usage:
- *   strip_tags:
- *     allowed_tags: <h1><h2><h3><br><img>
- *     remove_attr:
- *       - id
- *       - class
- *       - style
- *     allowed_classes:
- *       - class1
- *       - wildcard-* matching
+ * YMMV using this, it's rough and ready but works for simple markup.
+ * 
  */
 class UnwrapLinks implements ProcessorInterface
 {
@@ -23,14 +15,26 @@ class UnwrapLinks implements ProcessorInterface
   /**
    * Create a strip tags processor.
    */
-   public function __construct(array $config)
-   {
-     $this->allowed_tags = isset($config['allowed_tags']) ? $config['allowed_tags'] : null;
-     $this->remove_attr  = isset($config['remove_attr']) ? $config['remove_attr'] : [];
-     $this->allowed_classes = isset($config['allowed_classes']) ? $config['allowed_classes'] : [];
+  public function __construct(array $config)
+  {
+    $this->allowed_tags = isset($config['allowed_tags']) ? $config['allowed_tags'] : null;
+    $this->remove_attr  = isset($config['remove_attr']) ? $config['remove_attr'] : [];
+    $this->allowed_classes = isset($config['allowed_classes']) ? $config['allowed_classes'] : [];
 
   }//end __construct()
 
+
+  private function remove_empty($html) {
+//    $html = str_replace('&nbsp;', ' ', $html);
+    $html = str_replace('</drupal-entity>', '###_REMOVE_ME_###</drupal-entity>', $html);
+    do {
+      $tmp = $html;
+      $html = preg_replace(
+        '#<([^ >]+)[^>]*>[[:space:]]*</\1>#', '', $html );
+    } while ( $html !== $tmp );
+
+    return $html;
+  }
 
   /**
    * {@inheritdoc}
@@ -50,26 +54,55 @@ class UnwrapLinks implements ProcessorInterface
 
     $dom = new \DOMDocument('1.0', 'utf-8');
     @$dom->loadHtml(
-        mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
-        (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD)
+      mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
+      (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD)
     );
 
     $links = $dom->getElementsByTagName('a');
 
-    for ($i = $links->length; --$i >= 0;) {
-      // @var \DOMElement $n
+// todo: Make a more comprehensive list
+    $no_children = [
+//      'img',
+//      'br',
+    ];
+
+    for ($i = $links->length; --$i >= 0; ) {
+
+      /** @var \DOMElement $n */
       $n = $links->item($i);
-      $href = $n->getAttribute('href');
+      $href = $n->getAttribute('href') ;
 
       if ($n->hasChildNodes()) {
+
         $children = $n->childNodes;
         $nodes = [];
+
+
         for ($j = $children->length; --$j >= 0;) {
           $child = $children->item($j);
-          $new_a = $n->cloneNode();
-          // $new_a->appendChild($child->cloneNode(true));
-          $new_a->appendChild($child);
-          $nodes[] = $new_a;
+
+          if ($child->nodeType == XML_ELEMENT_NODE && !in_array($child->nodeName, $no_children)) {
+
+            // Move links inside elements, make it <element><a></element>
+            $new_a = $n->cloneNode();
+            $child_clone = $child->cloneNode();
+            foreach ($child->childNodes as $cn) {
+              $new_a->appendChild($cn);
+            }
+            $child_clone->appendChild($new_a);
+            $nodes[] = $child_clone;
+
+          }
+          else if ($child->nodeType == XML_TEXT_NODE) {
+            // Skip
+          }
+          else {
+            // Else wrap element in a <a><element></a>
+            $new_a = $n->cloneNode();
+            $new_a->appendChild($child);
+            $nodes[] = $new_a;
+          }
+
         }
 
         $nodes = array_reverse($nodes);
@@ -77,12 +110,19 @@ class UnwrapLinks implements ProcessorInterface
           $n->parentNode->appendChild($node);
         }
 
-        // Remove our original (now empty) <a>.
-        $n->parentNode->removeChild($n);
-      }//end if
-    }//end for
+        // Remove our original <a>
+//        $n->parentNode->removeChild($n);
+
+      }
+    }
 
     $value = $dom->saveHTML();
+
+    // So so gross.
+    $value = $this->remove_empty($value);
+    $value = str_replace('###_REMOVE_ME_###</drupal-entity>', '</drupal-entity>', $value);
+
+
     return substr(substr($value, 5), 0, -7);
 
   }//end process()
