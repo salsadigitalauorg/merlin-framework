@@ -93,7 +93,7 @@ trait MediaTrait
         try {
             $uri = Psr7\uri_for($uri);
             $uri = Psr7\UriResolver::resolve(Psr7\uri_for($this->crawler->getUri()), $uri);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception('Invalid file URL for media.');
         }
 
