@@ -6,6 +6,9 @@ namespace Merlin\Type;
 use Merlin\Command\GenerateCommand;
 use Symfony\Component\DomCrawler\Crawler;
 
+use function DeepCopy\deep_copy;
+
+
 /**
  * The Group class lets you build a flattened, but grouped result set from
  * a nested DOM structure.  You can make your result nested, too, if you
@@ -48,6 +51,7 @@ class Group extends TypeBase implements TypeInterface {
    * @throws \Exception
    */
   public function processItem(&$row, Crawler $crawler, $item) {
+
       $type = GenerateCommand::TypeFactory($item['type'], $crawler, $this->output, $row, $item);
       try {
         $type->process();
@@ -55,7 +59,7 @@ class Group extends TypeBase implements TypeInterface {
         error_log($e->getMessage());
     }
 
-  }//end processItem()
+}//end processItem()
 
 
   /**
@@ -63,7 +67,6 @@ class Group extends TypeBase implements TypeInterface {
    */
   public function process()
   {
-    $results = [];
 
     $items = isset($this->config['each']) ? $this->config['each'] : [];
     $options = isset($this->config['options']) ? $this->config['options'] : [];
@@ -72,7 +75,79 @@ class Group extends TypeBase implements TypeInterface {
       throw new \Exception('"each" key required for group.');
     }
 
-    $this->crawler->each(
+    $results = [];
+
+    // HERE BE MADNESS! This works but is hopefully not required.
+    // Here we create a new document and then processes a
+    // node as though it was separate by removing its siblings and then
+    // rinse, wash, repeat for each sibling.
+    /*
+    foreach ($this->crawler as $content) {
+      $selector = $this->config['selector'];
+      $original_nodes = $this->crawler->evaluate($selector);
+
+      foreach ($original_nodes as $idx => $node) {
+        // We are going to modify the DOM so use a new document per node we want to process.
+        $c = new Crawler($this->crawler->html(), $this->crawler->getUri(), $this->crawler->getBaseHref());
+
+        // The original crawler object has private access on the document.  Of course.
+        $patch = function() use ($items) {
+          return $this->document;
+        };
+        $doc = $patch->call($c);
+
+        // Find our group selector and remove each one unless
+        // it's the current one in the outer loop.  (i.e. we
+        // go over it and remove siblings for each sibling).
+        // This lets us process them individually.
+        $xpath = new \DOMXPath($doc);
+        $nodes = $xpath->evaluate($selector);
+
+        for ($i = $nodes->length; --$i >= 0;) {
+          if ($i != $idx) {
+            $n = $nodes->item($i);
+            $n->parentNode->removeChild($n);
+          }
+        }
+
+        // Iterate over our config child items and process.
+        foreach ($items as $item) {
+          // Todo: Allow global scope for items option i.e. make this concat bit optional.
+          $item['selector'] = $selector.$item['selector'];
+
+          $row = new \stdClass();
+          $this->processItem($row, $c, $item);
+          $tmp[$item['field']] = @$row->{$item['field']};
+        }
+
+        $results[] = $tmp;
+      }//end foreach
+    }//end foreach
+    */
+
+    // More sensible approach using subcrawler.
+    foreach ($this->crawler as $content) {
+      $selector = $this->config['selector'];
+
+      $group_nodes = $this->crawler->evaluate($selector);
+
+      foreach ($group_nodes->getIterator() as $n) {
+        $cc = new Crawler($n, $this->crawler->getUri(), $this->crawler->getBaseHref());
+
+        foreach ($items as $item) {
+          $row = new \stdClass();
+          $this->processItem($row, $cc, $item);
+          $tmp[$item['field']] = @$row->{$item['field']};
+        }
+
+        $results[] = $tmp;
+      }
+    }
+
+    // Original quick approach.  Types that need to process parent nodes
+    // though won't work!  (e.g. Media replace).
+    /*
+        $this->crawler->each(
         function(Crawler $node) use ($items, &$results) {
 
           $nodes = $node->filterXPath($this->config['selector']);
@@ -83,7 +158,7 @@ class Group extends TypeBase implements TypeInterface {
               $doc = new \DOMDocument();
               $in = $doc->importNode($n, true);
               $doc->appendChild($in);
-              $c = new Crawler($doc);
+              $c = new Crawler($doc, $this->crawler->getUri(), $this->crawler->getBaseHref());
               $row = new \stdClass();
               $this->processItem($row, $c, $item);
               $tmp[$item['field']] = @$row->{$item['field']};
@@ -92,7 +167,8 @@ class Group extends TypeBase implements TypeInterface {
             $results[] = $tmp;
           }//end foreach
         }
-    );
+        );
+    */
 
     $sortField = ($options['sort_field'] ?? null);
     if (!empty($sortField)) {
