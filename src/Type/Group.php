@@ -5,6 +5,7 @@ namespace Merlin\Type;
 
 use Merlin\Command\GenerateCommand;
 use Symfony\Component\DomCrawler\Crawler;
+use \Ramsey\Uuid\Uuid;
 
 use function DeepCopy\deep_copy;
 
@@ -134,11 +135,21 @@ class Group extends TypeBase implements TypeInterface {
       foreach ($group_nodes->getIterator() as $n) {
         $cc = new Crawler($n, $this->crawler->getUri(), $this->crawler->getBaseHref());
 
-        foreach ($items as $item) {
+        foreach ($items as $idx => $item) {
           $row = new \stdClass();
           $this->processItem($row, $cc, $item);
           $tmp[$item['field']] = @$row->{$item['field']};
         }
+
+
+        $serialised = json_encode($tmp);
+        $url = $this->crawler->getUri();
+
+        // This key assumes that there are no identical groups anywhere on this page.
+        $uuid_key = $url.$serialised;
+        $uuid = uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_key);
+        $tmp['uuid'] = $uuid;
+
 
         $results[] = $tmp;
       }
@@ -176,10 +187,32 @@ class Group extends TypeBase implements TypeInterface {
       $this->sortBy($sortField, $results, $sortDirection);
     }
 
-    $this->row->{$this->config['field']} = [
-        'type'     => 'group',
+
+    if (empty($options['exclude_from_output'])) {
+      $this->row->{$this->config['field']} = [
+        'type' => 'group',
         'children' => $results,
-    ];
+      ];
+    }
+
+    // NOTE: This does not currently support NESTED paragraph generation, would need to do like
+    // NOTE: Iterations over 'children' or something (or any children found with type group).
+    // .$this->config['field']
+    if ($options['output_paragraph']) {
+      $this->output->mergeRow('standard_page_paragraphs', 'data', $results, true);
+
+      $paragraph_uuids = [];
+      foreach (array_column($results, 'uuid') as $p_uuid) {
+        $paragraph_uuids[] = ['uuid' => $p_uuid];
+      }
+
+      if (is_array($this->row->paragraph_uuids)) {
+        $this->row->paragraph_uuids = array_merge($this->row->paragraph_uuids, $paragraph_uuids);
+      } else {
+        $this->row->paragraph_uuids = $paragraph_uuids;
+      }
+    }
+
 
   }//end process()
 
