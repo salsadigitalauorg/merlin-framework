@@ -198,8 +198,11 @@ class Group extends TypeBase implements TypeInterface {
     // NOTE: This does not currently support NESTED paragraph generation, would need to do like
     // NOTE: Iterations over 'children' or something (or any children found with type group).
     // .$this->config['field']
-    if ($options['output_paragraph']) {
-      $this->output->mergeRow('standard_page_paragraphs', 'data', $results, true);
+
+
+    if ($options['output_filename']) {
+      // The output filename could be e.g. 'standard_page_paragraphs'
+      $this->output->mergeRow($options['output_filename'], 'data', $results, true);
 
       $paragraph_uuids = [];
       foreach (array_column($results, 'uuid') as $p_uuid) {
