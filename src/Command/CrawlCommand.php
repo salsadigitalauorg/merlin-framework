@@ -12,6 +12,8 @@ use Merlin\Output\Yaml;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
+use Spatie\Browsershot\Browsershot;
+
 
 class CrawlCommand extends Command
 {
@@ -74,7 +76,9 @@ class CrawlCommand extends Command
       $redirectOptions = false;
       } else {
       $redirectOptions = [
-          'max' => ($this->options['max_redirects'] ?? 5),
+          'max'             => ($this->options['max_redirects'] ?? 5),
+          'track_redirects' => true,
+          'referer'         => true,
       ];
     }
 
@@ -84,7 +88,9 @@ class CrawlCommand extends Command
         RequestOptions::TIMEOUT         => $this->config['options']['timeout'],
         RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
         RequestOptions::VERIFY          => $this->config['options']['verify'],
-        RequestOptions::HEADERS         => ['User-Agent' => 'Merlin'],
+        RequestOptions::HEADERS         => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'],
+        RequestOptions::READ_TIMEOUT    => 120,
+
     ];
 
     $baseUrl = $this->config['domain'];
