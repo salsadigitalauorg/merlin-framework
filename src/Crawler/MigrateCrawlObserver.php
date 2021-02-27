@@ -116,7 +116,7 @@ class MigrateCrawlObserver extends CrawlObserver
     // Get raw headers and redirect info if not from cache.
     if (!$crawledFromCache) {
       // TODO: Determine if it is possible to pass in the original data into crawled() somehow for cache.
-      $redirect = RedirectUtils::checkForRedirect($url);
+      $redirect = RedirectUtils::checkForRedirect($url, $response);
       $rawHeaders = ($redirect['raw_headers'] ?? null);
       if (!empty($redirect) && $redirect['redirect']) {
         $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
@@ -194,6 +194,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
       if (!class_exists($class)) {
         // An unknown type.
+        throw new \Exception("Missing crawl group class: $class");
         continue;
       }
 
@@ -219,7 +220,7 @@ class MigrateCrawlObserver extends CrawlObserver
   ) {
     $entity_type = $this->json->getConfig()->get('entity_type');
     $this->json->mergeRow("crawl-error-{$entity_type}", $url->__toString(), [$requestException->getMessage()], true);
-    $this->io->error("Error: ${url} -- Found on url: ${foundOnUrl}");
+    $this->io->error("Error: ${url} -- {$requestException->getCode()} -- {$requestException->getMessage()} -- Found on url: ${foundOnUrl}");
 
   }//end crawlFailed()
 
