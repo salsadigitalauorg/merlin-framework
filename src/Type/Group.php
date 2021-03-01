@@ -132,20 +132,29 @@ class Group extends TypeBase implements TypeInterface {
 
       $group_nodes = $this->crawler->evaluate($selector);
 
+
       foreach ($group_nodes->getIterator() as $n) {
         $cc = new Crawler($n, $this->crawler->getUri(), $this->crawler->getBaseHref());
+        $tmp = [];
 
         foreach ($items as $idx => $item) {
           $row = new \stdClass();
           $this->processItem($row, $cc, $item);
-          $tmp[$item['field']] = @$row->{$item['field']};
-        }
 
+          // If a field is mandatory and it is empty, we skip the whole group.
+          $mandatory = ($item['options']['mandatory'] ?? null);
+          if ($mandatory && empty(@$row->{$item['field']})) {
+            return;
+          }
+
+          $tmp[$item['field']] = @$row->{$item['field']};
+
+        }
 
         $serialised = json_encode($tmp);
         $url = $this->crawler->getUri();
 
-        // This key assumes that there are no identical groups anywhere on this page.
+        // NOTE: This key assumes that there are no identical groups anywhere on this page.
         $uuid_key = $url.$serialised;
         $uuid = uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_key);
         $tmp['uuid'] = $uuid;
