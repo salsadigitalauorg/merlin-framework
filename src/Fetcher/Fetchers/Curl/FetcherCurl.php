@@ -33,7 +33,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
 
-	$referer        = ($this->config->get('fetch_options')['referer'] ?? null);
+	  $referer        = ($this->config->get('fetch_options')['referer'] ?? null);
 
     $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
@@ -57,7 +57,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $curl->setOpt(CURLOPT_SSL_VERIFYHOST, false);
       $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
     }
-    
+
     if ($referer) {
       $curl->setOpt(CURLOPT_REFERER, $referer);
     }
