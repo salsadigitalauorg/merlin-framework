@@ -60,8 +60,12 @@ class StripTags implements ProcessorInterface
             $string = "<div>{$string}</div>";
         }
 
-        $dom = new \DOMDocument('1.0', 'utf-8');
-        @$dom->loadHtml(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        // Change saveHTML function if use below.
+//        @$dom->loadHtml(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
+        @$dom->loadHTML($string, (LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD));
+
 
         $xpath = new \DOMXPath($dom);
 
@@ -107,8 +111,18 @@ class StripTags implements ProcessorInterface
             }
         }
 
-        $value = $dom->saveHTML();
-        return substr(substr($value, 5), 0, -7);
+        // Use with original loadHtml() function
+//        $value = $dom->saveHTML();
+//      return substr(substr($value, 5), 0, -7);
+
+
+      $value = utf8_decode($dom->saveHTML($dom->documentElement));
+
+      // Replace ridiculous unicode spaces?
+      $value = str_replace("\xc2\xa0", ' ', $value);
+
+      return substr(substr($value, 5), 0, -6);
+
 
     }//end process()
 
