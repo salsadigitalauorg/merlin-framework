@@ -147,9 +147,11 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = $name->text();
                 }
 
-                $file = urldecode($file->text());
-                $alt = ($alt->count() > 0) ? $alt->text() : null;
 
+                $file = utf8_decode($file->text());
+//                $file = urldecode($file->text()); // This breaks unicode urls when row merges. WOW. WTF.
+
+                $alt = ($alt->count() > 0) ? $alt->text() : null;
                 $uuid = $this->getUuid($name, $file);
 
                 if ($this->process_file) {
@@ -182,12 +184,14 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                   }
                 }
 
+
                 $this->entities[] = [
                     'name' => $name,
                     'file' => $fileUrl,
-                    'uuid' => $uuid,
+                    'uuid' => (string) $uuid,
                     'alt'  => $alt,
                 ];
+
 
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
@@ -277,6 +281,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     'uuid' => $uuid,
                     'alt'  => substr($alt, 0, 512),
                 ];
+
 
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
