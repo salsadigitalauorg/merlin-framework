@@ -56,6 +56,7 @@ class Media extends TypeMultiComponent implements TypeInterface {
     extract($this->config['options']);
     $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
     $external_assets = isset($this->config['options']['external_assets']) ? $this->config['options']['external_assets'] : false;
+    $full_details = ($this->config['options']['full_details'] ?? false);
 
     $this->crawler->each(
         function (Crawler $node) use (&$uuids, $type, $external_assets) {
@@ -85,6 +86,7 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $alt = null;
             }
 
+//            $file = utf8_decode($file);
             $uuid = $this->getUuid($name, $file);
 
             // Ignore if external assets are not permitted.
@@ -97,7 +99,7 @@ class Media extends TypeMultiComponent implements TypeInterface {
 
             $entity = [
                 'file' => $file,
-                'uuid' => $uuid,
+                'uuid' => (string) $uuid,
                 'alt'  => $alt,
                 'name' => $name,
             ];
@@ -109,7 +111,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
 
     if (count($this->entities) > 0) {
         $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
-        $this->addValueToRow($uuids);
+        if ($full_details) {
+          $this->addValueToRow($this->entities);
+        } else {
+          $this->addValueToRow($uuids);
+        }
     }
 
   }//end processXpath()
@@ -123,6 +129,7 @@ class Media extends TypeMultiComponent implements TypeInterface {
     extract($this->config['options']);
     $type = isset($this->config['options']['type']) ? $this->config['options']['type'] : 'media';
     $external_assets = isset($this->config['options']['external_assets']) ? $this->config['options']['external_assets'] : false;
+    $full_details = ($this->config['options']['full_details'] ?? false);
 
     $this->crawler->each(
         function (Crawler $node) use (&$uuids, $type, $external_assets) {
@@ -161,7 +168,11 @@ class Media extends TypeMultiComponent implements TypeInterface {
 
     if (count($this->entities) > 0) {
         $this->output->mergeRow("media-{$type}", 'data', $this->entities, TRUE);
-        $this->addValueToRow($uuids);
+        if ($full_details) {
+          $this->addValueToRow($this->entities);
+        } else {
+          $this->addValueToRow($uuids);
+        }
     }
 
   }//end processDom()

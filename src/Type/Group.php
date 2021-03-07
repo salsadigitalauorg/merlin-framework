@@ -141,9 +141,9 @@ class Group extends TypeBase implements TypeInterface {
           $row = new \stdClass();
           $this->processItem($row, $cc, $item);
 
-          // If a field is mandatory and it is empty, we skip the whole group.
-          $mandatory = ($item['options']['mandatory'] ?? null);
-          if ($mandatory && empty(@$row->{$item['field']})) {
+          // If a field is required and it is empty, we skip the whole group.
+          $required = ($item['options']['required'] ?? null);
+          if ($required && empty(@$row->{$item['field']})) {
             return;
           }
 
@@ -196,7 +196,6 @@ class Group extends TypeBase implements TypeInterface {
       $this->sortBy($sortField, $results, $sortDirection);
     }
 
-
     if (empty($options['exclude_from_output'])) {
       $this->row->{$this->config['field']} = [
         'type' => 'group',
@@ -209,7 +208,7 @@ class Group extends TypeBase implements TypeInterface {
     // .$this->config['field']
 
 
-    if ($options['output_filename']) {
+    if (key_exists('output_filename', $options)) {
       // The output filename could be e.g. 'standard_page_paragraphs'
       $this->output->mergeRow($options['output_filename'], 'data', $results, true);
 
@@ -218,7 +217,7 @@ class Group extends TypeBase implements TypeInterface {
         $paragraph_uuids[] = ['uuid' => $p_uuid];
       }
 
-      if (is_array($this->row->paragraph_uuids)) {
+      if (@is_array($this->row->paragraph_uuids)) {
         $this->row->paragraph_uuids = array_merge($this->row->paragraph_uuids, $paragraph_uuids);
       } else {
         $this->row->paragraph_uuids = $paragraph_uuids;
