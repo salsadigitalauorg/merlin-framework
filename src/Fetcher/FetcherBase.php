@@ -192,6 +192,7 @@ class FetcherBase implements FetcherInterface
     // Get raw headers and redirect info.
     $isRedirect = ($redirect['redirect'] ?? false);
     $effectiveUrl = ($redirect['url_effective'] ?? null);
+
     if ($isRedirect) {
       $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
     }
@@ -233,12 +234,12 @@ class FetcherBase implements FetcherInterface
 
     if ($duplicate === false) {
 
-      if (key_exists('redirect', $redirect)) {
+      if (($redirect['redirect'] ?? false)) {
         // Add a property to the row for checking on redirects
         $row->_redirected_from = $url;
       }
 
-      if (($this->config->get('url_options')['use_effective_url'] ?? false)) {
+      if (($this->config->get('url_options')['use_effective_url'] ?? false) && $effectiveUrl) {
         // If a redirect we will process this as the redirected url
         $crawler = new Crawler($html, $effectiveUrl);
       } else {
