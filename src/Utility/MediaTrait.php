@@ -91,8 +91,8 @@ trait MediaTrait
 
         // Resolve relative paths.
         try {
-            $uri = Psr7\uri_for($uri);
-            $uri = Psr7\UriResolver::resolve(Psr7\uri_for($this->crawler->getUri()), $uri);
+            $uri = Psr7\Utils::uriFor($uri);
+            $uri = Psr7\UriResolver::resolve(Psr7\Utils::uriFor($this->crawler->getUri()), $uri);
         } catch (\Exception $e) {
             throw new \Exception('Invalid file URL for media.');
         }
@@ -141,8 +141,17 @@ trait MediaTrait
     {
 
         $linkText = !empty($node->textContent) ? $node->textContent : basename($url);
-        $defaultLink = "/sites/default/files/".basename($url);
 
+        // Url encode any Unicode chars.
+        $file = preg_replace_callback(
+          '/[^\x20-\x7f]/',
+          function($match) {
+            return urlencode($match[0]);
+          },
+          basename($url)
+        );
+
+        $defaultLink = "/sites/default/files/".$file;
         $data = " data-entity-uuid=\"{$uuid}\"";
         $data .= " data-entity-substitution=\"media\"";
         $data .= " data-entity-type=\"media\"";
