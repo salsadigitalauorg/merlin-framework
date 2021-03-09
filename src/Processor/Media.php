@@ -147,12 +147,9 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     $name = $name->text();
                 }
 
-
-                $file = utf8_decode($file->text());
-//                $file = urldecode($file->text()); // This breaks unicode urls when row merges. WOW. WTF.
+                $file = $file->text();
 
                 $alt = ($alt->count() > 0) ? $alt->text() : null;
-                $uuid = $this->getUuid($name, $file);
 
                 if ($this->process_file) {
                     $file = ProcessController::apply($file, $this->process_file, $this->crawler, $this->output);
@@ -174,16 +171,28 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     }
                 }
 
+                // Guzzle Uri hates Unicode chars and will ruin your day, here
+                // we make sure any unicide chars are urlencoded before going in.
+                // They come out urldecoded afterwards from getFileUrl().
+                $file = preg_replace_callback(
+                    '/[^\x20-\x7f]/',
+                    function($match) {
+                      return urlencode($match[0]);
+                    },
+                    $file
+                );
                 $fileUrl = $this->getFileUrl($file);
+                $uuid = $this->getUuid($name, $fileUrl);
 
-                // Ignore if external assets are not permitted.
+
+
+              // Ignore if external assets are not permitted.
                 if (!$this->config['attributes']['external_assets']) {
                   if ($this->checkExternalUrl($fileUrl)) {
                     $this->output->mergeRow("warning-{$this->type}", $file, ["Skipping external asset {$fileUrl}"], true);
                     return;
                   }
                 }
-
 
                 $this->entities[] = [
                     'name' => $name,
@@ -192,14 +201,13 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     'alt'  => $alt,
                 ];
 
-
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
 
                 // Basic support for linkit vs. media embed.
                 switch ($this->config['attributes']['media_plugin']) {
                   case "linkit":
-                    $value = str_replace($outer_html, $this->getDrupalLinkitEmbed($parent, $this->getFileUrl($file), $uuid), $value);
+                    $value = str_replace($outer_html, $this->getDrupalLinkitEmbed($parent, $fileUrl, $uuid), $value);
                   break;
 
                   case "media":
@@ -281,7 +289,6 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
                     'uuid' => $uuid,
                     'alt'  => substr($alt, 0, 512),
                 ];
-
 
                 $parent     = $node->getNode(0);
                 $outer_html = $parent->ownerDocument->saveHtml($parent);
