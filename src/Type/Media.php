@@ -63,7 +63,18 @@ class Media extends TypeMultiComponent implements TypeInterface {
             try {
                 $file = $node->evaluate($this->getOption('file', TRUE));
                 assert($file->count() > 0);
-                $file = $this->getFileUrl($file->text());
+
+                // Guzzle Uri hates Unicode chars and will ruin your day, here
+                // we make sure any unicide chars are urlencoded before going in.
+                // They come out urldecoded afterwards from getFileUrl().
+                $file = preg_replace_callback(
+                    '/[^\x20-\x7f]/',
+                    function($match) {
+                      return urlencode($match[0]);
+                    },
+                    $file->text()
+                );
+                $file = $this->getFileUrl($file);
             } catch (\Exception $error) {
                 throw new ElementNotFoundException();
             }
@@ -86,7 +97,6 @@ class Media extends TypeMultiComponent implements TypeInterface {
                 $alt = null;
             }
 
-//            $file = utf8_decode($file);
             $uuid = $this->getUuid($name, $file);
 
             // Ignore if external assets are not permitted.
