@@ -142,7 +142,7 @@ trait MediaTrait
 
         $linkText = !empty($node->textContent) ? $node->textContent : basename($url);
 
-        // Url encode any Unicode chars.
+      // Url encode any Unicode chars.
         $file = preg_replace_callback(
           '/[^\x20-\x7f]/',
           function($match) {

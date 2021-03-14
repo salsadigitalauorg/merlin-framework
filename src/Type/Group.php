@@ -132,8 +132,8 @@ class Group extends TypeBase implements TypeInterface {
 
       $group_nodes = $this->crawler->evaluate($selector);
 
-
       foreach ($group_nodes->getIterator() as $n) {
+
         $cc = new Crawler($n, $this->crawler->getUri(), $this->crawler->getBaseHref());
         $tmp = [];
 
@@ -205,22 +205,20 @@ class Group extends TypeBase implements TypeInterface {
 
     // NOTE: This does not currently support NESTED paragraph generation, would need to do like
     // NOTE: Iterations over 'children' or something (or any children found with type group).
-    // .$this->config['field']
-
 
     if (key_exists('output_filename', $options)) {
       // The output filename could be e.g. 'standard_page_paragraphs'
       $this->output->mergeRow($options['output_filename'], 'data', $results, true);
 
-      $paragraph_uuids = [];
+      $group_uuids = [];
       foreach (array_column($results, 'uuid') as $p_uuid) {
-        $paragraph_uuids[] = ['uuid' => $p_uuid];
+        $group_uuids[] = ['uuid' => $p_uuid];
       }
 
-      if (@is_array($this->row->paragraph_uuids)) {
-        $this->row->paragraph_uuids = array_merge($this->row->paragraph_uuids, $paragraph_uuids);
+      if (@is_array($this->row->group_uuids)) {
+        $this->row->group_uuids = array_merge($this->row->group_uuids, $group_uuids);
       } else {
-        $this->row->paragraph_uuids = $paragraph_uuids;
+        $this->row->group_uuids = $group_uuids;
       }
     }
 
