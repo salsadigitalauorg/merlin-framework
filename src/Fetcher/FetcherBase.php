@@ -206,6 +206,11 @@ class FetcherBase implements FetcherInterface
         $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
       }
 
+//      $testUrl = json_encode($url);
+//      if (json_last_error() === JSON_ERROR_UTF8) {
+//        $url = mb_convert_encoding($testUrl, 'UTF-8', 'UTF-8');
+//      }
+
       $data = [
           'url'      => $url,
           'contents' => $html,
@@ -272,6 +277,10 @@ class FetcherBase implements FetcherInterface
     if (!empty((array) $row)) {
       $output->addRow($entity_type, $row);
     }
+
+    // We can use the function to get results
+    return (array)$row;
+
 
   }//end processContent()
 
