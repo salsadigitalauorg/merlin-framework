@@ -32,7 +32,6 @@ class SubFetch extends ProcessorOutputBase
       return;
     }
 
-//    $url = "/Home/Industries/Water/Reviews/Compliance/Updates-to-the-WIC-Act-Audit-Services-Panel?qDh=2";
     $options = ($this->config['options'] ?? []);
 
     // HMMMMMM. From cli --no-cache doesn't seem to get set right here. Mutha F.
@@ -56,10 +55,17 @@ class SubFetch extends ProcessorOutputBase
       throw new Exception('Either parser "config" array or "config_file" required to use sub_fetch.');
     }
 
-    $config_data = \Spyc::YAMLLoad($config_file);
+    if (!empty($config)) {
+      $config_data = $config;
+    }
+    else {
+      $config_data = \Spyc::YAMLLoad($config_file);
+    }
 
-    // TODO: Make this based on config 
-    $config_data['entity_type'] = "review_fetched";
+    // We save the fetched output in a derivative of
+    // specified config entity (for checking mainly
+    // the data is also returned to the main caller.
+    $config_data['entity_type'] .= "_fetched";
 
     //    $config_data = [
 //      'entity_type' => "review_summary_fetched",
