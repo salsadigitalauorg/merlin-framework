@@ -26,7 +26,7 @@ interface ParserInterface
     /**
      * Retrieves the next row for mapping.
      *
-     * Access the mapping direction from the sorce this will
+     * Access the mapping direction from the source this will
      * return the next in the iteration until it cannot return
      * another row and then it will return false.
      *
