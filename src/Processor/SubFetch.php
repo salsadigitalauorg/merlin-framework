@@ -67,8 +67,9 @@ class SubFetch extends ProcessorOutputBase
     // the data is also returned to the main caller.
     $config_data['entity_type'] .= "_fetched";
 
+    // Example Array config
     //    $config_data = [
-//      'entity_type' => "review_summary_fetched",
+//      'entity_type' => "review_summary",
 //
 //      'mappings' => [
 //        [
