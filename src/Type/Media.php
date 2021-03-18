@@ -163,6 +163,14 @@ class Media extends TypeMultiComponent implements TypeInterface
       } else {
         $this->addValueToRow($uuids);
       }
+
+      // Track which media entity was found on what page.
+      foreach ($this->entities as &$entity) {
+        $entity['found_on'] = $this->crawler->getUri();
+        unset($entity);
+      }
+      $this->output->mergeRow("media-{$type}-tracked", 'data', $this->entities, true);
+
     }
 
   }//end processXpath()
@@ -221,6 +229,16 @@ class Media extends TypeMultiComponent implements TypeInterface
       } else {
         $this->addValueToRow($uuids);
       }
+
+
+      // Track which media entity was found on what page.
+      foreach ($this->entities as &$entity) {
+        $entity['found_on'] = $this->crawler->getUri();
+        unset($entity);
+      }
+      $this->output->mergeRow("media-{$type}-tracked", 'data', $this->entities, true);
+
+
     }
 
   }//end processDom()

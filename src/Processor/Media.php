@@ -414,6 +414,13 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
       // If we found entities to add - we'll create a new output file and add
       // the entities directly.
       $this->output->mergeRow("media-{$this->type}", 'data', $this->entities, true);
+
+      // Track which media entity was found on what page.
+      foreach ($this->entities as &$entity) {
+        $entity['found_on'] = $this->crawler->getUri();
+        unset($entity);
+      }
+      $this->output->mergeRow("media-{$this->type}-tracked", 'data', $this->entities, true);
     }
 
     return $value;
