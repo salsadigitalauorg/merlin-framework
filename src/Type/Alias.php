@@ -69,10 +69,11 @@ class Alias extends TypeBase implements TypeInterface
         }
 
         // Truncate the url to a certain length and keep track of truncated urls.
-        $truncate = ($options['truncate'] ?? false);
-        if ($truncate !== false) {
+        $truncate = ($options['truncate'] ?? null);
+        $alias_map = ($options['alias_map'] ?? null);
+        if (!empty($truncate)) {
           $url_len = strlen(utf8_decode($url));
-          $max_len = $truncate;
+          $max_len = intval($truncate);
           $url_truncated = null;
 
           if ($url_len > $max_len) {
@@ -89,6 +90,33 @@ class Alias extends TypeBase implements TypeInterface
             ];
 
             $this->output->addRow("{$entity_type}-truncated-urls", (object) $data);
+          }
+        } else if (!empty($alias_map)) {
+          // Alias map provides a way for source original url to go to some
+          // new modified one.  E.g. for a map of original => truncated urls.
+          // TODO $GLOBALS...
+          if (!isset($GLOBALS['_merlin_alias_map'])) {
+            // Try load the map.
+            $f_map = file_get_contents($alias_map);
+            if ($f_map) {
+              $map = json_decode($f_map, TRUE);
+              $GLOBALS['_merlin_alias_map'] = $map;
+            } else {
+              throw new \Exception("Could not load alias map at: {$alias_map}");
+            }
+          }
+
+          $url_mapped = ($GLOBALS['_merlin_alias_map'][$url] ?? null);
+          if (!empty($url_mapped)) {
+            $data = [
+                'url'        => $url,
+                'url_mapped' => $url_mapped,
+            ];
+            // If you want to track it
+            //$this->output->addRow("{$entity_type}-mapped-alias", (object) $data);
+            $url = $url_mapped;
+          } else {
+            $this->output->addRow("error-{$entity_type}-mapped-alias-failed", (object) [$url]);
           }
         }//end if
 
