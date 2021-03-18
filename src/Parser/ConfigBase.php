@@ -169,7 +169,9 @@ abstract class ConfigBase implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function getMapping()
+    // TODO: This should be a generator so that reset() isn't needed -
+    // TODO: it is re-parsing the config file (and url list) every url...
+    public function getMapping_old()
     {
         if ($this->totals['mappings'] >= 0) {
             $this->totals['mappings']--;
@@ -184,8 +186,22 @@ abstract class ConfigBase implements ParserInterface
     /**
      * {@inheritdoc}
      */
+    public function getMapping() {
+      foreach ($this->data['mappings'] as $mapping) {
+        yield $mapping;
+      }
+    }
+
+
+
+    /**
+     * {@inheritdoc}
+     */
+  // TODO: This should be a generator so that reset() isn't needed -
+  // TODO: it is re-parsing the config file (and url list) every url...
     public function getUrl()
     {
+
         if (!empty($this->totals['urls']) && $this->totals['urls'] > 0) {
             $this->totals['urls']--;
             return $this->data['domain'].array_shift($this->data['urls']);

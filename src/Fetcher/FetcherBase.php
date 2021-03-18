@@ -252,8 +252,9 @@ class FetcherBase implements FetcherInterface
         $crawler = new Crawler($html, $url);
       }
 
-        while ($field = $parser->getMapping()) {
-        // $crawler = new Crawler($html, $url);
+//        while ($field = $parser->getMapping()) {
+        foreach ($parser->getMapping() as $field) {
+//         $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
             $type->process();
@@ -271,8 +272,9 @@ class FetcherBase implements FetcherInterface
     }//end if
 
     // Reset the parser so we have mappings back at 0.
-    $parser->reset();
+//    $parser->reset();
     $io->writeln(' <info>(Done!)</info>');
+
 
     if (!empty((array) $row)) {
       $output->addRow($entity_type, $row);
