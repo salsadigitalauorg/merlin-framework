@@ -135,6 +135,16 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
     private function processLink($text, $link)
     {
         $link = $link->count() > 0 ? $link->text() : 'internal:/';
+
+        // Encode unicode chars.
+        $link = preg_replace_callback(
+          '/[^\x20-\x7f]/',
+          function ($match) {
+            return urlencode($match[0]);
+          },
+          $link
+        );
+
         // Menu uuid comprised of menu name, link text, link value.
         $uuid_text = $this->config['name'].$text->text().$link;
         $uuid = MerlinUuid::getUuid($uuid_text);
