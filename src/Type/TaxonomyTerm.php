@@ -4,7 +4,7 @@ namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Merlin\Command\GenerateCommand;
-use Ramsey\Uuid\Uuid;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * Filter taxonomy terms by attributes.
@@ -48,7 +48,7 @@ class TaxonomyTerm extends TypeBase implements TypeInterface
     public function processChild(Crawler $crawler, &$row, $xpath=false)
     {
         $row->name = $crawler->text();
-        $row->uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, $row->name);
+        $row->uuid = MerlinUuid::getUuid($row->name);
 
     }//end processChild()
 

@@ -2,8 +2,8 @@
 
 namespace Merlin\Utility;
 
-use Ramsey\Uuid\Uuid;
 use GuzzleHttp\Psr7;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * A trait to be used for media representations throughout the project.
@@ -62,7 +62,7 @@ trait MediaTrait
             $uuid = reset($matches);
         }
 
-        return empty($uuid) ? Uuid::uuid3(Uuid::NAMESPACE_DNS, $filename) : $uuid;
+        return empty($uuid) ? MerlinUuid::getUuid($filename) : $uuid;
 
     }//end getUuid()
 

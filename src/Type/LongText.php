@@ -2,9 +2,9 @@
 
 namespace Merlin\Type;
 
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\DomCrawler\Crawler;
 use Merlin\Utility\ElementTrait;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * The long text processor.
@@ -68,7 +68,7 @@ class LongText extends TypeBase implements TypeInterface
                 // Sometimes a URL might have a UUID in the link, we should look to use that for the uuid
                 // of the media entity when migrating to Drupal for consistency.
                 $matches = [];
-                $uuid    = Uuid::uuid3(Uuid::NAMESPACE_DNS, $link->attr($document_name));
+                $uuid    = MerlinUuid::getUuid($link->attr($document_name));
                 if (preg_match('/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/', $link->attr($document_file), $matches) !== false) {
                     $uuid = reset($matches);
                 }

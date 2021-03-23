@@ -3,7 +3,6 @@
 namespace Merlin\Processor;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Ramsey\Uuid\Uuid;
 use Merlin\Output\OutputInterface;
 use Merlin\Utility\Callback;
 use Merlin\Utility\MediaTrait;

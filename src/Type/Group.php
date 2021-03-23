@@ -5,7 +5,7 @@ namespace Merlin\Type;
 
 use Merlin\Command\GenerateCommand;
 use Symfony\Component\DomCrawler\Crawler;
-use \Ramsey\Uuid\Uuid;
+use Merlin\Utility\MerlinUuid;
 
 use function DeepCopy\deep_copy;
 
@@ -156,7 +156,7 @@ class Group extends TypeBase implements TypeInterface {
 
         // NOTE: This key assumes that there are no identical groups anywhere on this page.
         $uuid_key = $url.$serialised;
-        $uuid = uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_key);
+        $uuid = MerlinUuid::getUuid($uuid_key);
         $tmp['uuid'] = $uuid;
 
 

@@ -3,7 +3,7 @@
 namespace Merlin\Type;
 
 use Merlin\Parser\ParserInterface;
-use Ramsey\Uuid\Uuid as UuidLib;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * Generate an alias for the given row.
@@ -63,7 +63,7 @@ class Alias extends TypeBase implements TypeInterface
 
         // Return uuidv3 of alias instead of actual alias.
         if (($options['return_uuid'] ?? false)) {
-          $uuid_url = UuidLib::uuid3(UuidLib::NAMESPACE_DNS, strtolower($url))->toString();
+          $uuid_url = MerlinUuid::getUuid($url);
           $this->addValueToRow($uuid_url);
           return;
         }
