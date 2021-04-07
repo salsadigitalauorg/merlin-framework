@@ -62,6 +62,8 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $curl->setOpt(CURLOPT_REFERER, $referer);
     }
 
+    $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
     $curl->setOpt(CURLOPT_USERAGENT, $userAgent);
 
     $this->multiCurl = $curl;
