@@ -3,6 +3,8 @@
 namespace Merlin\Processor;
 
 
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\RequestException;
 use Merlin\Fetcher\Cache;
 use Merlin\Fetcher\FetcherBase;
 use Merlin\Parser\ArrayConfig;
@@ -42,7 +44,9 @@ class SubFetch extends ProcessorOutputBase
     $headers      = ($options['headers'] ?? []);
 
 
-//    $useCache = false;
+
+    $useCache = true;
+
 
 //    $sub_fetch_id = $options['sub_fetch_id'] ?? null;
 //    if (empty($sub_fetch_id)) {
@@ -199,17 +203,42 @@ class SubFetch extends ProcessorOutputBase
         else {
 
           // TODO: ADD TO SUBFETCH ERROR OUTPUT SAY IT'S A FILE.
+          echo "ERROR: DIDNT RECEIVE TEXT/HTML!\n\n";
 
         }
 
 
 
       }
-      catch (\Exception $e) {
-
+      catch (RequestException $e) {
         var_dump($e->getMessage());
-        // TODO: ADD TO SUBFETCH ERROR OUTPUT.
 
+        $code = null;
+        $reason = null;
+
+        if ($e->hasResponse()) {
+          $response = $e->getResponse();
+          $code = $response->getStatusCode(); // HTTP status code;
+          $reason = $response->getReasonPhrase(); // Response message;
+        }
+
+        $d = [
+          'error' => $e->getMessage(),
+          'http_code' => $code,
+          'reason' => $reason,
+          'url' => $url,
+          'found_on' => $this->crawler->getUri()
+        ];
+        $this->output->addRow("subfetch-http-errors", (object)$d);
+      }
+      catch (\Exception $e) {
+        var_dump($e->getMessage());
+        $d = [
+          'error' => $e->getMessage(),
+          'url' => $url,
+          'found_on' => $this->crawler->getUri()
+        ];
+        $this->output->addRow("subfetch-http-errors", (object)$d);
       }
 
 
