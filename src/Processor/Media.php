@@ -281,7 +281,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
           $alt = $node->attr($this->alt);
 
           // Guzzle Uri hates Unicode chars and will ruin your day, here
-          // we make sure any unicide chars are urlencoded before going in.
+          // we make sure any unicode chars are urlencoded before going in.
           // They come out urldecoded afterwards from getFileUrl().
         $file = preg_replace_callback(
             '/[^\x20-\x7f]/',
