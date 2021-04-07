@@ -62,8 +62,12 @@ class Media extends TypeMultiComponent implements TypeInterface
     $full_details = ($this->config['options']['full_details'] ?? false);
     $extra_attr = ($this->config['options']['extra_attributes'] ?? []);
 
+    $process_name = isset($this->config['options']['process_name']) ? $this->config['options']['process_name'] : false;
+    $process_file = isset($this->config['options']['process_file']) ? $this->config['options']['process_file'] : false;
+
+    // @todo: refactor to not make use of use(), ditto dom.
     $this->crawler->each(
-        function (Crawler $node) use (&$uuids, $type, $external_assets, $extra_attr) {
+        function (Crawler $node) use (&$uuids, $type, $external_assets, $extra_attr, $process_name, $process_file) {
           try {
             $file = $node->evaluate($this->getOption('file', true));
             assert($file->count() > 0);
@@ -137,6 +141,16 @@ class Media extends TypeMultiComponent implements TypeInterface
               }
             }
           }
+
+
+          if ($process_file) {
+            $file = ProcessController::apply($file, $process_file, $this->crawler, $this->output);
+          }
+
+          if ($process_name) {
+            $name = ProcessController::apply($name, $process_name, $this->crawler, $this->output);
+          }
+
 
           $entity = [
               'file' => $file,
