@@ -19,7 +19,13 @@ use Symfony\Component\DomCrawler\Crawler;
 class ElementFilter extends GroupBase
 {
 
+  /**
+   * The filtered type - used to separate output by id.
+   *
+   * @var string
+   */
   protected $filter_type;
+
 
   /**
    * {@inheritdoc}
@@ -28,7 +34,9 @@ class ElementFilter extends GroupBase
   {
     parent::__construct($config);
     $this->filter_type = NULL;
-  }
+
+  }//end __construct()
+
 
   /**
    * {@inheritdoc}
@@ -42,7 +50,9 @@ class ElementFilter extends GroupBase
     }
 
     return $id;
-  }
+
+  }//end getId()
+
 
   /**
    * {@inheritdoc}
@@ -75,15 +85,18 @@ class ElementFilter extends GroupBase
       return FALSE;
     }
 
-     $types = $element->each(function(Crawler $node) use ($filter_attr, $pattern) {
-      preg_match($pattern, $node->attr($filter_attr), $matches);
-      return reset($matches);
-    });
+    $types = $element->each(
+        function(Crawler $node) use ($filter_attr, $pattern) {
+        preg_match($pattern, $node->attr($filter_attr), $matches);
+        return reset($matches);
+        }
+    );
 
     $this->filter_type = reset($types);
 
     return TRUE;
-  }
+
+  }//end match()
 
 
-}
+}//end class
