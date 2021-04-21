@@ -125,6 +125,11 @@ class CrawlCommand extends Command
       $crawler->setConcurrency($concurrency);
     }
 
+    // Set the robots respect flag.
+    if (!empty($this->config['options']['ignore_robotstxt'])) {
+      $crawler->ignoreRobots();
+    }
+
     // Optionally override maximum results (default is unlimited/all).
     if (!empty($input->getOption('limit')) || @$this->config['options']['maximum_total']) {
       $max = $input->getOption('limit') ? $input->getOption('limit') : @$this->config['options']['maximum_total'];
