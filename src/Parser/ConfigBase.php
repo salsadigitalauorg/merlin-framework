@@ -75,7 +75,7 @@ abstract class ConfigBase implements ParserInterface
               $urls_file = dirname($this->source).'/'.$urls_files[$i];
 
               if (!file_exists($urls_file)) {
-                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]}");
+                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]} ({$urls_file})");
               }
 
               $urls_from_current_file = \Spyc::YAMLLoad($urls_file);
