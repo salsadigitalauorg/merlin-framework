@@ -78,7 +78,7 @@ class Ordered extends TypeBase implements TypeInterface {
         $hash = md5(serialize($item));
         if (!in_array($hash, $hashed_results)) {
           $hashed_results[] = $hash;
-          $flat_results[$key] = $item;
+          $flat_results[][$key] = $item;
         }
       }
     }
