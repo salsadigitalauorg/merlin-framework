@@ -39,7 +39,7 @@ class CrawlCommand extends Command
   protected function configure()
   {
     $this
-      ->setDescription('Build migration datasets from configuration objects')
+      ->setDescription('Crawl a website and generate a list of URLs')
       ->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to the configuration file')
       ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Path to the output directory', __DIR__)
       ->addOption('debug', 'd', InputOption::VALUE_REQUIRED, 'Output debug messages', false)
@@ -82,15 +82,21 @@ class CrawlCommand extends Command
       ];
     }
 
+    $headers = ['User-Agent' => 'Merlin (+https://github.com/salsadigitalauorg/merlin-framework)'];
+
+    // Add headers listed in config, if any are provided.
+    if (!empty($this->config['options']['headers'])) {
+      $headers = array_merge($headers, $this->config['options']['headers']);
+    }
+
     $clientOptions = [
         RequestOptions::COOKIES         => $this->config['options']['cookies'],
         RequestOptions::CONNECT_TIMEOUT => $this->config['options']['connect_timeout'],
         RequestOptions::TIMEOUT         => $this->config['options']['timeout'],
         RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
         RequestOptions::VERIFY          => $this->config['options']['verify'],
-        RequestOptions::HEADERS         => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'],
-        RequestOptions::READ_TIMEOUT    => 120,
-
+        RequestOptions::HEADERS         => $headers,
+        RequestOptions::READ_TIMEOUT    => 120
     ];
 
     $baseUrl = $this->config['domain'];
@@ -142,6 +148,10 @@ class CrawlCommand extends Command
     if (!empty($delay = @$this->config['options']['delay'])) {
       $io->writeln("Setting delay between requests to {$delay}ms");
       $crawler->setDelayBetweenRequests($delay);
+    }
+
+    if (!empty($this->config['options']['ignore_robotstxt'])) {
+      $crawler->ignoreRobots();
     }
 
     $io->success('Starting crawl!');
