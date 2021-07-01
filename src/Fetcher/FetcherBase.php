@@ -206,11 +206,6 @@ class FetcherBase implements FetcherInterface
         $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
       }
 
-//      $testUrl = json_encode($url);
-//      if (json_last_error() === JSON_ERROR_UTF8) {
-//        $url = mb_convert_encoding($testUrl, 'UTF-8', 'UTF-8');
-//      }
-
       $data = [
           'url'      => $url,
           'contents' => $html,
@@ -248,23 +243,20 @@ class FetcherBase implements FetcherInterface
     }
 
     if ($duplicate === false) {
-
       if ($is_real_redirect) {
-        // Add a property to the row for checking on redirects
+        // Add a property to the row for checking on redirects.
         $row->_redirected_from = $url;
       }
 
       if (($this->config->get('url_options')['use_effective_url'] ?? false) && $effectiveUrl) {
-        // If a redirect we will process this as the redirected url
+        // If a redirect we will process this as the redirected url.
         $crawler = new Crawler($html, $effectiveUrl);
       } else {
-        // Process as the non-redirected url
+        // Process as the non-redirected url.
         $crawler = new Crawler($html, $url);
       }
 
-//        while ($field = $parser->getMapping()) {
         foreach ($parser->getMapping() as $field) {
-//         $crawler = new Crawler($html, $url);
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
             $type->process();
@@ -278,23 +270,19 @@ class FetcherBase implements FetcherInterface
                 $e->getFile()."(".$e->getLine()."): ".$e->getMessage()."\n".$e->getTraceAsString()
             );
           }
-        }//end while
+        }//end foreach
     }//end if
 
-    // Reset the parser so we have mappings back at 0.
-//    $parser->reset();
     $io->writeln(' <info>(Done!)</info>');
-
 
     if (!empty((array) $row)) {
       $output->addRow($entity_type, $row);
     }
 
-    // We can use the function to get results
-    return (array)$row;
+    // We can use the function to get results.
+    return (array) $row;
 
-
-  }//end processContent()
+}//end processContent()
 
 
   /**
@@ -379,7 +367,7 @@ class FetcherBase implements FetcherInterface
       throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
     }
 
-    $fetcher  = new $fetcherClass($io, $json, $config);
+    $fetcher = new $fetcherClass($io, $json, $config);
 
     return $fetcher;
 

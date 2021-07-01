@@ -142,7 +142,6 @@ class Media extends TypeMultiComponent implements TypeInterface
             }
           }
 
-
           if ($process_file) {
             $file = ProcessController::apply($file, $process_file, $this->crawler, $this->output);
           }
@@ -150,7 +149,6 @@ class Media extends TypeMultiComponent implements TypeInterface
           if ($process_name) {
             $name = ProcessController::apply($name, $process_name, $this->crawler, $this->output);
           }
-
 
           $entity = [
               'file' => $file,
@@ -183,8 +181,8 @@ class Media extends TypeMultiComponent implements TypeInterface
         $entity['found_on'] = $this->crawler->getUri();
         unset($entity);
       }
-      $this->output->mergeRow("media-{$type}-tracked", 'data', $this->entities, true);
 
+      $this->output->mergeRow("media-{$type}-tracked", 'data', $this->entities, true);
     }
 
   }//end processXpath()
@@ -244,15 +242,13 @@ class Media extends TypeMultiComponent implements TypeInterface
         $this->addValueToRow($uuids);
       }
 
-
       // Track which media entity was found on what page.
       foreach ($this->entities as &$entity) {
         $entity['found_on'] = $this->crawler->getUri();
         unset($entity);
       }
+
       $this->output->mergeRow("media-{$type}-tracked", 'data', $this->entities, true);
-
-
     }
 
   }//end processDom()

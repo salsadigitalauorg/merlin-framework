@@ -13,13 +13,14 @@ use Psr\Http\Message\ResponseInterface;
  *   type: meta
  *   options:
  *       attr: name
-*        value: 'contenttype'
+ *        value: 'contenttype'
  *       content:
  *          - 'Landing page'
  *          - 'Standard page'
  */
 class Meta extends GroupBase
 {
+
 
   /**
    * {@inheritdoc}
@@ -32,6 +33,7 @@ class Meta extends GroupBase
     if (empty($attr) || empty($value) || empty($content)) {
       return FALSE;
     }
+
     if (!is_array($content)) {
       $content = [$content];
     }
@@ -41,11 +43,11 @@ class Meta extends GroupBase
     $meta = null;
 
     $metatags->each(
-      function(Crawler $node) use ($attr, $value, &$meta) {
-        if ($node->attr($attr) === $value) {
-          $meta = $node;
+        function(Crawler $node) use ($attr, $value, &$meta) {
+          if ($node->attr($attr) === $value) {
+            $meta = $node;
+          }
         }
-      }
     );
 
     try {

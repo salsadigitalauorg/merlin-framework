@@ -419,6 +419,7 @@ class Media extends ProcessorOutputBase implements ProcessorInterface
         $entity['found_on'] = $this->crawler->getUri();
         unset($entity);
       }
+
       $this->output->mergeRow("media-{$this->type}-tracked", 'data', $this->entities, true);
     }
 

@@ -10,6 +10,7 @@ use Ramsey\Uuid\Uuid;
 class MerlinUuid
 {
 
+
     /**
      * Generate a Merlin-standard UUID.
      *
@@ -23,7 +24,8 @@ class MerlinUuid
       $string = strtolower($string);
       $string = preg_replace('/^(https?:\/\/)?(www\.)?/', '', $string);
       return Uuid::uuid3(Uuid::NAMESPACE_DNS, $string)->toString();
-    }//end getResult()
+
+    }//end getUuid()
 
 
 }//end class

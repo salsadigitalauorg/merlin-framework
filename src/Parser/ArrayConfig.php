@@ -13,12 +13,15 @@ class ArrayConfig extends ConfigBase
   public function __construct($data)
   {
     $this->data = $data;
+
   }//end __construct()
 
 
   public function parse() {
-    // Nada
+    // Nada.
     return $this;
-  }
 
-}
+  }//end parse()
+
+
+}//end class

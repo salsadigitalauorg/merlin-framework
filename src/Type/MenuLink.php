@@ -138,11 +138,11 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
 
         // Encode unicode chars.
         $link = preg_replace_callback(
-          '/[^\x20-\x7f]/',
-          function ($match) {
-            return urlencode($match[0]);
-          },
-          $link
+            '/[^\x20-\x7f]/',
+            function ($match) {
+              return urlencode($match[0]);
+            },
+            $link
         );
 
         // Menu uuid comprised of menu name, link text, link value.

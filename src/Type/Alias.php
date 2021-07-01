@@ -22,7 +22,7 @@ class Alias extends TypeBase implements TypeInterface
     public function process()
     {
 
-        $options = isset($this->config['options']) ? $this->config['options'] : [];
+        $options = ($this->config['options'] ?? []);
 
         $uri = $this->crawler->getUri();
         $parts = parse_url($uri);
@@ -50,7 +50,7 @@ class Alias extends TypeBase implements TypeInterface
         }
 
         // Throw away domain, scheme etc and rebuild according to config options.
-        $path  = isset($parts['path']) ? $parts['path'] : null;
+        $path  = ($parts['path'] ?? null);
         $query = isset($parts['query']) && $includeQuery ? "?".$parts['query'] : null;
         $frag  = isset($parts['fragment']) && $includeFrag ? "#".$parts['fragment'] : null;
 
@@ -81,7 +81,7 @@ class Alias extends TypeBase implements TypeInterface
             $url_trimmed = mb_strimwidth($url,0, $max_len,'','utf-8');
             $GLOBALS['_merlin_truncated_url_track'][$url_trimmed] += 1;
 
-            // TODO: Better place than $GLOBALS to store this...
+            // TODO: Better place than $GLOBALS to store this.
             $tag = "-".$GLOBALS['_merlin_truncated_url_track'][$url_trimmed];
             $url = $url_trimmed.$tag;
             $data = [
@@ -94,7 +94,7 @@ class Alias extends TypeBase implements TypeInterface
         } else if (!empty($alias_map)) {
           // Alias map provides a way for source original url to go to some
           // new modified one.  E.g. for a map of original => truncated urls.
-          // TODO $GLOBALS...
+          // TODO $GLOBALS.
           if (!isset($GLOBALS['_merlin_alias_map'])) {
             // Try load the map.
             $f_map = file_get_contents($alias_map);
@@ -113,7 +113,7 @@ class Alias extends TypeBase implements TypeInterface
                 'url_mapped' => $url_mapped,
             ];
             // If you want to track it
-            //$this->output->addRow("{$entity_type}-mapped-alias", (object) $data);
+            // $this->output->addRow("{$entity_type}-mapped-alias", (object) $data);.
             $url = $url_mapped;
           } else {
             $this->output->addRow("error-{$entity_type}-mapped-alias-failed", (object) [$url]);
@@ -136,7 +136,7 @@ class Alias extends TypeBase implements TypeInterface
      */
     public static function getDomainlessUrl($uri) {
       $parts = parse_url($uri);
-      $path  = isset($parts['path']) ? $parts['path'] : null;
+      $path  = ($parts['path'] ?? null);
       $query  = isset($parts['query']) ? "?".$parts['query'] : null;
       $frag  = isset($parts['fragment']) ? "#".$parts['fragment'] : null;
       $u = "{$path}{$query}{$frag}";

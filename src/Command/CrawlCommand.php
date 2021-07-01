@@ -96,7 +96,7 @@ class CrawlCommand extends Command
         RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
         RequestOptions::VERIFY          => $this->config['options']['verify'],
         RequestOptions::HEADERS         => $headers,
-        RequestOptions::READ_TIMEOUT    => 120
+        RequestOptions::READ_TIMEOUT    => 120,
     ];
 
     $baseUrl = $this->config['domain'];
