@@ -16,6 +16,7 @@ Structured link representation.
 ## Usage
 
 **DOM**
+
 ```
 field: link
 type: link
@@ -26,6 +27,7 @@ options:
 ```
 
 **Xpath**
+
 ```
 field: link
 type: link
