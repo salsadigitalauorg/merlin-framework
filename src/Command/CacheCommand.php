@@ -130,9 +130,9 @@ class CacheCommand extends Command
   private function initCache($domain) {
     $cache = new Cache($domain, $this->cacheRoot);
     $this->io->section("Cache settings:");
-    $this->io->writeln("Domain:      {$domain}");
-    $this->io->writeln("Cache root:  {$this->cacheRoot}");
-    $this->io->writeln("Cache dir:   {$cache->getPath()}");
+    $this->io->writeln("URL domain:\t{$domain}");
+    $this->io->writeln("Cache root:\t{$this->cacheRoot}");
+    $this->io->writeln("Cache dir:\t{$cache->getPath()}");
 
     return $cache;
 
@@ -174,12 +174,6 @@ class CacheCommand extends Command
           $url = str_replace($domain, "", $url);
           $url = "{$domain}{$url}";
           $targetDomain = $domain;
-        }
-
-        // Check we have a valid url.
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-          $this->io->warning("Invalid URL, skipping: $url");
-          continue;
         }
 
         $cache = $this->initCache($targetDomain);
@@ -241,20 +235,26 @@ class CacheCommand extends Command
           $targetDomain = $domain;
         }
 
-        // Check we have a valid url.
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-          $this->io->warning("Invalid URL, skipping: $url");
-          continue;
-        }
-
         $cache = $this->initCache($targetDomain);
         $filename = $cache->getFilename($url);
 
         if (is_file($filename)) {
-          $this->io->writeln("Url found in cache:  ".$url);
-          $this->io->writeln("Cache file: ".$filename);
+          $j = file_get_contents($filename);
+          $data = json_decode($j, TRUE);
+          $is_redirect = ($data['redirect']['redirect'] ?? FALSE);
+          $is_redirect_lbl = $is_redirect ? 'TRUE' : 'FALSE';
+
+          $url_effective = $url;
+          if ($is_redirect) {
+            $url_effective = $data['redirect']['url_effective'];
+          }
+
+          $this->io->writeln("URL FOUND:\t".$url);
+          $this->io->writeln("Cache file:\t".$filename);
+          $this->io->writeln("Is redirect:\t".$is_redirect_lbl);
+          $this->io->writeln("URL effective:\t".$url_effective);
         } else {
-          $this->io->writeln("Url not in cache:  ".$url);
+          $this->io->writeln("URL NOT FOUND");
         }
       }//end if
     }//end foreach
