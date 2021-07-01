@@ -232,14 +232,24 @@ class FetcherBase implements FetcherInterface
     }//end if
 
     // Check if duplicate if we are doing that.
-    $duplicate = false;
+    $duplicate = FALSE;
+    // Only records the duplicate if this is not a redirect,
+    // or redirect with count_redirects_as_content_duplicates enabled.
+    $count_redirect_as_duplicates = ($this->config->get('url_options')['count_redirects_as_content_duplicates'] ?? true);
+    $is_real_redirect = !empty($redirect['redirect'])
+      || !empty($redirect['redirect_count'])
+      || !empty($redirect['status_code_original'])
+      || (!empty($redirect['status_code']) && ($redirect['status_code'] >= 300 && $redirect['status_code'] < 400));
+
     if ($this->hashes instanceof ContentHash) {
-      $duplicate = $this->hashes->put($url, $html);
+      if (empty($is_real_redirect) || (!empty($is_real_redirect) && $count_redirect_as_duplicates)) {
+        $duplicate = $this->hashes->put($url, $html);
+      }
     }
 
     if ($duplicate === false) {
 
-      if (($redirect['redirect'] ?? false)) {
+      if ($is_real_redirect) {
         // Add a property to the row for checking on redirects
         $row->_redirected_from = $url;
       }
