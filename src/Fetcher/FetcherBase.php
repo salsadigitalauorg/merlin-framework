@@ -273,6 +273,8 @@ class FetcherBase implements FetcherInterface
         }//end foreach
     }//end if
 
+    // Reset the parser so we have mappings back at 0.
+    // $parser->reset();
     $io->writeln(' <info>(Done!)</info>');
 
     if (!empty((array) $row)) {
