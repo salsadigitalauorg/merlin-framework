@@ -26,16 +26,18 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   /** @inheritDoc */
   public function init()
   {
-    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
-    $allowRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
-    $maxRedirects   = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
 
-    $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
-    $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
+    $fetch_options = $this->config->get('fetch_options');
 
-	  $referer        = ($this->config->get('fetch_options')['referer'] ?? null);
+    $concurrency    = ($fetch_options['concurrency'] ?? FetcherDefaults::CONCURRENCY);
+    $allowRedirects = ($fetch_options['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
+    $maxRedirects   = ($fetch_options['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
+    $ignoreSSL      = ($fetch_options['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
+    $userAgent      = ($fetch_options['user_agent'] ?? FetcherDefaults::USER_AGENT);
+	  $referer        = ($fetch_options['referer'] ?? null);
+	  $ipResolve      = ($fetch_options['ip_resolve'] ?? 'v4');
 
-    $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
+    $timeouts       = ($fetch_options['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
     $timeout        = ($timeouts['timeout'] ?? FetcherDefaults::TIMEOUT);
 
@@ -62,9 +64,18 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $curl->setOpt(CURLOPT_REFERER, $referer);
     }
 
-    $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
     $curl->setOpt(CURLOPT_USERAGENT, $userAgent);
+
+    switch ($ipResolve) {
+      case 'v6':
+        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+        break;
+      case 'v4':
+        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        break;
+      default:
+        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_WHATEVER);
+    }
 
     $this->multiCurl = $curl;
 
