@@ -35,7 +35,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $ignoreSSL      = ($fetch_options['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($fetch_options['user_agent'] ?? FetcherDefaults::USER_AGENT);
 	  $referer        = ($fetch_options['referer'] ?? null);
-	  $ipResolve      = ($fetch_options['ip_resolve'] ?? 'v4');
+	  $ipResolve      = ($fetch_options['ip_resolve'] ?? 'whatever');
 
     $timeouts       = ($fetch_options['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
