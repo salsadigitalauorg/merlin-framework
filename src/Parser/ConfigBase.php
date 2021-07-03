@@ -169,36 +169,18 @@ abstract class ConfigBase implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    // TODO: This should be a generator so that reset() isn't needed -
-    // TODO: it is re-parsing the config file (and url list) every url...
-    public function getMapping_old()
-    {
-        if ($this->totals['mappings'] >= 0) {
-            $this->totals['mappings']--;
-            return array_shift($this->data['mappings']);
-        }
-
-        return false;
+    public function getMapping() {
+      foreach ($this->data['mappings'] as $mapping) {
+        yield $mapping;
+      }
 
     }//end getMapping()
 
 
     /**
      * {@inheritdoc}
+     * // TODO: Is this still in use?  If not, should probably be removed (and from interface).
      */
-    public function getMapping() {
-      foreach ($this->data['mappings'] as $mapping) {
-        yield $mapping;
-      }
-    }
-
-
-
-    /**
-     * {@inheritdoc}
-     */
-  // TODO: This should be a generator so that reset() isn't needed -
-  // TODO: it is re-parsing the config file (and url list) every url...
     public function getUrl()
     {
 
