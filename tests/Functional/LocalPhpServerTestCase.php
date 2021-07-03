@@ -39,10 +39,11 @@ class LocalPhpServerTestCase extends TestCase
       throw new \Exception("Test www directory does not exist: {$www}");
     }
 
+    // Note: IP address used below (not 'localhost:') so ipv4 only resolve works in cURL for Fetcher tests.
     $cmd = [
       'php',
       '-S',
-      'localhost:' . $port,
+      '127.0.0.1:' . $port,
       '-t',
       $www
     ];

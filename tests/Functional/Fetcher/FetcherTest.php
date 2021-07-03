@@ -16,7 +16,7 @@ class FetcherTest extends LocalPhpServerTestCase
 {
 
   /**
-   * Start up the local PHP server with the www dir required for theses tests.
+   * Start up the local PHP server with the www dir required for these tests.
    * @throws \Exception
    */
   public static function setUpBeforeClass() {
@@ -75,6 +75,7 @@ class FetcherTest extends LocalPhpServerTestCase
   /**
    * Perform a request via a fetcher.
    *
+   * @depends testPhpServerRunning
    * @param $expected
    * @param $configData
    *
@@ -95,10 +96,16 @@ class FetcherTest extends LocalPhpServerTestCase
     $io = new SymfonyStyle($input, $output);
     $json = new Json($io, $config);
 
-    // We use Spatie to test JS.
-    $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
-    // TODO: extend to test FetcherCurl too
-    // $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
+    $use_js = $configData['fetch_options']['execute_js'] ?? false;
+
+    // TODO: extend to run all non-js tests for both FetcherCurl and FetcherSpatieCrawler
+    if ($use_js) {
+      // We use Spatie to test JS.
+      $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    } else {
+      $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
+    }
+
     $urls = $configData['urls'] ?? [];
     foreach($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);

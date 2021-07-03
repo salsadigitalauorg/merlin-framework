@@ -23,22 +23,22 @@ class GroupTest extends CrawlerTestCase {
         [
           "field"     => "rank",
           "type"      => "text",
-          "selector"  => "//th[1]",
+          "selector"  => ".//th[1]",
         ],
         [
           "field"     => "movie",
           "type"      => "text",
-          "selector"  => "//td[1]",
+          "selector"  => ".//td[1]",
         ],
         [
           "field"     => "downloads",
           "type"      => "text",
-          "selector"  => "//td[2]",
+          "selector"  => ".//td[2]",
         ],
         [
           "field"     => "grosses",
           "type"      => "text",
-          "selector"  => "//td[3]",
+          "selector"  => ".//td[3]",
         ]
       ],
     ];
@@ -76,22 +76,22 @@ class GroupTest extends CrawlerTestCase {
         [
           "field"     => "rank",
           "type"      => "text",
-          "selector"  => "//th[1]",
+          "selector"  => ".//th[1]",
         ],
         [
           "field"     => "movie",
           "type"      => "text",
-          "selector"  => "//td[1]",
+          "selector"  => ".//td[1]",
         ],
         [
           "field"     => "downloads",
           "type"      => "text",
-          "selector"  => "//td[2]",
+          "selector"  => ".//td[2]",
         ],
         [
           "field"     => "grosses",
           "type"      => "text",
-          "selector"  => "//td[3]",
+          "selector"  => ".//td[3]",
         ]
       ],
     ];
