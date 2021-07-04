@@ -5,6 +5,7 @@ namespace Merlin\Tests\Functional\Type;
 use Merlin\Tests\Functional\CrawlerTestCase;
 use Merlin\Type\Group;
 use Merlin\Exception\ElementNotFoundException;
+use Merlin\Type\TypeBase;
 
 class GroupTest extends CrawlerTestCase {
 
@@ -133,6 +134,218 @@ class GroupTest extends CrawlerTestCase {
     );
     $this->expectException(\Exception::class);
     $type->process();
+  }
+
+
+  /**
+   * Test whole GROUP is skipped if option set and one field is required.
+   * @group type_group
+   */
+  public function testGroupRequiredFieldSkipGroup() {
+    $config = [
+      'field' => 'people',
+      'type' => 'group',
+      'selector' => '//div[@id="group_container_of_things_2"]//div[contains(@class, "person")]',
+      'options' => [
+        'required_skip_group' => true
+      ],
+      'each' => [
+        [
+          "field"     => "name",
+          "type"      => "text",
+          "selector"  => ".//div[@class='name']",
+        ],
+        [
+          "field"     => "email",
+          "type"      => "text",
+          "selector"  => ".//div[@class='email']",
+        ],
+        [
+          "field"     => "phone",
+          "type"      => "text",
+          "selector"  => ".//div[@class='phone']",
+        ],
+        [
+          "field"     => "skills",
+          "type"      => "text",
+          "selector"  => ".//ul[@class='skills']//li",
+          "options"   => [
+            "required" => true
+          ]
+        ],
+        [
+          "field"     => "skills_group",
+          "type"      => "group",
+          "selector"  => ".//ul[@class='skills']//li",
+          "each"      => [
+            [
+              "field" => "skill",
+              "type"  => "text",
+              "selector" => "."
+            ]
+          ]
+        ],
+      ],
+    ];
+
+    $row = new \stdClass;
+    $type = new Group(
+      $this->getCrawler(),
+      $this->getOutput(),
+      $row,
+      $config
+    );
+
+    $type->process();
+    $results = json_decode(json_encode($row), true);
+    $this->assertTrue(empty($results));
+
+  }
+
+
+  /**
+   * Test whole CHILD is skipped if option set and one field is required.
+   * @group type_group
+   */
+  public function testGroupRequiredFieldSkipChild() {
+    $config = [
+      'field' => 'people',
+      'type' => 'group',
+      'selector' => '//div[@id="group_container_of_things_2"]//div[contains(@class, "person")]',
+      'options' => [
+        'required_skip_child' => true
+      ],
+      'each' => [
+        [
+          "field"     => "name",
+          "type"      => "text",
+          "selector"  => ".//div[@class='name']",
+        ],
+        [
+          "field"     => "email",
+          "type"      => "text",
+          "selector"  => ".//div[@class='email']",
+        ],
+        [
+          "field"     => "phone",
+          "type"      => "text",
+          "selector"  => ".//div[@class='phone']",
+        ],
+        [
+          "field"     => "skills",
+          "type"      => "text",
+          "selector"  => ".//ul[@class='skills']//li",
+          "options"   => [
+            "required" => true
+          ]
+        ],
+        [
+          "field"     => "skills_group",
+          "type"      => "group",
+          "selector"  => ".//ul[@class='skills']//li",
+          "each"      => [
+            [
+              "field" => "skill",
+              "type"  => "text",
+              "selector" => "."
+            ]
+          ]
+        ],
+      ],
+    ];
+
+    $row = new \stdClass;
+    $type = new Group(
+      $this->getCrawler(),
+      $this->getOutput(),
+      $row,
+      $config
+    );
+
+    $type->process();
+    $results = json_decode(json_encode($row), true);
+
+    // There are two items that have the required skills items.
+    $c = $results['people']['children'] ?? [];
+    $this->assertEquals(2, count($c));
+
+  }
+
+
+  /**
+   * Test each child gets a UUID generated if option set.
+   *
+   * @group type_group
+   * @throws \Merlin\Exception\ElementNotFoundException
+   * @throws \Merlin\Exception\ValidationException
+   */
+  public function testGroupGenerateUUID() {
+    $config = [
+      'field' => 'people',
+      'type' => 'group',
+      'selector' => '//div[@id="group_container_of_things_2"]//div[contains(@class, "person")]',
+      'options' => [
+        'generate_uuid' => true
+      ],
+      'each' => [
+        [
+          "field"     => "name",
+          "type"      => "text",
+          "selector"  => ".//div[@class='name']",
+        ],
+        [
+          "field"     => "email",
+          "type"      => "text",
+          "selector"  => ".//div[@class='email']",
+        ],
+        [
+          "field"     => "phone",
+          "type"      => "text",
+          "selector"  => ".//div[@class='phone']",
+        ],
+        [
+          "field"     => "skills",
+          "type"      => "text",
+          "selector"  => ".//ul[@class='skills']//li",
+          "options"   => [
+            "required" => true
+          ]
+        ],
+        [
+          "field"     => "skills_group",
+          "type"      => "group",
+          "selector"  => ".//ul[@class='skills']//li",
+          "each"      => [
+            [
+              "field" => "skill",
+              "type"  => "text",
+              "selector" => "."
+            ]
+          ]
+        ],
+      ],
+    ];
+
+    $row = new \stdClass;
+    $type = new Group(
+      $this->getCrawler(),
+      $this->getOutput(),
+      $row,
+      $config
+    );
+
+    $type->process();
+    $results = json_decode(json_encode($row), true);
+
+    // There are four items so should have four uuids
+    $uuids = array_column($results['people']['children'], 'uuid');
+    $this->assertNotEmpty($uuids);
+    $this->assertEquals(4, count($uuids));
+
+    foreach($uuids as $uuid) {
+      $this->assertNotEmpty($uuid);
+    }
+
   }
 
 }
