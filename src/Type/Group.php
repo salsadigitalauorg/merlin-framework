@@ -68,6 +68,11 @@ class Group extends TypeBase implements TypeInterface {
 
     $items = ($this->config['each'] ?? []);
     $options = ($this->config['options'] ?? []);
+    $req_skip_group = ($options['required_skip_group'] ?? false);
+    $req_skip_child = ($options['required_skip_child'] ?? false);
+    $generate_uuid = ($options['generate_uuid'] ?? false);
+    $output_filename = ($options['output_filename'] ?? null);
+
 
     if (empty($items)) {
       throw new \Exception('"each" key required for group.');
@@ -83,14 +88,21 @@ class Group extends TypeBase implements TypeInterface {
         $cc = new Crawler($n, $this->crawler->getUri(), $this->crawler->getBaseHref());
         $tmp = [];
 
+        $add_to_results = true;
+
         foreach ($items as $_idx => $item) {
           $row = new \stdClass();
           $this->processItem($row, $cc, $item);
 
-          // If a field is required and it is empty, we skip the whole group.
-          $required = ($item['options']['required'] ?? null);
-          if ($required && empty(@$row->{$item['field']})) {
+          $required = ($item['options']['required'] ?? false);
+          if ($req_skip_group && $required && empty(@$row->{$item['field']})) {
+            // If a field is required and it is empty, skip the whole group construct.
             return;
+          }
+
+          if ($req_skip_child && $required && empty(@$row->{$item['field']})) {
+            // If a fields is required, but empty, skip the current group child.
+            $add_to_results = false;
           }
 
           $tmp[$item['field']] = @$row->{$item['field']};
@@ -99,12 +111,16 @@ class Group extends TypeBase implements TypeInterface {
         $serialised = json_encode($tmp);
         $url = $this->crawler->getUri();
 
-        // NOTE: This key assumes that there are no identical groups anywhere on this page.
-        $uuid_key = $url.$serialised;
-        $uuid = MerlinUuid::getUuid($uuid_key);
-        $tmp['uuid'] = $uuid;
+        if ($generate_uuid || !empty($output_filename)) {
+          // NOTE: This key assumes that there are no identical groups anywhere on this page.
+          $uuid_key = $url.$serialised;
+          $uuid = MerlinUuid::getUuid($uuid_key);
+          $tmp['uuid'] = $uuid;
+        }
 
-        $results[] = $tmp;
+        if ($add_to_results) {
+          $results[] = $tmp;
+        }
       }//end foreach
     }//end foreach
 
@@ -122,9 +138,9 @@ class Group extends TypeBase implements TypeInterface {
     }
 
     // NOTE: This does not currently support NESTED output generation.
-    if (key_exists('output_filename', $options)) {
+    if (!empty($output_filename)) {
       // The output filename could be e.g. 'standard_page_paragraphs'.
-      $this->output->mergeRow($options['output_filename'], 'data', $results, true);
+      $this->output->mergeRow($output_filename, 'data', $results, true);
 
       $group_uuids = [];
       foreach (array_column($results, 'uuid') as $p_uuid) {
