@@ -21,6 +21,13 @@ The group type is intended to be used with a selector that returns multiple elem
 
 The group type requires the `each` property.  This is an array of fields that will build up each item in the group.
 
+## Options
+
+- `sort_field` `<string>`: The field used to sort results.
+- `sort_direction ` `<string>`: Sort direction (asc, or desc).
+- `required_skip_group` `<bool>`: Skip whole group if any field is required.
+- `required_skip_child` `<bool>`: Skip single child if any field is required.
+- `generate_uuid ` `<bool>`: Generate a v3 UUID of serialised child content.
 
 
 ## Example Usage

@@ -93,7 +93,7 @@ class Alias extends TypeBase implements TypeInterface
           }
         } else if (!empty($alias_map)) {
           // Alias map provides a way for source original url to go to some
-          // new modified one.  E.g. for a map of original => truncated urls.
+          // new modified one.  E.g. for a map of original => truncated/rewritten urls.
           // TODO $GLOBALS.
           if (!isset($GLOBALS['_merlin_alias_map'])) {
             // Try load the map.
