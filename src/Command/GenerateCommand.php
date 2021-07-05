@@ -107,7 +107,7 @@ class GenerateCommand extends Command
         $io->success('Done!');
 
         $start   = microtime(true);
-        $json    = new Json($io, $config);
+        $json    = new Json($io, $this->config);
 
         $io->section('Processing requests');
 
