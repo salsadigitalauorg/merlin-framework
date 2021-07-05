@@ -245,7 +245,8 @@ class FetcherBase implements FetcherInterface
     if ($duplicate === false) {
       if ($is_real_redirect) {
         // Add a property to the row for checking on redirects.
-        $row->_redirected_from = $url;
+        $row->_redirect_from = $url;
+        $row->_redirect_code = $redirect['status_code_original'];
       }
 
       if (($this->config->get('url_options')['use_effective_url'] ?? false) && $effectiveUrl) {
@@ -347,6 +348,25 @@ class FetcherBase implements FetcherInterface
     }
 
   }//end complete()
+
+
+  /**
+   * Returns curl constant value from expected config string.
+   * @param null $ipResolve
+   *
+   * @return int
+   */
+  public static function getCurlIpResolve($ipResolve=null) {
+
+    if ($ipResolve == 'v6') {
+      return CURL_IPRESOLVE_V6;
+    } else if ($ipResolve == 'v4') {
+      return CURL_IPRESOLVE_V4;
+    }
+
+    return CURL_IPRESOLVE_WHATEVER;
+
+  }//end getCurlIpResolve()
 
 
   /**
