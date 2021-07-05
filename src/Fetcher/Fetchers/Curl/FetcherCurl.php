@@ -35,7 +35,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $ignoreSSL      = ($fetch_options['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
     $userAgent      = ($fetch_options['user_agent'] ?? FetcherDefaults::USER_AGENT);
 	  $referer        = ($fetch_options['referer'] ?? null);
-	  $ipResolve      = ($fetch_options['ip_resolve'] ?? 'whatever');
+	  $ipResolve      = ($fetch_options['ip_resolve'] ?? null);
 
     $timeouts       = ($fetch_options['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
@@ -45,7 +45,6 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $curl->setConcurrency($concurrency);
     $curl->setConnectTimeout($connectTimeout);
     $curl->setTimeout($timeout);
-
     $curl->success($this->onSuccess());
     $curl->error($this->onError());
     $curl->complete($this->onComplete());
@@ -65,17 +64,7 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     }
 
     $curl->setOpt(CURLOPT_USERAGENT, $userAgent);
-
-    switch ($ipResolve) {
-      case 'v6':
-        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
-        break;
-      case 'v4':
-        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        break;
-      default:
-        $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_WHATEVER);
-    }
+    $curl->setOpt(CURLOPT_IPRESOLVE, FetcherBase::getCurlIpResolve($ipResolve));
 
     $this->multiCurl = $curl;
 
