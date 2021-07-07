@@ -322,7 +322,7 @@ class FetcherBase implements FetcherInterface
   /**
    * Called when fetching is completed.
    */
-  public function complete() {
+  public function complete($show_msg=true) {
 
     // Print some basic stats.
     $fetched       = $this->counts['fetched'];
@@ -332,13 +332,24 @@ class FetcherBase implements FetcherInterface
 
     $msg = "{$total} URLs processed ({$fetched} fetched, {$fetched_cache} from cache), {$failed} failed.";
 
-    if ($failed === 0) {
-      $this->io->success($msg);
-    } else {
-      $this->io->error($msg);
+    if ($show_msg) {
+      if ($failed === 0) {
+        $this->io->success($msg);
+      } else {
+        $this->io->error($msg);
+      }
     }
 
     // Build the duplicates file.
+    $this->buildDuplicates();
+
+  }//end complete()
+
+
+  /**
+   * Builds the content duplicates for this entity.
+   */
+  public function buildDuplicates() {
     if ($this->hashes instanceof ContentHash) {
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
@@ -347,7 +358,7 @@ class FetcherBase implements FetcherInterface
       }
     }
 
-  }//end complete()
+  }//end buildDuplicates()
 
 
   /**
