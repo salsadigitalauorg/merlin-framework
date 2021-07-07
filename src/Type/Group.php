@@ -73,7 +73,6 @@ class Group extends TypeBase implements TypeInterface {
     $generate_uuid = ($options['generate_uuid'] ?? false);
     $output_filename = ($options['output_filename'] ?? null);
 
-
     if (empty($items)) {
       throw new \Exception('"each" key required for group.');
     }

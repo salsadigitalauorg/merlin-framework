@@ -34,11 +34,9 @@ class RedirectUtils
       return null;
     }
 
-
     $redirect = false;
 
     if ($response) {
-
       // We have a response object from Guzzle passed in so use that to figure things out.
       if ($response->getHeader('X-Guzzle-Redirect-History')) {
         $redirect = true;
@@ -56,7 +54,6 @@ class RedirectUtils
       foreach ($response->getHeaders() as $name => $values) {
         $rawHeaders .= $name.': '.implode(', ', $values)."\r\n";
       }
-
     } else {
         // Do a curl and check if its a redirect.
         $ch = curl_init();
@@ -71,7 +68,6 @@ class RedirectUtils
         $info = curl_getinfo($ch);
         $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         curl_close($ch);
-
 
         $redirectCount = ($info['redirect_count'] ?? 0);
         $redirect = $redirectCount > 0;
@@ -93,9 +89,6 @@ class RedirectUtils
             }
           }
         }
-
-
-
     }//end if
 
     if ($redirect) {

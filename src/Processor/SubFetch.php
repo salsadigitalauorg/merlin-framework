@@ -142,7 +142,6 @@ class SubFetch extends ProcessorOutputBase
      *  use FetcherCurl and setting the success & error
      *  callbacks to set return data to class property.  This
      *  would remove the need for the Guzzle fetching below.
-     *
      */
 
     $fetcher = new FetcherBase($io, $this->output, $config);
