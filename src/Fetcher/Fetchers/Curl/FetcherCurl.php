@@ -71,6 +71,12 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   }//end init()
 
 
+  public function getCurl() {
+    return $this->multiCurl;
+
+  }//end getCurl()
+
+
   public function addUrl(?string $url)
   {
    $this->multiCurl->addGet($url);
