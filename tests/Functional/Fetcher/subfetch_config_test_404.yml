@@ -1,0 +1,58 @@
+---
+domain: http://localhost:8000
+
+entity_type: phpunit_test
+
+urls:
+  - /subfetch_landing.php
+
+fetch_options:
+  cache_enabled: false
+  follow_redirects: true
+  
+mappings:
+  -
+    field: test_result
+    selector: //h1
+    type: text
+    processors:
+      whitespace: {  }
+  -
+    field: items
+    selector: //tr
+    type: group
+    each:
+      -
+        field: title
+        selector: './td[2]'
+        type: text
+      -
+        field: link
+        selector: './td[3]/a/@href'
+        type: text
+        processors:
+          -
+            processor: function_process
+            function: |
+                function ($value, $crawler) {
+                  $url = $value . "-404-test.html";
+                  return 'what.html';
+                }
+          -
+            processor: sub_fetch
+            options:
+              config:
+                entity_type: item
+                mappings:
+                  -
+                    field: title
+                    selector: '//div[@class="title"]//span'
+                    type: text
+                  -
+                    field: description
+                    selector: '//div[@class="description"]//span'
+                    type: text
+                  -
+                    field: price
+                    selector: '//div[@class="price"]//span'
+                    type: text
