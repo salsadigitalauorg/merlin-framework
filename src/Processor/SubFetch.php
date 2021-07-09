@@ -83,7 +83,7 @@ class SubFetch extends ProcessorOutputBase
     }
 
     // Sub fetch options (these are the same as standard fetcher options).
-    $fetchOpts = $config_data['fetch_options'];
+    $fetchOpts      = ($config_data['fetch_options'] ?? []);
     $allowRedirects = ($fetchOpts['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
     $maxRedirects   = ($fetchOpts['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
     $ignoreSSL      = ($fetchOpts['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
@@ -98,7 +98,7 @@ class SubFetch extends ProcessorOutputBase
     // We save the fetched output in a derivative of
     // specified config entity (for ease of checking)
     // the data is also returned to the main caller.
-    $config_data['entity_type'] .= "_fetched";
+    $config_data['entity_type'] .= "_subfetch";
 
     // Check for empty url now have entity_type.
     if (empty($url)) {
@@ -237,41 +237,60 @@ class SubFetch extends ProcessorOutputBase
           throw new \Exception("Expected text/html content-type, got: {$content_type}");
         }//end if
       } catch (RequestException $e) {
-        $code = null;
+        $status = null;
         $reason = null;
 
         if ($e->hasResponse()) {
           $response = $e->getResponse();
-          $code = $response->getStatusCode();
+          $status = $response->getStatusCode();
           $reason = $response->getReasonPhrase();
         }
 
+        switch ($status) {
+          case 500:
+          case 404:
+          case 400:
+            $type = "{$config_data['entity_type']}-error-{$status}";
+            break;
+
+          default:
+            $type = "{$config_data['entity_type']}-error";
+        }
+
         $d = [
-            'url'       => $url,
-            'error'     => $e->getMessage(),
-            'http_code' => $code,
-            'reason'    => $reason,
-            'found_on'  => $this->crawler->getUri(),
+            'type'     => 'subfetch',
+            'error'    => $e->getMessage(),
+            'url'      => $url,
+            'status'   => $status,
+            'reason'   => $reason,
+            'found_on' => $this->crawler->getUri(),
+            'data'     => null,
+
         ];
-        $this->output->addRow("error-subfetch", (object) $d);
+        $this->output->addRow($type, (object) $d);
+        return $d;
       } catch (\Exception $e) {
         $d = [
+            'type'     => 'subfetch',
             'error'    => $e->getMessage(),
             'url'      => $url,
             'found_on' => $this->crawler->getUri(),
+            'data'     => null,
         ];
-        $this->output->addRow("error-subfetch", (object) $d);
+        $this->output->addRow("{$config_data['entity_type']}-error", (object) $d);
+        return $d;
       }//end try
     }//end if
 
     // $io->writeln("\n--------- END SUB FETCH ---------");
-    $ret = [
-        'type'     => 'fetched',
+    $d = [
+        'type'     => 'subfetch',
+        'error'    => null,
         'url'      => $url,
         'found_on' => $this->crawler->getUri(),
         'data'     => $data,
     ];
-    return $ret;
+    return $d;
 
   }//end process()
 
