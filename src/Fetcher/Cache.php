@@ -35,8 +35,10 @@ class Cache
       }
     }
 
-    if (strstr($cacheDir, ".") || strstr($cacheDir, "..")) {
-      throw new \Exception("Cannot initialise cache!  You must use an absolute path for the cache dir.");
+    $cacheDir = realpath($cacheDir);
+
+    if (strpos($cacheDir, ".") === 0 || strpos($cacheDir, "..") === 0) {
+      throw new \Exception("Cannot initialise cache!  You must use an absolute path for the cache dir ({$cacheDir}).");
     }
 
     if (!empty($cacheDir) && is_dir($cacheDir) && is_writable($cacheDir) && realpath($cacheDir) != "/") {

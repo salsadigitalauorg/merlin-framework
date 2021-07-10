@@ -1,0 +1,19 @@
+[{
+  "title": "Plums",
+  "type": "fruit",
+  "description": "Yellow and red sweet plums",
+  "filename": "42.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 19.18,
+  "rating": 1
+}, {
+  "title": "French fries",
+  "type": "bakery",
+  "description": "Homemade oven baked french fries with ketchup",
+  "filename": "43.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 18.32,
+  "rating": 3
+}]

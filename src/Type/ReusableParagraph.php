@@ -3,7 +3,7 @@
 namespace Merlin\Type;
 
 use Merlin\Command\GenerateCommand;
-use Ramsey\Uuid\Uuid;
+use Merlin\Utility\MerlinUuid;
 
 class ReusableParagraph extends TypeBase implements TypeInterface
 {
@@ -36,7 +36,7 @@ class ReusableParagraph extends TypeBase implements TypeInterface
 
         // Generate a UUID based on the selected row values.
         $tmp       = md5(json_encode($row));
-        $row->uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, $tmp);
+        $row->uuid = MerlinUuid::getUuid($tmp);
         $uuids[]   = $row->uuid;
 
         $this->output->mergeRow($name, 'data', [$row], true);

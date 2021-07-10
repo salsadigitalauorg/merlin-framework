@@ -48,6 +48,20 @@ options:
   attribute: data-type
 ```
 
+#### Meta tag
+
+Group URLs by the value of a given meta tag.
+
+```
+type: meta
+options:
+  attr: name
+  value: contenttype
+  content: 
+    - 'Landing page'
+    - 'Standard page'
+```
+
 ## Configuration example
 ```
 ---

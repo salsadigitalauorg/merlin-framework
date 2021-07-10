@@ -190,7 +190,7 @@ class MediaTest extends CrawlerTestCase
     }
 
     /**
-     * Ensure thata processors apply when using Xpath.
+     * Ensure that processors apply when using Xpath.
      */
     public function testProcessorXpath()
     {
@@ -257,7 +257,9 @@ class MediaTest extends CrawlerTestCase
         ];
 
         $output = $this->getOutput(['mergeRow']);
-        $output->expects($this->once())->method('mergeRow')->with('media-custom-media-type');
+        $output->expects($this->exactly(2))
+          ->method('mergeRow')
+          ->withConsecutive(['media-custom-media-type'], ['media-custom-media-type-tracked']);
 
         $row = new \stdClass;
         $media = new Media(

@@ -41,6 +41,7 @@ class CacheCommand extends Command
       ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to the configuration file')
       ->addOption('purge-url', null, (InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL), 'Purge url(s) from cache')
       ->addOption('purge-domain', null, InputOption::VALUE_OPTIONAL, 'Purge entire cache for domain')
+      ->addOption('exists-url', null, (InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL), 'Confirms url(s) exist in cache and prints store path')
       ->addOption('cache-dir', null, InputOption::VALUE_OPTIONAL, 'Specify cache dir (overrides config file)')
       ->addOption('domain', null, InputOption::VALUE_OPTIONAL, 'Specify target domain to use')
       ->addOption('stats', null, InputOption::VALUE_NONE, 'Print the cache statistics');
@@ -92,12 +93,16 @@ class CacheCommand extends Command
 
     $printStats  = ($input->getOption('stats') ?? false);
     $purgeUrls   = $input->getOption('purge-url');
+    $existUrls   = $input->getOption('exists-url');
     $purgeDomain = null;
     if (!empty($input->getOption('purge-domain'))) {
       $purgeDomain = ($input->getOption('purge-domain') ?? $configDomain);
     }
 
     switch (true) {
+      case $existUrls:
+        $this->existUrls($configDomain, $existUrls);
+        break;
       case $purgeUrls:
         $this->purgeUrls($configDomain, $purgeUrls);
         break;
@@ -125,9 +130,9 @@ class CacheCommand extends Command
   private function initCache($domain) {
     $cache = new Cache($domain, $this->cacheRoot);
     $this->io->section("Cache settings:");
-    $this->io->writeln("Domain:      {$domain}");
-    $this->io->writeln("Cache root:  {$this->cacheRoot}");
-    $this->io->writeln("Cache dir:   {$cache->getPath()}");
+    $this->io->writeln("URL domain:\t{$domain}");
+    $this->io->writeln("Cache root:\t{$this->cacheRoot}");
+    $this->io->writeln("Cache dir:\t{$cache->getPath()}");
 
     return $cache;
 
@@ -171,12 +176,6 @@ class CacheCommand extends Command
           $targetDomain = $domain;
         }
 
-        // Check we have a valid url.
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-          $this->io->warning("Invalid URL, skipping: $url");
-          continue;
-        }
-
         $cache = $this->initCache($targetDomain);
         $filename = $cache->getFilename($url);
 
@@ -198,6 +197,69 @@ class CacheCommand extends Command
     }//end foreach
 
   }//end purgeUrls()
+
+
+  /**
+   * Checks if given file exists in cache and prints store file.
+   * @param $domain
+   * @param $urls
+   *
+   * @throws \Exception
+   */
+  private function existUrls($domain, $urls)
+  {
+
+    if (empty($urls[0])) {
+      $this->io->error("Specify at least one URL!");
+      exit(1);
+    }
+
+    foreach ($urls as $url) {
+      $url = trim($url);
+      if (!empty($url)) {
+        // If no domain, we check url to fetch it out of there.
+        // This may be the case if manually specifying without a config file.
+        if (empty($domain)) {
+          $p = parse_url($url);
+          $scheme = $p['scheme'];
+          $host = $p['host'];
+          $targetDomain = "{$scheme}://{$host}";
+          if (!empty($p['port'])) {
+            $targetDomain .= ":".$p['port'];
+          }
+        } else {
+          // Assume using relative url. We str replace just in case someone uses
+          // the full URL from the command line and gets confused about it.
+          $url = str_replace($domain, "", $url);
+          $url = "{$domain}{$url}";
+          $targetDomain = $domain;
+        }
+
+        $cache = $this->initCache($targetDomain);
+        $filename = $cache->getFilename($url);
+
+        if (is_file($filename)) {
+          $j = file_get_contents($filename);
+          $data = json_decode($j, TRUE);
+          $is_redirect = ($data['redirect']['redirect'] ?? FALSE);
+          $is_redirect_lbl = $is_redirect ? 'TRUE' : 'FALSE';
+
+          $url_effective = $url;
+          if ($is_redirect) {
+            $url_effective = $data['redirect']['url_effective'];
+          }
+
+          $this->io->writeln("URL FOUND:\t".$url);
+          $this->io->writeln("Cache file:\t".$filename);
+          $this->io->writeln("Is redirect:\t".$is_redirect_lbl);
+          $this->io->writeln("URL effective:\t".$url_effective);
+        } else {
+          $this->io->writeln("URL NOT FOUND");
+        }
+      }//end if
+    }//end foreach
+
+  }//end existUrls()
 
 
   /**

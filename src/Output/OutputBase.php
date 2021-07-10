@@ -206,4 +206,15 @@ abstract class OutputBase implements OutputInterface
     }//end getData()
 
 
+    /**
+     * Returns the console output io.
+     *
+     * @return \Symfony\Component\Console\Output\OutputInterface
+     */
+    public function getIo() {
+      return $this->io;
+
+    }//end getIo()
+
+
 }//end class

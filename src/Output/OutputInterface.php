@@ -25,7 +25,7 @@ interface OutputInterface
      * Add a row to the output object.
      *
      * @param string   $entity_type
-     *   The entity type to add this too.
+     *   The entity type to add this to.
      * @param stdClass $row
      *   The row to add.
      *
@@ -37,7 +37,7 @@ interface OutputInterface
     /**
      * Convert a data array to string.
      *
-     * This is called when the comand is attempting to write
+     * This is called when the command is attempting to write
      * the files to disk. Each output object will understand
      * how to generate a string from the data.
      *

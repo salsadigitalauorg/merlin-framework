@@ -3,7 +3,7 @@
 namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Ramsey\Uuid\Uuid;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * Defines menu structures in an iterative YML structure.
@@ -135,9 +135,19 @@ class MenuLink extends TypeMultiComponent implements TypeInterface
     private function processLink($text, $link)
     {
         $link = $link->count() > 0 ? $link->text() : 'internal:/';
+
+        // Encode unicode chars.
+        $link = preg_replace_callback(
+            '/[^\x20-\x7f]/',
+            function ($match) {
+              return urlencode($match[0]);
+            },
+            $link
+        );
+
         // Menu uuid comprised of menu name, link text, link value.
         $uuid_text = $this->config['name'].$text->text().$link;
-        $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, strtolower($uuid_text));
+        $uuid = MerlinUuid::getUuid($uuid_text);
 
         if ($this->isRelativeUri($link)) {
             if (substr($link, 0, 1) !== '/') {

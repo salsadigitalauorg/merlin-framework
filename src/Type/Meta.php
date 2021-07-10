@@ -46,7 +46,7 @@ class Meta extends TypeBase implements TypeInterface {
     $value = $this->getOption('value');
 
     if (empty($value)) {
-      throw new \Exception('Meta requries the value option.');
+      throw new \Exception('Meta requires the value option.');
     }
 
     $metatags = $this->crawler->filter('meta');

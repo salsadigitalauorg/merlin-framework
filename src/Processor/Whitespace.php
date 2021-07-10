@@ -18,7 +18,7 @@ class Whitespace implements ProcessorInterface
     public function process($value)
     {
         $value = preg_replace("/(\n|\t|\r)/", '', $value);
-        $value = preg_replace('/ {2,}/', '', $value);
+        $value = preg_replace('/ {2,}/', ' ', $value);
         $value = preg_replace('/[\x{200B}-\x{200D}]/u', '', $value);
         return trim($value);
 

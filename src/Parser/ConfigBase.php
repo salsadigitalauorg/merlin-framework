@@ -75,7 +75,7 @@ abstract class ConfigBase implements ParserInterface
               $urls_file = dirname($this->source).'/'.$urls_files[$i];
 
               if (!file_exists($urls_file)) {
-                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]}");
+                  throw new \Exception("Invalid URLs file provided: cannot locate {$urls_files[$i]} ({$urls_file})");
               }
 
               $urls_from_current_file = \Spyc::YAMLLoad($urls_file);
@@ -169,23 +169,21 @@ abstract class ConfigBase implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function getMapping()
-    {
-        if ($this->totals['mappings'] >= 0) {
-            $this->totals['mappings']--;
-            return array_shift($this->data['mappings']);
-        }
-
-        return false;
+    public function getMapping() {
+      foreach ($this->data['mappings'] as $mapping) {
+        yield $mapping;
+      }
 
     }//end getMapping()
 
 
     /**
      * {@inheritdoc}
+     * // TODO: Is this still in use?  If not, should probably be removed (and from interface).
      */
     public function getUrl()
     {
+
         if (!empty($this->totals['urls']) && $this->totals['urls'] > 0) {
             $this->totals['urls']--;
             return $this->data['domain'].array_shift($this->data['urls']);
