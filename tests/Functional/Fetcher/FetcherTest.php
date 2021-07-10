@@ -612,7 +612,7 @@ class FetcherTest extends LocalPhpServerTestCase
     $this->assertCount(3, $j1);
     $this->assertCount(2, $j2);
 
-    $titles1 = ['Brown eggs', 'Sweet fresh stawberry', 'Asparagus'];
+    $titles1 = ['Brown eggs', 'Sweet fresh strawberry', 'Asparagus'];
     $titles2 = ['Plums', 'French fries'];
 
     foreach ($titles1 as $idx => $title) {
