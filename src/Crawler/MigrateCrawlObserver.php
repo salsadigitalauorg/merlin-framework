@@ -82,7 +82,6 @@ class MigrateCrawlObserver extends CrawlObserver
     $this->count++;
     $url_string = $url->__toString();
     $return_url = $url_string;
-    $url_effective = $url_string;
 
     if (!empty($this->json->getConfig()->get('options')['path_only'])) {
       $query = parse_url($url_string, PHP_URL_QUERY);
@@ -92,6 +91,8 @@ class MigrateCrawlObserver extends CrawlObserver
     if (empty($return_url)) {
       $return_url = '/';
     }
+
+    $url_effective = $return_url;
 
     $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
     $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
@@ -129,7 +130,7 @@ class MigrateCrawlObserver extends CrawlObserver
         $html = $response->getBody()->__toString();
 
         $cacheUrl = $url_string;
-// $url instanceof UriInterface ? $url->__toString() : null;
+        // $url instanceof UriInterface ? $url->__toString() : null;
         $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
 
         // Check for malformed UTF-8 encoding.
@@ -209,6 +210,10 @@ class MigrateCrawlObserver extends CrawlObserver
         $this->json->mergeRow("crawled-urls-{$entity_type}_{$type->getId()}", 'urls', [$return_url], true);
 
         // Write an effective url list (ie after redirects followed).
+        if (!empty($redirect) && $redirect['redirect'] && $redirect['is_external']) {
+          return;
+        }
+
         $url_effective = $this->unparse_url(parse_url($url_effective), false);
         $this->json->mergeRow("effective-urls-{$entity_type}_{$type->getId()}", 'urls', [$url_effective], true);
 
@@ -220,6 +225,10 @@ class MigrateCrawlObserver extends CrawlObserver
     $this->json->mergeRow("crawled-urls-{$entity_type}_default", 'urls', [$return_url], true);
 
     // Write an effective url list (ie after redirects followed).
+    if (!empty($redirect) && $redirect['redirect'] && $redirect['is_external']) {
+      return;
+    }
+
     $url_effective = $this->unparse_url(parse_url($url_effective), false);
     $this->json->mergeRow("effective-urls-{$entity_type}_default", 'urls', [$url_effective], true);
 
