@@ -92,6 +92,8 @@ class RedirectUtils
     }//end if
 
     if ($redirect) {
+      $is_external = parse_url($url, PHP_URL_HOST) != parse_url($destUri, PHP_URL_HOST);
+
       $ret = [
           'status_code_original' => $statusCodeOrigin,
           'status_code'          => $statusCodeDestination,
@@ -100,6 +102,7 @@ class RedirectUtils
           'url_original'         => $url,
           'url_effective'        => $destUri,
           'raw_headers'          => $rawHeaders,
+          'is_external'          => $is_external,
       ];
     } else {
       $ret = [
@@ -157,14 +160,17 @@ class RedirectUtils
         }
       }
 
+      $is_external = parse_url($url, PHP_URL_HOST) != parse_url($destUri, PHP_URL_HOST);
+
       $ret = [
           'status_code_original' => $statusCodeOrigin,
           'status_code'          => $statusCodeDestination,
-          'redirect'             => $redirect,
+          'redirect'             => true,
           'redirect_count'       => $redirectCount,
           'url_original'         => $url,
           'url_effective'        => $destUri,
           'raw_headers'          => $instance->rawResponseHeaders,
+          'is_external'          => $is_external,
       ];
     } else {
       $ret = [
