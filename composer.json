@@ -61,7 +61,7 @@
   },
   "config": {
     "platform": {
-      "php": "7.2.0"
+      "php": "7.2.5"
     },
     "optimize-autoloader": true,
     "sort-packages": true
