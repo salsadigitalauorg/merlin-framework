@@ -82,7 +82,7 @@ class LongText extends TypeBase implements TypeInterface
                 $node       = $link->getNode(0);
                 $outer_html = $node->ownerDocument->saveHtml($node);
 
-                $markup = str_replace($outer_html, '<drupal-entity data-embed-button="tide_media" data-entity-embed-display="view_mode:media.embedded" data-entity-type="media" data-entity-uuid="'.$uuid.'"></drupal-entity>', $markup);
+                $markup = str_replace($outer_html, '<drupal-media data-embed-button="tide_media" data-entity-embed-display="view_mode:media.embedded" data-entity-type="media" data-entity-uuid="'.$uuid.'"></drupal-media>', $markup);
             }
         );
 

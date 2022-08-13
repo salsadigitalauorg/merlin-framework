@@ -120,7 +120,7 @@ trait MediaTrait
         $data .= " data-entity-uuid=\"{$uuid}\"";
         $data  = trim($data);
 
-        return "<drupal-entity {$data}></drupal-entity>";
+        return "<drupal-media {$data}></drupal-media>";
 
     }//end getDrupalEntityEmbed()
 

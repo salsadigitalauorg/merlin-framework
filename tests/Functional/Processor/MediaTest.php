@@ -65,7 +65,7 @@ class MediaTest extends CrawlerTestCase
     $this->assertTrue(strpos($value, 'data-embed-button="test_media"') !== FALSE);
     $this->assertTrue(strpos($value, 'data-entity-type="test"') !== FALSE);
     $this->assertTrue(strpos($value, 'data-entity-embed-display="view_mode:media.test"') !== FALSE);
-    $this->assertTrue(strpos($value, '<drupal-entity') !== FALSE);
+    $this->assertTrue(strpos($value, '<drupal-media') !== FALSE);
   }
 
 
