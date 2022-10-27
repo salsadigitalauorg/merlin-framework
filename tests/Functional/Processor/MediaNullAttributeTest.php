@@ -62,10 +62,10 @@ class MediaNullAttributeTest extends CrawlerTestCase
     $markup = $crawler->filter('#with-image-null-attributes')->html();
     $value = $processor->process($markup);
 
-    $this->assertTrue(strpos($value, 'data-embed-button="test_media"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-type="test"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-embed-display="view_mode:media.test"') !== FALSE);
-    $this->assertTrue(strpos($value, '<drupal-media') !== FALSE);
+    $this->assertFalse(strpos($value, 'data-embed-button="test_media"'));
+    $this->assertFalse(strpos($value, 'data-entity-type="test"'));
+    $this->assertFalse(strpos($value, 'data-entity-embed-display="view_mode:media.test"'));
+    $this->assertFalse(strpos($value, '<drupal-media'));
   }
 
 
