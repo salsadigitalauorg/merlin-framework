@@ -33,7 +33,7 @@
   "require": {
     "chuyskywalker/rolling-curl": "^3.1",
     "consolidation/comments": "^1.0",
-    "dompdf/dompdf": "^0.8.3",
+    "dompdf/dompdf": "^2.0.0",
     "league/uri": "^6.0",
     "masterminds/html5": "^2.5",
     "mustangostang/spyc": "^0.6.2",

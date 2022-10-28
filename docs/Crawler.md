@@ -41,7 +41,7 @@ options:
 Group URLs by the value of a given element or attribute. If the `attribute` key is not present it will use the text value of DOM node when doing the comparison. Pattern can be a simple string or a valid regular expression.
 
 ```
-type: element
+type: value
 options:
   selector: //*/h1
   pattern: /\w+{4}/
