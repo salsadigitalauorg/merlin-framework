@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Cache Tools · Merlin</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;p&gt;Merlin has a cache for content.  The &lt;code&gt;cache&lt;/code&gt; command provides a way to clear the cache for a given domain or a specific url as well as print out some cache statistics.&lt;/p&gt;
+"/><meta name="docsearch:version" content="1.0.0"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Cache Tools · Merlin"/><meta property="og:type" content="website"/><meta property="og:url" content="https://salsadigitalauorg.github.io/merlin-framework/"/><meta property="og:description" content="&lt;p&gt;Merlin has a cache for content.  The &lt;code&gt;cache&lt;/code&gt; command provides a way to clear the cache for a given domain or a specific url as well as print out some cache statistics.&lt;/p&gt;
+"/><meta property="og:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/merlin-framework/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/merlin-framework/js/scrollSpy.js"></script><link rel="stylesheet" href="/merlin-framework/css/main.css"/><script src="/merlin-framework/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/merlin-framework/"><img class="logo" src="/merlin-framework/img/merlin_logo.svg" alt="Merlin"/><h2 class="headerTitleWithLogo">Merlin</h2></a><a href="/merlin-framework/versions"><h3>1.0.0</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/merlin-framework/docs/1.0.0/getting-started" target="_self">Docs</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Introduction</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/getting-started">Getting Started</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/merlin-framework/docs/1.0.0/cache_tools">Cache Tools</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/crawler">URL Crawler</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/examples">Examples</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/reporting">Migration Reporting</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/url-options">URL and Fetcher Options</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Types</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-accordion">Accordion</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-ordered">Ordered</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-uuid">Uuid</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-taxonomy-term">Taxonomy Term</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-taxonomy-filter">Taxonomy Filter</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-static-value">Static Value</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-reusable-paragraph">Reusable Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-paragraph">Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-meta">Meta</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-alias">Alias</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-menu-link">Menu Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-menu">Menu</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-media">Media</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-long-text">Long Text</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-link">Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-group">Group</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-boolean">Boolean</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-text">Text</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Processors</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-convert-encoding">Convert Encoding</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-html-entity-decode">Html Entity Decode</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-nl2br">nl2br</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-remove-dom">Remove elements</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-remove-empty-tags">Remove empty tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-replace">Replace</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-strip-tags">Strip tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-subfetch">Subfetch</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-whitespace">Whitespace</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Cache Tools</h1></header><article><div><span><p>Merlin has a cache for content.  The <code>cache</code> command provides a way to clear the cache for a given domain or a specific url as well as print out some cache statistics.</p>
+<p>There are two main ways it can be used - with or without an existing configuration file.</p>
+<p>###With an Existing Config File###</p>
+<p>You can use an existing crawler or migrate config YAML file which will use the <code>domain</code> and any <code>cache_dir</code> setting found.</p>
+<p>You can then use relative or absolute domains via the <code>--purge-url</code> flag.</p>
+<p><strong>Statistics:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache -c config/my_config.yml <span class="hljs-params">--stats</span>
+</code></pre>
+<p><strong>Purge Single URL:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache -c config/my_config.yml \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"/somepage.html"</span>`
+</code></pre>
+<p><strong>Purge Multple URLs:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache -c config/my_config.yml \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/somepage.html"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/anotherpage.html"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/andanother.html"</span>
+</code></pre>
+<p><strong>Purge Entire Domain:</strong></p>
+<p>While you are prompted to confirm, you may like to take a backup of your cache before doing this if the cache for the domain is large!</p>
+<pre><code class="hljs">./migrate <span class="hljs-keyword">cache</span> -c config/my_config.yml \
+  <span class="hljs-comment">--purge-domain="http://localhost"</span>
+
+ Really <span class="hljs-keyword">purge</span> entire <span class="hljs-keyword">cache</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">http</span>://localhost? [y/n]:
+ n
+
+</code></pre>
+<p>###Without an Existing Config File###
+If you don't have or wish to use an existing config file, you can specify the parameters directly on the command line.</p>
+<p><strong>NOTE:</strong> When used without a config file, you must specify the absolute url to <code>--purge-url</code> or specify <code>--domain=http://yourdomain.com</code>.</p>
+<p><strong>Statistics:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache <span class="hljs-params">--cache-dir=</span><span class="hljs-string">"/tmp/merlin_cache"</span> \
+  <span class="hljs-params">--domain=</span><span class="hljs-string">"http://localhost"</span> <span class="hljs-params">--stats</span>
+</code></pre>
+<p><strong>Purge Single URL:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache <span class="hljs-params">--cache-dir=</span><span class="hljs-string">"/tmp/merlin_cache"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/somepage.html"</span>
+</code></pre>
+<p><strong>Purge Multple URLs:</strong></p>
+<pre><code class="hljs"><span class="hljs-string">./migrate</span> cache <span class="hljs-params">--cache-dir=</span><span class="hljs-string">"/tmp/merlin_cache"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/somepage.html"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/anotherpage.html"</span> \
+  <span class="hljs-params">--purge-url=</span><span class="hljs-string">"http://localhost/andanother.html"</span>
+</code></pre>
+<p><strong>Purge Entire Domain:</strong></p>
+<p>While you are prompted to confirm, you may like to take a backup of your cache before doing this if the cache for the domain is large!</p>
+<pre><code class="hljs">.<span class="hljs-regexp">/migrate cache --cache-dir="/</span>tmp/merlin_cache<span class="hljs-string">" \
+  --purge-domain="</span><span class="hljs-string">http:</span><span class="hljs-comment">//localhost"</span>
+
+ Really purge entire cache <span class="hljs-keyword">for</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost? [y/n]:</span>
+ n
+
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/merlin-framework/docs/1.0.0/getting-started"><span class="arrow-prev">← </span><span>Getting Started</span></a><a class="docs-next button" href="/merlin-framework/docs/1.0.0/crawler"><span>URL Crawler</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/merlin-framework/" class="nav-home"><img src="/merlin-framework/img/merlin_logo_white.svg" alt="Merlin" width="100" height="50"/></a><div></div><div></div><div><h5>Docs</h5><a href="/merlin-framework/docs/getting-started">Getting Started</a><a href="/merlin-framework/docs/crawler">Crawler</a><a href="/merlin-framework/docs/examples">Examples</a></div></section><section class="copyright">Copyright © 2022 Merlin</section></footer></div></body></html>

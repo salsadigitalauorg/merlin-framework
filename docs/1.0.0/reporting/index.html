@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Migration Reporting · Merlin</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;p&gt;Merlin has a reporting tool that allows you to verify the success or failure of a migration in a simple way.&lt;/p&gt;
+"/><meta name="docsearch:version" content="1.0.0"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Migration Reporting · Merlin"/><meta property="og:type" content="website"/><meta property="og:url" content="https://salsadigitalauorg.github.io/merlin-framework/"/><meta property="og:description" content="&lt;p&gt;Merlin has a reporting tool that allows you to verify the success or failure of a migration in a simple way.&lt;/p&gt;
+"/><meta property="og:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://salsadigitalauorg.github.io/merlin-framework/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/merlin-framework/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/merlin-framework/js/scrollSpy.js"></script><link rel="stylesheet" href="/merlin-framework/css/main.css"/><script src="/merlin-framework/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/merlin-framework/"><img class="logo" src="/merlin-framework/img/merlin_logo.svg" alt="Merlin"/><h2 class="headerTitleWithLogo">Merlin</h2></a><a href="/merlin-framework/versions"><h3>1.0.0</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/merlin-framework/docs/1.0.0/getting-started" target="_self">Docs</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Introduction</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/getting-started">Getting Started</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/cache_tools">Cache Tools</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/crawler">URL Crawler</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/examples">Examples</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/merlin-framework/docs/1.0.0/reporting">Migration Reporting</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/url-options">URL and Fetcher Options</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Types</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-accordion">Accordion</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-ordered">Ordered</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-uuid">Uuid</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-taxonomy-term">Taxonomy Term</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-taxonomy-filter">Taxonomy Filter</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-static-value">Static Value</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-reusable-paragraph">Reusable Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-paragraph">Paragraph</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-meta">Meta</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-alias">Alias</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-menu-link">Menu Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-menu">Menu</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-media">Media</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-long-text">Long Text</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-link">Link</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-group">Group</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-boolean">Boolean</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/type-text">Text</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Processors</h3><ul class=""><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-convert-encoding">Convert Encoding</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-html-entity-decode">Html Entity Decode</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-nl2br">nl2br</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-remove-dom">Remove elements</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-remove-empty-tags">Remove empty tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-replace">Replace</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-strip-tags">Strip tags</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-subfetch">Subfetch</a></li><li class="navListItem"><a class="navItem" href="/merlin-framework/docs/1.0.0/processor-whitespace">Whitespace</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Migration Reporting</h1></header><article><div><span><p>Merlin has a reporting tool that allows you to verify the success or failure of a migration in a simple way.</p>
+<p>The <code>report</code> command can check that the initial URL list exists on a new target domain, verify the headers received are the same as the original URL as well as verify any media exist (e.g. documents etc).</p>
+<p><strong>Note:</strong> currently reporting does not verify the existence of the <em>body content</em> from on the destination domain, or that it matches the original source, only that the URLs exist and returns the expected header.</p>
+<h2><a class="anchor" aria-hidden="true" id="reporting-configuration"></a><a href="#reporting-configuration" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Reporting Configuration</h2>
+<p>Reports can be generating by creating a reports YAML configuration file.  You can create any number of reports from a migration through the configuration.</p>
+<h3><a class="anchor" aria-hidden="true" id="available-report-types"></a><a href="#available-report-types" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Available Report Types</h3>
+<p>Currently there are two report types available - <code>content</code> (i.e. the original URL list) and <code>media</code>.</p>
+<p>If you have multiple YAML or JSON configuration or result files you can generate multiple reports (e.g. different entity URL configurations or media JSON results).</p>
+<h4><a class="anchor" aria-hidden="true" id="content"></a><a href="#content" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Content</h4>
+<p>The report type <code>content</code> is for verifying a list of URLs exists on the destination domain.  The source of this list can be specified as the original migration YAML crawler configuration used to migrate the site.</p>
+<p>If this migration is cached from a crawl the reporting will check the cached version headers against the destination to detect any possible mismatch.</p>
+<h4><a class="anchor" aria-hidden="true" id="media"></a><a href="#media" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Media</h4>
+<p>The report type <code>media</code> is for verifying any media detected in a migration.  The reporting tool uses the results of the media migration json files generated during a migration run as the source list to verify.</p>
+<h2><a class="anchor" aria-hidden="true" id="reporting-configuration-example"></a><a href="#reporting-configuration-example" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Reporting Configuration Example</h2>
+<p>See the table below for an explanation of each configuration directive.</p>
+<pre><code class="hljs"><span class="hljs-meta">---</span>
+
+<span class="hljs-attr">reports:</span>
+<span class="hljs-bullet">  -</span> 
+<span class="hljs-attr">    type:</span> <span class="hljs-string">content</span>
+<span class="hljs-attr">    dst_domain:</span> <span class="hljs-attr">http://localhost:8000</span>
+<span class="hljs-attr">    src_domain:</span> <span class="hljs-attr">http://localhost:8000</span>    
+<span class="hljs-attr">    url_source:</span> <span class="hljs-string">path/to/a/migration/config_for_wundersite.yml</span>
+
+    <span class="hljs-comment"># All options are... optional.</span>
+<span class="hljs-attr">    options:</span>
+    
+<span class="hljs-attr">      verify_source_response:</span> <span class="hljs-literal">false</span>
+<span class="hljs-attr">      adopt_source_name:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-comment"># filename_suffix: "let_a_thousand_blossoms_bloom"</span>
+      <span class="hljs-comment"># filename_root: "manually-specify-output-filename"</span>
+    
+<span class="hljs-attr">      report_options:</span>
+<span class="hljs-attr">        title:</span> <span class="hljs-string">"A custom title"</span>
+<span class="hljs-attr">        adopt_title_name:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">        save_json:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">        save_html:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">        save_pdf:</span> <span class="hljs-literal">true</span>
+        
+<span class="hljs-bullet">  -</span> 
+<span class="hljs-attr">    type:</span> <span class="hljs-string">media</span>
+<span class="hljs-attr">    enabled:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">    src_domain:</span> <span class="hljs-attr">http://localhost:8000</span>
+<span class="hljs-attr">    dst_domain:</span> <span class="hljs-attr">http://localhost:8000</span>
+<span class="hljs-attr">    url_source:</span> <span class="hljs-string">path/to/a/media/results-file.json</span>
+    <span class="hljs-comment"># url_source: path/to/a/pattern/media-*-files.json</span>
+    <span class="hljs-comment"># url_source:</span>
+    <span class="hljs-comment">#  - path/to/media/file-1.json</span>
+    <span class="hljs-comment">#  - path/to/media/file-2.json</span>
+    <span class="hljs-comment">#  - path/to/media/file-3.json</span>
+    
+<span class="hljs-attr">    options:</span>
+<span class="hljs-attr">      verify_source_response:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">      report_options:</span>
+<span class="hljs-attr">        save_pdf:</span> <span class="hljs-literal">false</span>    
+<span class="hljs-attr">      rewrite_urls:</span>
+<span class="hljs-attr">        domain:</span> <span class="hljs-attr">https://dfat.gov.au</span>
+<span class="hljs-attr">        rewrite:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">        path:</span> <span class="hljs-string">/sites/default/files</span>
+      
+        
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="configuration"></a><a href="#configuration" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration</h3>
+<p>The first group of main options are required and set key report variables.  The second group of options are not required and set the network configuration for checking requests.</p>
+<table>
+<thead>
+<tr><th>Directive</th><th>Required</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Main Configuration</strong></td><td></td><td></td><td></td></tr>
+<tr><td><code>type</code></td><td>Required <code>string</code></td><td>Type (i.e. class) of report.</td><td><code>'content'</code></td></tr>
+<tr><td><code>url_source</code></td><td>Required <code>string</code></td><td>The source file that contains the URLs to check.  This can be: A path to a single file, an array list of multiple files or a pattern/wildcard match path to multiple files.</td><td></td></tr>
+<tr><td><code>dst_domain</code></td><td>Required <code>string</code></td><td>The destination domain of the migrated content.</td><td></td></tr>
+<tr><td><code>src_domain</code></td><td>optional <code>string</code></td><td>The source domain of the migrated content.  Note that if you wish to verify source responses (see options below) you must specify this.</td><td></td></tr>
+<tr><td><code>enabled</code></td><td>optional <code>bool</code></td><td>If Merlin should generate this report.</td><td><code>true</code></td></tr>
+<tr><td><code>options</code></td><td>optional <code>array</code></td><td>Options for the report build.</td><td>See Configuration (options) below.</td></tr>
+<tr><td><strong>Network Configuration</strong></td><td></td><td></td><td></td></tr>
+<tr><td><code>concurrency</code></td><td>optional <code>int</code></td><td>Concurrent cURL requests.</td><td><code>10</code></td></tr>
+<tr><td><code>follow_redirects</code></td><td>optional <code>bool</code></td><td>Follow redirect headers.</td><td><code>true</code></td></tr>
+<tr><td><code>max_redirects</code></td><td>optional <code>int</code></td><td>Maximum redirects.</td><td><code>5</code></td></tr>
+<tr><td><code>ignore_ssl_errors</code></td><td>optional <code>int</code></td><td>Ignore any SSL errors encountered.</td><td><code>false</code></td></tr>
+<tr><td><code>timeouts</code></td><td>optional <code>array</code></td><td>Various timeouts, see below.</td><td></td></tr>
+<tr><td><code>timeouts['connect_timeout']</code></td><td>optional <code>int</code></td><td>Connection timeout in seconds.</td><td><code>10</code></td></tr>
+<tr><td><code>timeouts['timeout']</code></td><td>optional <code>int</code></td><td>Overall timeout in seconds.</td><td><code>30</code></td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="configuration-options"></a><a href="#configuration-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration (options)</h3>
+<p>These options sit under the <code>options</code> array in the configuration.</p>
+<table>
+<thead>
+<tr><th>Directive</th><th>Required</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>verify_source_response</code></td><td>Optional <code>bool</code></td><td>Enables source header checking and compares against destination.</td><td><code>false</code></td></tr>
+<tr><td><code>adopt_source_name</code></td><td>Optional <code>bool</code></td><td>This builds report result files based on the input source filename.  This facilitates automatic file naming and report titling.  If you don't use it you will most likely want to use the <code>filename_suffix</code> option.</td><td><code>true</code></td></tr>
+<tr><td><code>filename_root</code></td><td>Optional <code>string</code></td><td>Filenames will not be automatically generated but will instead be based on the string specified.<br><br><strong>NOTE:</strong>  This options overrides <code>adopt_source_name</code> and <code>report_options.adopt_title_name</code></td><td></td></tr>
+<tr><td><code>filename_suffix</code></td><td>Optional <code>string</code></td><td>If you don't use the above <code>adopt_source_name</code> option, you will need to manually specify a filename suffix if you have multiple reports of the same type so they don't overwrite each other, either by using this option or <code>filename_root</code>.</td><td></td></tr>
+<tr><td><code>rewrite_urls</code></td><td>Optional <code>array</code></td><td>This set of options will rewrite the original source urls according to some rules when requests are made to the destination server.</td><td>See below</td></tr>
+<tr><td><code>report_options</code></td><td>Optional <code>array</code></td><td>Options pertaining to the saved output of the reports.</td><td>See below</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="configuration-rewrite_urls"></a><a href="#configuration-rewrite_urls" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration (rewrite_urls)</h3>
+<p><code>rewrite_urls</code> sits under the <code>options</code> array in the configuration.</p>
+<table>
+<thead>
+<tr><th>Directive</th><th>Required</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>rewrite</code></td><td>Optional <code>bool</code></td><td>Enable/disable the rewrite</td><td><code>false</code></td></tr>
+<tr><td><code>domain</code></td><td>Optional <code>string</code></td><td>Domain to use in the rewrite.</td><td><code>dst_domain</code></td></tr>
+<tr><td><code>path</code></td><td>Optional <code>string</code></td><td>Path to use in the rewrite.  All URLs will use the path specified infront of the base filename.</td><td>The original path.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="configuration-report_options"></a><a href="#configuration-report_options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration (report_options)</h3>
+<p><code>report_options</code> sit under the <code>options</code> array in the configuration.</p>
+<table>
+<thead>
+<tr><th>Directive</th><th>Required</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>title</code></td><td>Optional <code>string</code></td><td>Report title.</td><td>Source file name<br>if <code>adopt_source_name</code> is <code>true</code><br>&quot;Migration Report&quot;<br>if <code>adopt_source_name</code> is <code>false</code></td></tr>
+<tr><td><code>adopt_title_name</code></td><td>Optional <code>bool</code></td><td>Generated filenames will be based on the report title instead of the source input files.</td><td><code>true</code></td></tr>
+<tr><td><code>save_json</code></td><td>Optional <code>bool</code></td><td>Save the report raw results as JSON.</td><td><code>true</code></td></tr>
+<tr><td><code>save_html</code></td><td>Optional <code>bool</code></td><td>Save the HTML version of the report.</td><td><code>true</code></td></tr>
+<tr><td><code>save_pdf</code></td><td>Optional <code>bool</code></td><td>Save the PDF version of the report.</td><td><code>false</code></td></tr>
+<tr><td><code>paper_size</code></td><td>Optional <code>string</code></td><td>Paper size for the PDF.</td><td><code>A4</code></td></tr>
+<tr><td><code>paper_orientation</code></td><td>Optional <code>string</code></td><td>Paper orientation for the PDF.</td><td><code>landscape</code></td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="creating-the-report"></a><a href="#creating-the-report" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Creating the Report</h2>
+<p>Simply provide a configuration input file and output folder for generated reports and run with:</p>
+<pre><code class="hljs">php migrate report -c /<span class="hljs-type">path</span>/<span class="hljs-keyword">to</span>/reporting_config.yml -o /<span class="hljs-type">path</span>/<span class="hljs-keyword">to</span>/output
+</code></pre>
+<p>You will see output something like:</p>
+<pre><code class="hljs">Migration Reporting
+===================
+
+Generating content report <span class="hljs-keyword">for</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000</span>
+---------------------------------------------------
+
+Checking <span class="hljs-number">14</span> URLs...
+Checked dst <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/</span>
+Checked src <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/</span>
+Checked dst <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/about.html</span>
+Checked src <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/about.html</span>
+Checked dst <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/home.html</span>
+Checked src <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/home.html</span>
+Checked dst <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/search.php</span>
+Checked src <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/search.php</span>
+Checked dst <span class="hljs-string">url:</span> <span class="hljs-string">http:</span><span class="hljs-comment">//localhost:8000/index.php?p=1</span>
+...
+
+ [OK] URL Check complete
+
+Munging data...
+
+ [OK] Munge complete!
+
+ [OK] Wrote JSON data <span class="hljs-string">file:</span> <span class="hljs-regexp">/tmp/</span>merlin-report-content<span class="hljs-number">-93</span>-fetcher-redirect-support.json
+
+ [OK] Wrote HTML report <span class="hljs-string">file:</span> <span class="hljs-regexp">/tmp/</span>merlin-report-content<span class="hljs-number">-93</span>-fetcher-redirect-support.html
+
+ [OK] Wrote PDF report <span class="hljs-string">file:</span> <span class="hljs-regexp">/tmp/</span>merlin-report-content<span class="hljs-number">-93</span>-fetcher-redirect-support.pdf
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="cli-flag-options"></a><a href="#cli-flag-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>CLI Flag Options</h2>
+<table>
+<thead>
+<tr><th>Flag</th><th>Full Name</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>-c</code></td><td><code>--config</code></td><td>Path to the reporting configuration file</td><td></td></tr>
+<tr><td><code>-o</code></td><td><code>--output</code></td><td>Path to the output directory to write reports</td><td><code>/tmp</code></td></tr>
+</tbody>
+</table>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/merlin-framework/docs/1.0.0/examples"><span class="arrow-prev">← </span><span>Examples</span></a><a class="docs-next button" href="/merlin-framework/docs/1.0.0/url-options"><span>URL and Fetcher Options</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#reporting-configuration">Reporting Configuration</a><ul class="toc-headings"><li><a href="#available-report-types">Available Report Types</a></li></ul></li><li><a href="#reporting-configuration-example">Reporting Configuration Example</a><ul class="toc-headings"><li><a href="#configuration">Configuration</a></li><li><a href="#configuration-options">Configuration (options)</a></li><li><a href="#configuration-rewrite_urls">Configuration (rewrite_urls)</a></li><li><a href="#configuration-report_options">Configuration (report_options)</a></li></ul></li><li><a href="#creating-the-report">Creating the Report</a></li><li><a href="#cli-flag-options">CLI Flag Options</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/merlin-framework/" class="nav-home"><img src="/merlin-framework/img/merlin_logo_white.svg" alt="Merlin" width="100" height="50"/></a><div></div><div></div><div><h5>Docs</h5><a href="/merlin-framework/docs/getting-started">Getting Started</a><a href="/merlin-framework/docs/crawler">Crawler</a><a href="/merlin-framework/docs/examples">Examples</a></div></section><section class="copyright">Copyright © 2022 Merlin</section></footer></div></body></html>
