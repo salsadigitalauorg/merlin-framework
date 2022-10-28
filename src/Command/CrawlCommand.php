@@ -145,6 +145,10 @@ class CrawlCommand extends Command
       $crawler->setDelayBetweenRequests($delay);
     }
 
+    if (!empty($this->config['options']['ignore_robotstxt'])) {
+      $crawler->ignoreRobots();
+    }
+
     $io->success('Starting crawl!');
 
     $crawler->startCrawling($baseUrl);
