@@ -11,8 +11,11 @@ jobs:
       - image: circleci/php:7.3-node-browsers
     steps:
       - checkout
-
-      - run: sudo apt update
+      - run:
+          name: Update apt repositories
+          command: |
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add
+            sudo apt update
 
       - run:
           name: Install Headless Chrome dependencies
