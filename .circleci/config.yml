@@ -13,6 +13,8 @@ jobs:
     steps:
       - checkout
 
+      - run: sudo apt update
+
       - run:
           name: Install Headless Chrome dependencies
           command: |
@@ -23,13 +25,11 @@ jobs:
             libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
             fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
 
-
       - run:
           name: Install puppeteer with chromium
           command: |
             npm i puppeteer
 
-      - run: sudo apt update
       - run: sudo docker-php-ext-install zip
       - run: sudo docker-php-ext-install exif && sudo docker-php-ext-enable exif
 
