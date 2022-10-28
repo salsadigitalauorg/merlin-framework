@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>This is a test page</title>
@@ -6,6 +7,7 @@
     <meta name="description" content="Learning about Meta Tags." />
     <meta name="revised" content="Demo, 1/1/2019" />
     <meta name="DCTERMS.title" content="Meta title" />
+    <meta charset="utf-8"/>
   </head>
   <body>
     <div id="wrapper">
@@ -754,13 +756,13 @@
     <div id="with-image">
       <h2>Media extraction</h2>
       <p>This is a block of text with an image in it.</p>
-      <img id="400x400" src="https://placehold.it/400x400.jpg" alt="test" data-name="Test" data-file="http://localhost/real-path-to-file" data-alt="Alternative text" />
+      <img id="400x400" src="http://placehold.it/400x400.jpg" alt="test" data-name="Test" data-file="http://localhost/real-path-to-file" data-alt="Alternative text" />
       <p>Used for testing the media extraction processor.</p>
     </div>
     <div id="with-image-null-attributes">
       <h2>Media extraction (null-attribute markup)</h2>
       <p>This is a block of text with an image in it.</p>
-      <img title="" alt src="https://placehold.it/400x420" />
+      <img title="" alt src="http://placehold.it/400x420" />
       <p>Used for testing the media extraction processor against markup with empty attributes.</p>
     </div>
 
@@ -769,6 +771,53 @@
       <div id="multiple-selectors-1" class="multiple-selectors">This is a div for testing multiple selectors #1</div>
       <div id="multiple-selectors-2" class="multiple-selectors">This is a div for testing multiple selectors #2</div>
       <div id="multiple-selectors-3" class="multiple-selectors">This is a div for testing multiple selectors #3</div>
+    </div>
+
+    <h2>Containers for Group</h2>
+    <div id="group_container_of_things_1">
+      <div class="container_1">Just text 1</div>
+      <div class="container_1">Just text 2</div>
+      <div class="container_1">Just text 3</div>
+      <div class="container_1">Just text 4</div>
+    </div>
+
+    <div id="group_container_of_things_2">
+      <div class="person">
+        <div class="name">Person 1</div>
+        <div class="email">person1@example.com</div>
+        <div class="phone">(07) 1234 1111</div>
+      </div>
+      <div class="person">
+        <div class="name">Person 2</div>
+        <div class="email">person2@example.com</div>
+        <div class="phone">(07) 1234 2222</div>
+      </div>
+      <div class="person">
+        <div class="name">Person 3</div>
+        <div class="email">person3@example.com</div>
+        <div class="phone">(07) 1234 3333</div>
+        <div>
+          <div>Skills</div>
+          <ul class="skills">
+            <li>Person 3 - Backflips</li>
+            <li>Person 3 - Whistling</li>
+            <li>Person 3 - Handstands</li>
+          </ul>
+        </div>
+      </div>
+      <div class="person">
+        <div class="name">Person 4</div>
+        <div class="email">person4@example.com</div>
+        <div class="phone">(07) 1234 4444</div>
+        <div>
+          <div>Skills</div>
+          <ul class="skills">
+            <li>Person 4 - Knitting</li>
+            <li>Person 4 - Karate</li>
+            <li>Person 4 - Dancing</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
   </body>

@@ -20,7 +20,7 @@ class UuidTest extends CrawlerTestCase {
     );
 
     $uuid->process();
-    $this->assertEquals( '9f0aa4c1-0145-3b3f-b718-c8c37db7710f', $row->uuid);
+    $this->assertEquals( 'cefc6637-1599-38a5-9a6b-8e7c0763490f', $row->uuid);
   }
 
 }

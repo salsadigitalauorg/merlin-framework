@@ -34,9 +34,15 @@ class MigrateCrawler extends Crawler
                 $contents = $cacheData['contents'];
                 $foundOnUrl = $cacheData['foundOnUrl'];
                 $foundOnUrl = new \GuzzleHttp\Psr7\Uri($foundOnUrl);
+                $redirect = ($cacheData['redirect'] ?? []);
 
-                $linkAdder = new LinkAdder($this);
-                $linkAdder->addFromHtml($contents, $crawlUrl->url);
+                // Only add non-redirected or internal redirected links to queue.
+                if ((!empty($redirect) && $redirect['redirect'] && !$redirect['is_external'])
+                  || empty($redirect['redirect'])
+                ) {
+                  $linkAdder = new LinkAdder($this);
+                  $linkAdder->addFromHtml($contents, $crawlUrl->url);
+                }
 
                 $this->crawlQueue->markAsProcessed($crawlUrl);
 
@@ -44,7 +50,7 @@ class MigrateCrawler extends Crawler
                 $observer->crawled($crawlUrl->url, $fakeResponse, $foundOnUrl, true);
 
                 continue 2;
-              }
+              }//end if
             }//end if
           }//end if
         }//end if

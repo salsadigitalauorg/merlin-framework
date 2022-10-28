@@ -80,6 +80,8 @@ class FetcherSpatieCrawler extends FetcherBase implements FetcherInterface
       $browserShot = new Browsershot();
       $crawler->setBrowsershot($browserShot);
       $crawler->executeJavaScript();
+      // $browserShot->setChromePath('/usr/bin/chromium');
+      $browserShot->noSandbox();
       $browserShot->addChromiumArguments(['disk-cache-dir' => '/tmp/merlin_browser_cache']);
 
       if ($ignoreSSL) {

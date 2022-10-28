@@ -62,10 +62,10 @@ class MediaTest extends CrawlerTestCase
     $markup = $crawler->filter('#with-image')->html();
     $value = $processor->process($markup);
 
-    $this->assertTrue(strpos($value, 'data-embed-button="test_media"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-type="test"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-embed-display="view_mode:media.test"') !== FALSE);
-    $this->assertTrue(strpos($value, '<drupal-entity') !== FALSE);
+    $this->assertStringContainsString('data-embed-button="test_media"', $value);
+    $this->assertStringContainsString('data-entity-type="test"', $value);
+    $this->assertStringContainsString('data-entity-embed-display="view_mode:media.test"', $value);
+    $this->assertStringContainsString('<drupal-media', $value);
   }
 
 
@@ -90,10 +90,10 @@ class MediaTest extends CrawlerTestCase
     $markup = $crawler->filter('#with-image')->html();
     $value = $processor->process($markup);
 
-    $this->assertTrue(strpos($value, 'data-entity-type="media"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-substitution="media"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-uuid="54c7ec67-fa8b-3bb5-8976-7f3cab3886e2"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/400x400.jpg"') !== FALSE);
+    $this->assertStringContainsString('data-entity-type="media"', $value);
+    $this->assertStringContainsString('data-entity-substitution="media"', $value);
+    $this->assertStringContainsString('data-entity-uuid="26520ab1-6c12-30ee-8e63-00b618fd598b"', $value);
+    $this->assertStringContainsString('<a href="/sites/default/files/400x400.jpg"', $value);
   }
 
   /**
@@ -117,25 +117,21 @@ class MediaTest extends CrawlerTestCase
     $markup = $crawler->filter('#with-links')->html();
     $value = $processor->process($markup);
 
-    $this->assertTrue(strpos($value, 'data-entity-type="media"') !== FALSE);
-    $this->assertTrue(strpos($value, 'data-entity-substitution="media"') !== FALSE);
+    $this->assertStringContainsString('data-entity-type="media"', $value);
+    $this->assertStringContainsString('data-entity-substitution="media"', $value);
 
     # something.doc
-    $this->assertTrue(strpos($value, 'data-entity-uuid="a50ca849-19e0-3009-bf11-a2d4be7dde4c"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/something.doc"') !== FALSE);
+    $this->assertStringContainsString('data-entity-uuid="2f978042-b8eb-35ab-b32d-cc28d0e27214"', $value);
+    $this->assertStringContainsString('<a href="/sites/default/files/something.doc"', $value);
 
     # something.pdf
-    $this->assertTrue(strpos($value, 'data-entity-uuid="ac575920-fc8b-3ce6-bdfd-015b1f764681"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/something.pdf"') !== FALSE);
-
-    # something with spaces.pdf
-    $this->assertTrue(strpos($value, 'data-entity-uuid="f9178c12-92b8-34b8-8e11-e999715660c3"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/something with spaces.pdf"') !== FALSE);
+    $this->assertStringContainsString('data-entity-uuid="a31c283f-5a5c-3a33-bab1-60dfce929a77"', $value);
+    $this->assertStringContainsString('<a href="/sites/default/files/something.pdf"', $value);
 
     # something%20with%20encoded.pdf
-    $this->assertTrue(strpos($value, 'data-entity-uuid="61719010-8cdf-303a-837e-a66abce18964"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/something with encoded.pdf"') !== FALSE);
-    $this->assertTrue(strpos($value, '<a href="/sites/default/files/something%with%encoded.pdf"') === FALSE);
+    $this->assertStringContainsString('data-entity-uuid="dc894c2a-4f96-361a-818c-8d0352fc98ce"', $value);
+    $this->assertStringContainsString('<a href="/sites/default/files/something with encoded.pdf"', $value);
+    $this->assertStringNotContainsString('<a href="/sites/default/files/something%with%encoded.pdf"', $value);
   }
 
 

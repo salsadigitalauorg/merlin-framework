@@ -2,7 +2,7 @@
 
 namespace Merlin\Type;
 
-use Ramsey\Uuid\Uuid as UuidLib;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * Add a unique identifier to the row.
@@ -36,14 +36,13 @@ class Uuid extends TypeBase implements TypeInterface
             $value = $this->processValue($element->text());
 
             if ($element && $element->count() > 0) {
-                $uuid = UuidLib::uuid3(UuidLib::NAMESPACE_DNS, $value)->toString();
+                $uuid = MerlinUuid::getUuid($value);
             }
         }
 
         if (!$uuid) {
             $path = $this->crawler->getUri();
-            $uuid = UuidLib::uuid3(UuidLib::NAMESPACE_DNS, $path)
-            ->toString();
+            $uuid = MerlinUuid::getUuid($path);
         }
 
         $this->row->{$field} = $uuid;

@@ -11,20 +11,23 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 use Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler;
+use Symfony\Component\Yaml\Yaml;
 
 class FetcherTest extends LocalPhpServerTestCase
 {
 
   /**
-   * Start up the local PHP server with the www dir required for theses tests.
+   * Start up the local PHP server with the www dir required for these tests.
    * @throws \Exception
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass()
+  {
     self::stopServer();
     self::startServer();
   }
 
-  public function getInputMock() {
+  public function getInputMock()
+  {
 
     /** @var InputInterface $input */
     $input = $this
@@ -56,12 +59,14 @@ class FetcherTest extends LocalPhpServerTestCase
 
   /**
    * Sets a config data attribute (normally protected property)
-   * @param \Merlin\Parser\WebConfig $config
+   *
+   * @param \Merlin\Parser\WebConfig  $config
    * @param                           $property
    * @param                           $value
    */
-  private function setConfigDataProperty(WebConfig $config, $property, $value) {
-    $patch = function() use ($property, $value) {
+  private function setConfigDataProperty(WebConfig $config, $property, $value)
+  {
+    $patch = function () use ($property, $value) {
       $this->data[$property] = $value;
 
       // Update the url count in case changed
@@ -75,12 +80,16 @@ class FetcherTest extends LocalPhpServerTestCase
   /**
    * Perform a request via a fetcher.
    *
-   * @param $expected
-   * @param $configData
+   * @depends testPhpServerRunning
+   *
+   * @param mixed $expected
+   * @param array $configData
+   * @param bool  $assertExpected
    *
    * @return mixed
    */
-  private function doRequest($expected, array $configData) {
+  private function doRequest($expected, array $configData, $assertExpected=true)
+  {
 
     $input = $this->getInputMock();
     $output = $this->getOutputMock();
@@ -95,23 +104,31 @@ class FetcherTest extends LocalPhpServerTestCase
     $io = new SymfonyStyle($input, $output);
     $json = new Json($io, $config);
 
-    // We use Spatie to test JS.
-    $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
-    // TODO: extend to test FetcherCurl too
-    // $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
+    $use_js = $configData['fetch_options']['execute_js'] ?? false;
+
+    // TODO: extend to run all non-js tests for both FetcherCurl and FetcherSpatieCrawler
+    if ($use_js) {
+      // We use Spatie to test JS.
+      $fetcher = new \Merlin\Fetcher\Fetchers\SpatieCrawler\FetcherSpatieCrawler($io, $json, $config);
+    } else {
+      $fetcher = new \Merlin\Fetcher\Fetchers\Curl\FetcherCurl($io, $json, $config);
+    }
+
     $urls = $configData['urls'] ?? [];
-    foreach($urls as $url) {
+    foreach ($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);
     }
     $fetcher->start();
     $fetcher->complete();
 
-    // Check for a sensible result
-    // PHP puts the expected result in a h1, which is mapped in fetcher_config_test.yml
     $data = json_decode(json_encode($json->getData()), true);
-    $result = $data['phpunit_test'][0]['test_result'] ?? null;
 
-    $this->assertEquals($expected, $result);
+    if ($assertExpected) {
+      // Check for a sensible result
+      // PHP puts the expected result in a h1, which is mapped in fetcher_config_test.yml
+      $result = $data['phpunit_test'][0]['test_result'] ?? null;
+      $this->assertEquals($expected, $result);
+    }
 
     return $data;
 
@@ -122,17 +139,19 @@ class FetcherTest extends LocalPhpServerTestCase
    * @group fetch_options
    * @group url_options
    */
-  public function testPhpServerRunning() {
+  public function testPhpServerRunning()
+  {
     $running = $this->isServerRunning();
     $this->assertNotFalse($running);
   }
 
 
   /**
-   * @group fetch_options
+   * @group   fetch_options
    * @depends testPhpServerRunning
    */
-  public function testFollowRedirectsTrue() {
+  public function testFollowRedirectsTrue()
+  {
 
     $config = [
 
@@ -152,10 +171,11 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group fetch_options
+   * @group   fetch_options
    * @depends testPhpServerRunning
    */
-  public function testFollowRedirectsFalse() {
+  public function testFollowRedirectsFalse()
+  {
 
     $config = [
 
@@ -175,10 +195,11 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group fetch_options
+   * @group   fetch_options
    * @depends testPhpServerRunning
    */
-  public function testExecuteJavascriptTrue() {
+  public function testExecuteJavascriptTrue()
+  {
 
     $config = [
 
@@ -198,10 +219,11 @@ class FetcherTest extends LocalPhpServerTestCase
   }
 
   /**
-   * @group fetch_options
+   * @group   fetch_options
    * @depends testPhpServerRunning
    */
-  public function testExecuteJavascriptFalse() {
+  public function testExecuteJavascriptFalse()
+  {
 
     $config = [
 
@@ -211,7 +233,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false
+        'execute_js' => false
       ]
 
     ];
@@ -222,10 +244,11 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group fetch_options
+   * @group   fetch_options
    * @depends testPhpServerRunning
    */
-  public function testUserAgent() {
+  public function testUserAgent()
+  {
     $config = [
 
       'urls' => [
@@ -234,8 +257,8 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false,
-        'user_agent'    => 'Merlin'
+        'execute_js' => false,
+        'user_agent' => 'Merlin'
       ]
 
     ];
@@ -245,21 +268,21 @@ class FetcherTest extends LocalPhpServerTestCase
   }
 
 
-
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testUrlQueryTrue() {
+  public function testUrlQueryTrue()
+  {
 
     $url = "/url_query.php";
     $query = "?query=bananas";
-    $fullUrl = $url.$query;
+    $fullUrl = $url . $query;
 
     $config = [
 
       'urls' => [
-       $fullUrl
+        $fullUrl
       ],
 
       'url_options' => [
@@ -268,7 +291,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false
+        'execute_js' => false
       ]
 
     ];
@@ -284,14 +307,15 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testUrlQueryFalse() {
+  public function testUrlQueryFalse()
+  {
 
     $url = "/url_query.php";
     $query = "?query=bananas";
-    $fullUrl = $url.$query;
+    $fullUrl = $url . $query;
 
     $config = [
 
@@ -305,7 +329,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false
+        'execute_js' => false
       ]
 
     ];
@@ -321,14 +345,15 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testUrlFragmentTrue() {
+  public function testUrlFragmentTrue()
+  {
 
     $url = "/url_fragment.php";
     $frag = "#i-am-a-fragment";
-    $fullUrl = $url.$frag;
+    $fullUrl = $url . $frag;
 
     $config = [
 
@@ -342,7 +367,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => true,
+        'execute_js' => true,
       ]
 
     ];
@@ -358,14 +383,15 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testUrlFragmentFalse() {
+  public function testUrlFragmentFalse()
+  {
 
     $frag = "#i-am-a-fragment";
     $url = "/url_fragment.php";
-    $fullUrl = $url.$frag;
+    $fullUrl = $url . $frag;
 
     $config = [
 
@@ -379,7 +405,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => true,
+        'execute_js' => true,
       ]
 
     ];
@@ -394,20 +420,20 @@ class FetcherTest extends LocalPhpServerTestCase
   }
 
 
-
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testFindContentDuplicatesTrue() {
+  public function testFindContentDuplicatesTrue()
+  {
 
     $url = "/duplicate_content.php";
     $query1 = "?query=bananas";
     $query2 = "?query=bananas-are-yum";
     $query3 = "?query=bananas-are-yellow";
-    $fullUrl1 = $url.$query1;
-    $fullUrl2 = $url.$query2;
-    $fullUrl3 = $url.$query3;
+    $fullUrl1 = $url . $query1;
+    $fullUrl2 = $url . $query2;
+    $fullUrl3 = $url . $query3;
 
     $config = [
 
@@ -424,7 +450,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false
+        'execute_js' => false
       ]
 
     ];
@@ -441,18 +467,19 @@ class FetcherTest extends LocalPhpServerTestCase
 
 
   /**
-   * @group url_options
+   * @group   url_options
    * @depends testPhpServerRunning
    */
-  public function testFindContentDuplicatesFalse() {
+  public function testFindContentDuplicatesFalse()
+  {
 
     $url = "/duplicate_content.php";
     $query1 = "?query=bananas";
     $query2 = "?query=bananas-are-yum";
     $query3 = "?query=bananas-are-yellow";
-    $fullUrl1 = $url.$query1;
-    $fullUrl2 = $url.$query2;
-    $fullUrl3 = $url.$query3;
+    $fullUrl1 = $url . $query1;
+    $fullUrl2 = $url . $query2;
+    $fullUrl3 = $url . $query3;
 
     $config = [
 
@@ -469,7 +496,7 @@ class FetcherTest extends LocalPhpServerTestCase
 
       'fetch_options' => [
         'cache_enabled' => false,
-        'execute_js'    => false
+        'execute_js' => false
       ]
 
     ];
@@ -484,6 +511,121 @@ class FetcherTest extends LocalPhpServerTestCase
     $this->assertCount(count($config['urls']), $results);
 
   }
+
+
+  /**
+   * @group    fetch_options
+   * @depends_ testPhpServerRunning
+   */
+  public function test404()
+  {
+
+    $config = [
+      'urls' => [
+        '/404-test-1.php',
+        '/404-test-2.php',
+        '/404-test-3.php',
+      ]
+    ];
+
+    $data = $this->doRequest(null, $config);
+    $results = $data['phpunit_test-error-404']['urls'] ?? [];
+    $this->assertCount(count($config['urls']), $results);
+
+  }
+
+
+  /**
+   * @group    fetch_options
+   * @depends_ testPhpServerRunning
+   */
+  public function testSubFetch()
+  {
+
+    $config = Yaml::parseFile(__DIR__ . DIRECTORY_SEPARATOR . 'subfetch_config_test.yml');
+    $data = $this->doRequest("Subfetch Landing", $config);
+    $items = $data['phpunit_test'][0]['items']['children'] ?? [];
+
+    // There are 4 test urls to subfetch.
+    $this->assertCount(4, $items);
+
+    $idx = 1;
+    foreach ($items as $item) {
+      $d = $item['link']['data'];
+
+      // Each item should have title, description price.
+      $this->assertNotEmpty($d);
+      $this->assertCount(3, $d);
+      $this->assertNotEmpty($d['title']);
+      $this->assertNotEmpty($d['description']);
+      $this->assertNotEmpty($d['price']);
+
+      // Check we get the right title data.
+      $title = "Super Product Number {$idx}";
+      $this->assertSame($title, $d['title']);
+
+      // Check we get the right price data.
+      $price = "{$idx}.00";
+      $this->assertSame($price, $d['price']);
+
+      $idx++;
+
+    }
+  }
+
+
+  /**
+   * @group    fetch_options
+   * @depends_ testPhpServerRunning
+   */
+  public function testSubFetch404()
+  {
+
+    $config = Yaml::parseFile(__DIR__ . DIRECTORY_SEPARATOR . 'subfetch_config_test_404.yml');
+    $data = $this->doRequest("Subfetch Landing", $config);
+    $items = $data['item_subfetch-error-404'] ?? [];
+
+    // There are 4 test 404 urls to subfetch.
+    $this->assertCount(4, $items);
+
+  }
+
+
+  /**
+   * @group    fetch_options
+   * @depends_ testPhpServerRunning
+   */
+  public function testSubFetchJson()
+  {
+
+    $config = Yaml::parseFile(__DIR__ . DIRECTORY_SEPARATOR . 'subfetch_config_test_json.yml');
+    $data = $this->doRequest("Subfetch Landing", $config);
+
+    $items = $data['phpunit_test'][0]['items']['children'] ?? [];
+
+    // There are 2 links to 2 different JSON test urls to subfetch.
+    $this->assertCount(2, $items);
+
+    // Check we fetch expected data.  First JSON has 3 items, second has 2.
+    $j1 = $items[0]['link']['data'] ?? [];
+    $j2 = $items[1]['link']['data'] ?? [];
+    $this->assertCount(3, $j1);
+    $this->assertCount(2, $j2);
+
+    $titles1 = ['Brown eggs', 'Sweet fresh strawberry', 'Asparagus'];
+    $titles2 = ['Plums', 'French fries'];
+
+    foreach ($titles1 as $idx => $title) {
+      $this->assertSame($title, $j1[$idx]['title']);
+    }
+
+    foreach ($titles2 as $idx => $title) {
+      $this->assertSame($title, $j2[$idx]['title']);
+    }
+
+  }
+
+
 
 
   //TODO: Consider adding a cache test similar to the one defined in CrawlerTest

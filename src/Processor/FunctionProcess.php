@@ -40,7 +40,7 @@ class FunctionProcess extends ProcessorOutputBase
     public function process($value)
     {
         if (!empty($value)) {
-            $value = Callback::getResult($this->fn, $value, $this->crawler);
+            $value = Callback::getResult($this->fn, $value, $this->crawler, $this);
         }
 
         return $value;

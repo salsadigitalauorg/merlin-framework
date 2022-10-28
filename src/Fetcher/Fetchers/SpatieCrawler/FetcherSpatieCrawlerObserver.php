@@ -66,7 +66,7 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
 
     // Get raw headers and redirect info.
     // TODO: Determine if it is possible to pass in the original data into crawled() somehow.
-    $redirect = RedirectUtils::checkForRedirect($urlString);
+    $redirect = RedirectUtils::checkForRedirect($urlString, $response);
 
     if (!empty($urlString) && !empty($html)) {
       $this->fetcher->processContent($urlString, $html, $redirect);

@@ -113,12 +113,16 @@ class CrawlerTest extends LocalPhpServerTestCase
     $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_redirects.yml');
     $redirects = Yaml::parse($redirects);
 
+    $effective = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'effective-urls-crawler_test_default.yml');
+    $effective = Yaml::parse($effective);
+
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    $this->assertEquals(2, count($ymls));
+    $this->assertEquals(3, count($ymls));
     $this->assertEquals(20, count($crawled['urls']));
     $this->assertArrayHasKey('redirects', $redirects);
     $this->assertEquals(8, count($redirects['redirects']));
+    $this->assertEquals(14, count($effective['urls']));
 
 
   }//end testAllPages()
@@ -218,11 +222,22 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
+    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_redirects.yml');
+    $redirects = Yaml::parse($redirects);
+
+    $effective = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'effective-urls-crawler_test_default.yml');
+    $effective = Yaml::parse($effective);
+
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    // We have *TWO* ymls, also we will have 'crawled-urls-crawler_test_redirects.yml'
-    $this->assertEquals(2, count($ymls));
+    // We have *THREE* ymls, also we will have:
+    //  - 'crawled-urls-crawler_test_redirects.yml'
+    //  - 'effective-urls-crawler_test_default.yml'
+    $this->assertEquals(3, count($ymls));
     $this->assertEquals(20, count($crawled['urls']));
+    $this->assertArrayHasKey('redirects', $redirects);
+    $this->assertEquals(8, count($redirects['redirects']));
+    $this->assertEquals(14, count($effective['urls']));
 
     // Remove our output files, stop local server and test again.  The files should magically come from the cache.
     $this->tearDown();
@@ -239,11 +254,23 @@ class CrawlerTest extends LocalPhpServerTestCase
     $crawled = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_default.yml');
     $crawled = Yaml::parse($crawled);
 
-    // We should have *TWO* ymls because caching also supports redirect info.
+    $redirects = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'crawled-urls-crawler_test_redirects.yml');
+    $redirects = Yaml::parse($redirects);
+
+    $effective = file_get_contents($this->outputDir . DIRECTORY_SEPARATOR . 'effective-urls-crawler_test_default.yml');
+    $effective = Yaml::parse($effective);
+
     $ymls = glob($this->outputDir. DIRECTORY_SEPARATOR . '*.yml');
 
-    $this->assertEquals(2, count($ymls));
+    // We should have *THREE* ymls again from cache
+    //  - 'crawled-urls-crawler_test_default.yml'
+    //  - 'crawled-urls-crawler_test_redirects.yml'
+    //  - 'effective-urls-crawler_test_default.yml'
+    $this->assertEquals(3, count($ymls));
     $this->assertEquals(20, count($crawled['urls']));
+    $this->assertArrayHasKey('redirects', $redirects);
+    $this->assertEquals(8, count($redirects['redirects']));
+    $this->assertEquals(14, count($effective['urls']));
 
 
     // Remove cached files
