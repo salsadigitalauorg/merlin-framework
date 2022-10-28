@@ -1,7 +1,8 @@
 ---
-id: type-alias
+id: version-1.0.0-type-alias
 title: Alias
 sidebar_label: Alias
+original_id: type-alias
 ---
 
 Returns the scrapers current path.

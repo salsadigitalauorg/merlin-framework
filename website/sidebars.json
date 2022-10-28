@@ -24,6 +24,7 @@
             "type-media",
             "type-long-text",
             "type-link",
+            "type-group",
             "type-boolean",
             "type-text"
         ],
@@ -35,6 +36,7 @@
             "processor-remove-empty-tags",
             "processor-replace",
             "processor-strip-tags",
+            "processor-subfetch",
             "processor-whitespace"
         ]
     }

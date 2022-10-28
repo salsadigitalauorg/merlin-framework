@@ -1,0 +1,43 @@
+{
+  "version-1.0.0-docs": {
+    "Introduction": [
+      "version-1.0.0-getting-started",
+      "version-1.0.0-cache_tools",
+      "version-1.0.0-crawler",
+      "version-1.0.0-examples",
+      "version-1.0.0-reporting",
+      "version-1.0.0-url-options"
+    ],
+    "Types": [
+      "version-1.0.0-type-accordion",
+      "version-1.0.0-type-ordered",
+      "version-1.0.0-type-uuid",
+      "version-1.0.0-type-taxonomy-term",
+      "version-1.0.0-type-taxonomy-filter",
+      "version-1.0.0-type-static-value",
+      "version-1.0.0-type-reusable-paragraph",
+      "version-1.0.0-type-paragraph",
+      "version-1.0.0-type-meta",
+      "version-1.0.0-type-alias",
+      "version-1.0.0-type-menu-link",
+      "version-1.0.0-type-menu",
+      "version-1.0.0-type-media",
+      "version-1.0.0-type-long-text",
+      "version-1.0.0-type-link",
+      "version-1.0.0-type-group",
+      "version-1.0.0-type-boolean",
+      "version-1.0.0-type-text"
+    ],
+    "Processors": [
+      "version-1.0.0-processor-convert-encoding",
+      "version-1.0.0-processor-html-entity-decode",
+      "version-1.0.0-processor-nl2br",
+      "version-1.0.0-processor-remove-dom",
+      "version-1.0.0-processor-remove-empty-tags",
+      "version-1.0.0-processor-replace",
+      "version-1.0.0-processor-strip-tags",
+      "version-1.0.0-processor-subfetch",
+      "version-1.0.0-processor-whitespace"
+    ]
+  }
+}

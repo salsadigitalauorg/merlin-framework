@@ -1,6 +1,7 @@
 ---
-id: url-options
+id: version-1.0.0-url-options
 title: URL and Fetcher Options
+original_id: url-options
 ---
 
 # URL and Fetcher options

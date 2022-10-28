@@ -1,6 +1,7 @@
 ---
-id: examples
+id: version-1.0.0-examples
 title: Examples
+original_id: examples
 ---
 
 A configuration file should be made up of several key components.

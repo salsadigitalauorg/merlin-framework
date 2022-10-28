@@ -1,7 +1,8 @@
 ---
-id: type-link
+id: version-1.0.0-type-link
 title: Link
 sidebar_label: Link
+original_id: type-link
 ---
 
 Structured link representation.
