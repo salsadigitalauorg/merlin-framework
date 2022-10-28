@@ -92,6 +92,8 @@ class MigrateCrawlObserver extends CrawlObserver
       $return_url = '/';
     }
 
+    $url_effective = $return_url;
+
     $cacheLbl = ($crawledFromCache ? ' (cache)' : null);
     $this->io->writeln("Visited{$cacheLbl}: {$url_string} (found on {$foundOnUrl})");
 
@@ -116,17 +118,19 @@ class MigrateCrawlObserver extends CrawlObserver
     // Get raw headers and redirect info if not from cache.
     if (!$crawledFromCache) {
       // TODO: Determine if it is possible to pass in the original data into crawled() somehow for cache.
-      $redirect = RedirectUtils::checkForRedirect($url);
+      $redirect = RedirectUtils::checkForRedirect($url, $response);
       $rawHeaders = ($redirect['raw_headers'] ?? null);
       if (!empty($redirect) && $redirect['redirect']) {
         $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+        $url_effective = $redirect['url_effective'];
       }
 
       // Cache data if we are doing that.
       if ($this->cache instanceof Cache) {
         $html = $response->getBody()->__toString();
 
-        $cacheUrl = $url instanceof UriInterface ? $url->__toString() : null;
+        $cacheUrl = $url_string;
+        // $url instanceof UriInterface ? $url->__toString() : null;
         $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
 
         // Check for malformed UTF-8 encoding.
@@ -168,6 +172,7 @@ class MigrateCrawlObserver extends CrawlObserver
           $redirect = ($cacheData['redirect'] ?? null);
           if (!empty($redirect) && $redirect['redirect']) {
             $this->json->mergeRow("crawled-urls-{$entity_type}_redirects", 'redirects', [$redirect], true);
+            $url_effective = $redirect['url_effective'];
           }
         }
       }
@@ -194,6 +199,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
       if (!class_exists($class)) {
         // An unknown type.
+        throw new \Exception("Missing crawl group class: $class");
         continue;
       }
 
@@ -202,12 +208,29 @@ class MigrateCrawlObserver extends CrawlObserver
       if ($type->match($url_string, $response)) {
         // Only match on the first option.
         $this->json->mergeRow("crawled-urls-{$entity_type}_{$type->getId()}", 'urls', [$return_url], true);
+
+        // Write an effective url list (ie after redirects followed).
+        if (!empty($redirect) && $redirect['redirect'] && $redirect['is_external']) {
+          return;
+        }
+
+        $url_effective = $this->unparse_url(parse_url($url_effective), false);
+        $this->json->mergeRow("effective-urls-{$entity_type}_{$type->getId()}", 'urls', [$url_effective], true);
+
         return;
       }
     }//end foreach
 
     // Add this to the default group if it doesn't match.
     $this->json->mergeRow("crawled-urls-{$entity_type}_default", 'urls', [$return_url], true);
+
+    // Write an effective url list (ie after redirects followed).
+    if (!empty($redirect) && $redirect['redirect'] && $redirect['is_external']) {
+      return;
+    }
+
+    $url_effective = $this->unparse_url(parse_url($url_effective), false);
+    $this->json->mergeRow("effective-urls-{$entity_type}_default", 'urls', [$url_effective], true);
 
   }//end crawled()
 
@@ -219,7 +242,7 @@ class MigrateCrawlObserver extends CrawlObserver
   ) {
     $entity_type = $this->json->getConfig()->get('entity_type');
     $this->json->mergeRow("crawl-error-{$entity_type}", $url->__toString(), [$requestException->getMessage()], true);
-    $this->io->error("Error: ${url} -- Found on url: ${foundOnUrl}");
+    $this->io->error("Error: ${url} -- {$requestException->getCode()} -- {$requestException->getMessage()} -- Found on url: ${foundOnUrl}");
 
   }//end crawlFailed()
 
@@ -365,6 +388,27 @@ class MigrateCrawlObserver extends CrawlObserver
     return $this->hashes;
 
   }//end getHashes()
+
+
+  /**
+   * @param      $parsed_url
+   * @param bool $include_domain
+   *
+   * @return string
+   */
+  private function unparse_url($parsed_url, $include_domain=true) {
+    $scheme   = isset($parsed_url['scheme']) && $include_domain ? $parsed_url['scheme'].'://' : '';
+    $host     = isset($parsed_url['host']) && $include_domain ? $parsed_url['host'] : '';
+    $port     = isset($parsed_url['port']) && $include_domain ? ':'.$parsed_url['port'] : '';
+    $user     = isset($parsed_url['user']) && $include_domain ? $parsed_url['user'] : '';
+    $pass     = isset($parsed_url['pass']) && $include_domain ? ':'.$parsed_url['pass'] : '';
+    $pass     = ($user || $pass) ? "$pass@" : '';
+    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+    $query    = isset($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
+    $fragment = isset($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
+    return "$scheme$user$pass$host$port$path$query$fragment";
+
+  }//end unparse_url()
 
 
 }//end class

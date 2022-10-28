@@ -154,6 +154,8 @@ class MigrateReport
       $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
     }
 
+    $curl->setOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
     $this->multiCurl = $curl;
 
     // TODO: Consider turning these into separate files/streams, or use a streaming XML or json encoder.

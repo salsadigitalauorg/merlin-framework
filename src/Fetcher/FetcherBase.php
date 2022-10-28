@@ -191,6 +191,8 @@ class FetcherBase implements FetcherInterface
 
     // Get raw headers and redirect info.
     $isRedirect = ($redirect['redirect'] ?? false);
+    $effectiveUrl = ($redirect['url_effective'] ?? null);
+
     if ($isRedirect) {
       $this->output->mergeRow("{$entity_type}-redirects", 'redirects', [$redirect], true);
     }
@@ -225,15 +227,37 @@ class FetcherBase implements FetcherInterface
     }//end if
 
     // Check if duplicate if we are doing that.
-    $duplicate = false;
+    $duplicate = FALSE;
+    // Only records the duplicate if this is not a redirect,
+    // or redirect with count_redirects_as_content_duplicates enabled.
+    $count_redirect_as_duplicates = ($this->config->get('url_options')['count_redirects_as_content_duplicates'] ?? true);
+    $is_real_redirect = !empty($redirect['redirect'])
+      || !empty($redirect['redirect_count'])
+      || !empty($redirect['status_code_original'])
+      || (!empty($redirect['status_code']) && ($redirect['status_code'] >= 300 && $redirect['status_code'] < 400));
+
     if ($this->hashes instanceof ContentHash) {
-      $duplicate = $this->hashes->put($url, $html);
+      if (empty($is_real_redirect) || (!empty($is_real_redirect) && $count_redirect_as_duplicates)) {
+        $duplicate = $this->hashes->put($url, $html);
+      }
     }
 
     if ($duplicate === false) {
+      if ($is_real_redirect) {
+        // Add a property to the row for checking on redirects.
+        $row->_redirect_from = $url;
+        $row->_redirect_code = $redirect['status_code_original'];
+      }
+
+      if (($this->config->get('url_options')['use_effective_url'] ?? false) && $effectiveUrl) {
+        // If a redirect we will process this as the redirected url.
+        $crawler = new Crawler($html, $effectiveUrl);
+      } else {
+        // Process as the non-redirected url.
         $crawler = new Crawler($html, $url);
-        while ($field = $parser->getMapping()) {
-        // $crawler = new Crawler($html, $url);
+      }
+
+        foreach ($parser->getMapping() as $field) {
           $type = GenerateCommand::TypeFactory($field['type'], $crawler, $output, $row, $field);
           try {
             $type->process();
@@ -247,18 +271,22 @@ class FetcherBase implements FetcherInterface
                 $e->getFile()."(".$e->getLine()."): ".$e->getMessage()."\n".$e->getTraceAsString()
             );
           }
-        }//end while
+        }//end foreach
     }//end if
 
     // Reset the parser so we have mappings back at 0.
-    $parser->reset();
+    // $parser->reset();
+    // .
     $io->writeln(' <info>(Done!)</info>');
 
     if (!empty((array) $row)) {
       $output->addRow($entity_type, $row);
     }
 
-  }//end processContent()
+    // We can use the function to get results.
+    return (array) $row;
+
+}//end processContent()
 
 
   /**
@@ -294,7 +322,7 @@ class FetcherBase implements FetcherInterface
   /**
    * Called when fetching is completed.
    */
-  public function complete() {
+  public function complete($show_msg=true) {
 
     // Print some basic stats.
     $fetched       = $this->counts['fetched'];
@@ -304,13 +332,24 @@ class FetcherBase implements FetcherInterface
 
     $msg = "{$total} URLs processed ({$fetched} fetched, {$fetched_cache} from cache), {$failed} failed.";
 
-    if ($failed === 0) {
-      $this->io->success($msg);
-    } else {
-      $this->io->error($msg);
+    if ($show_msg) {
+      if ($failed === 0) {
+        $this->io->success($msg);
+      } else {
+        $this->io->error($msg);
+      }
     }
 
     // Build the duplicates file.
+    $this->buildDuplicates();
+
+  }//end complete()
+
+
+  /**
+   * Builds the content duplicates for this entity.
+   */
+  public function buildDuplicates() {
     if ($this->hashes instanceof ContentHash) {
       $duplicateUrls = $this->hashes->getDuplicates();
       if (!empty($duplicateUrls)) {
@@ -319,7 +358,26 @@ class FetcherBase implements FetcherInterface
       }
     }
 
-  }//end complete()
+  }//end buildDuplicates()
+
+
+  /**
+   * Returns curl constant value from expected config string.
+   * @param null $ipResolve
+   *
+   * @return int
+   */
+  public static function getCurlIpResolve($ipResolve=null) {
+
+    if ($ipResolve == 'v6') {
+      return CURL_IPRESOLVE_V6;
+    } else if ($ipResolve == 'v4') {
+      return CURL_IPRESOLVE_V4;
+    }
+
+    return CURL_IPRESOLVE_WHATEVER;
+
+  }//end getCurlIpResolve()
 
 
   /**
@@ -343,7 +401,7 @@ class FetcherBase implements FetcherInterface
       throw new \Exception("Specified Fetcher class does not extend FetcherBase!");
     }
 
-    $fetcher  = new $fetcherClass($io, $json, $config);
+    $fetcher = new $fetcherClass($io, $json, $config);
 
     return $fetcher;
 

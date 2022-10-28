@@ -23,57 +23,86 @@ class RedirectUtils
    * source url and effective destination url.  Also returns the raw
    * headers, regardless of if the url was a redirect or not.
    *
-   * @param string $url
+   * @param string                                   $url
+   * @param \Psr\Http\Message\ResponseInterface|null $response
    *
    * @return array|null
    */
-  public static function checkForRedirect(string $url) {
+  public static function checkForRedirect(string $url, ResponseInterface $response=null) {
 
     if (empty($url)) {
       return null;
     }
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_NOBODY, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_HEADER, true);
-    $rawHeaders = curl_exec($ch);
-    $info = curl_getinfo($ch);
+    $redirect = false;
 
-    $redirectCount = ($info['redirect_count'] ?? 0);
-    $redirect = $redirectCount > 0;
+    if ($response) {
+      // We have a response object from Guzzle passed in so use that to figure things out.
+      if ($response->getHeader('X-Guzzle-Redirect-History')) {
+        $redirect = true;
+        $history = $response->getHeader('X-Guzzle-Redirect-History');
+        $historyCode = $response->getHeader('X-Guzzle-Redirect-Status-History');
+        $redirectCount = count($history);
+        $statusCodeOrigin = intval($historyCode[0]);
+        $destUri = end($history);
+      }
 
-    $statusCodeDestination = intval($info['http_code']);
+      $statusCodeDestination = $response->getStatusCode();
 
-    if ($redirect) {
-      $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+      // This is not exactly the "raw headers" here because it's been Guzzlified.
+      $rawHeaders = "";
+      foreach ($response->getHeaders() as $name => $values) {
+        $rawHeaders .= $name.': '.implode(', ', $values)."\r\n";
+      }
+    } else {
+        // Do a curl and check if its a redirect.
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+        $rawHeaders = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        $destUri = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        curl_close($ch);
 
-      $statusCodeOrigin = null;
+        $redirectCount = ($info['redirect_count'] ?? 0);
+        $redirect = $redirectCount > 0;
 
-      // Find the first redirect in raw headers.
-      $headers = (explode("\r\n", $rawHeaders));
-      foreach ($headers as $key => $r) {
-        if (stripos($r, 'HTTP/1.1') === 0) {
-          list(, $statusCodeOrigin, $status) = explode(' ', $r, 3);
-          $statusCodeOrigin = intval($statusCodeOrigin);
-          if ($statusCodeOrigin >= 300 && $statusCodeOrigin < 400) {
-            break;
-          } else {
-            // Let it be the last found code.. this would be weird.
+        $statusCodeDestination = intval($info['http_code']);
+
+        $statusCodeOrigin = null;
+
+        // Find the first redirect in raw headers.
+        $headers = (explode("\r\n", $rawHeaders));
+        foreach ($headers as $key => $r) {
+          if (stripos($r, 'HTTP/1.1') === 0) {
+            list(, $statusCodeOrigin, $status) = explode(' ', $r, 3);
+            $statusCodeOrigin = intval($statusCodeOrigin);
+            if ($statusCodeOrigin >= 300 && $statusCodeOrigin < 400) {
+              break;
+            } else {
+              // Let it be the last found code.. this would be weird.
+            }
           }
         }
-      }
+    }//end if
+
+    if ($redirect) {
+      $is_external = parse_url($url, PHP_URL_HOST) != parse_url($destUri, PHP_URL_HOST);
 
       $ret = [
           'status_code_original' => $statusCodeOrigin,
           'status_code'          => $statusCodeDestination,
-          'redirect'             => $redirect,
+          'redirect'             => true,
           'redirect_count'       => $redirectCount,
           'url_original'         => $url,
           'url_effective'        => $destUri,
           'raw_headers'          => $rawHeaders,
+          'is_external'          => $is_external,
       ];
     } else {
       $ret = [
@@ -83,8 +112,6 @@ class RedirectUtils
           'url_effective' => $url,
       ];
     }//end if
-
-    curl_close($ch);
 
     return $ret;
 
@@ -133,14 +160,17 @@ class RedirectUtils
         }
       }
 
+      $is_external = parse_url($url, PHP_URL_HOST) != parse_url($destUri, PHP_URL_HOST);
+
       $ret = [
           'status_code_original' => $statusCodeOrigin,
           'status_code'          => $statusCodeDestination,
-          'redirect'             => $redirect,
+          'redirect'             => true,
           'redirect_count'       => $redirectCount,
           'url_original'         => $url,
           'url_effective'        => $destUri,
           'raw_headers'          => $instance->rawResponseHeaders,
+          'is_external'          => $is_external,
       ];
     } else {
       $ret = [

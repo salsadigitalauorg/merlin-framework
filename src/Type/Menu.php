@@ -3,7 +3,7 @@
 namespace Merlin\Type;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Ramsey\Uuid\Uuid;
+use Merlin\Utility\MerlinUuid;
 
 /**
  * The Menu field type processor.
@@ -73,7 +73,7 @@ class Menu extends TypeBase implements TypeInterface
             $link = 'internal:'.$link_el->first()->attr($link_attr);
             // Menu uuid comprised of menu name, link text, link value.
             $uuid_text = $text.$link;
-            $uuid      = Uuid::uuid3(Uuid::NAMESPACE_DNS, $uuid_text);
+            $uuid      = MerlinUuid::getUuid($uuid_text);
 
             $return[] = [
                 'uuid'   => $uuid,

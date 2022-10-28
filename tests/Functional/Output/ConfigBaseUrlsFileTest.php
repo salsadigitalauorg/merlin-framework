@@ -33,8 +33,16 @@ class UrlsFileTest extends TestCase
     $sources = ['source', 'source_urls_only', 'source_urls_file_only', 'source_multiple_urls_files'];
     foreach ($sources as $source) {
       $base = new WebConfig($this->$source);
-      $totals = $base->get('totals');
-      $this->assertEquals($totals['urls_from_file'] + $totals['urls_from_config'], $totals['urls']);
+
+      // Note: totals isn't part of the data[] array, so get() returns false.
+      // $totals = $base->get('totals');
+      $t = function() {return $this->totals;};
+      $totals = $t->call($base);
+
+      $urls_from_file = $totals['urls_from_file'] ?? 0;
+      $urls_from_config = $totals['urls_from_config'] ?? 0;
+
+      $this->assertEquals($urls_from_file + $urls_from_config, $totals['urls']);
     }
   }
 

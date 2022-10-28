@@ -12,6 +12,8 @@ use Merlin\Output\Yaml;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Spatie\Crawler\CrawlUrl;
 use GuzzleHttp\RequestOptions;
+use Spatie\Browsershot\Browsershot;
+
 
 class CrawlCommand extends Command
 {
@@ -74,7 +76,9 @@ class CrawlCommand extends Command
       $redirectOptions = false;
       } else {
       $redirectOptions = [
-          'max' => ($this->options['max_redirects'] ?? 5),
+          'max'             => ($this->options['max_redirects'] ?? 5),
+          'track_redirects' => true,
+          'referer'         => true,
       ];
     }
 
@@ -92,6 +96,7 @@ class CrawlCommand extends Command
         RequestOptions::ALLOW_REDIRECTS => $redirectOptions,
         RequestOptions::VERIFY          => $this->config['options']['verify'],
         RequestOptions::HEADERS         => $headers,
+        RequestOptions::READ_TIMEOUT    => 120,
     ];
 
     $baseUrl = $this->config['domain'];
@@ -124,6 +129,11 @@ class CrawlCommand extends Command
     if (!empty($concurrency = @$this->config['options']['concurrency'])) {
       $io->writeln("Setting concurrency to {$concurrency}");
       $crawler->setConcurrency($concurrency);
+    }
+
+    // Set the robots respect flag.
+    if (!empty($this->config['options']['ignore_robotstxt'])) {
+      $crawler->ignoreRobots();
     }
 
     // Optionally override maximum results (default is unlimited/all).

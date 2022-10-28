@@ -26,14 +26,18 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
   /** @inheritDoc */
   public function init()
   {
-    $concurrency    = ($this->config->get('fetch_options')['concurrency'] ?? FetcherDefaults::CONCURRENCY);
-    $allowRedirects = ($this->config->get('fetch_options')['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
-    $maxRedirects   = ($this->config->get('fetch_options')['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
 
-    $ignoreSSL      = ($this->config->get('fetch_options')['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
-    $userAgent      = ($this->config->get('fetch_options')['user_agent'] ?? FetcherDefaults::USER_AGENT);
+    $fetch_options = $this->config->get('fetch_options');
 
-    $timeouts       = ($this->config->get('fetch_options')['timeouts'] ?? []);
+    $concurrency    = ($fetch_options['concurrency'] ?? FetcherDefaults::CONCURRENCY);
+    $allowRedirects = ($fetch_options['follow_redirects'] ?? FetcherDefaults::FOLLOW_REDIRECTS);
+    $maxRedirects   = ($fetch_options['max_redirects'] ?? FetcherDefaults::MAX_REDIRECTS);
+    $ignoreSSL      = ($fetch_options['ignore_ssl_errors'] ?? FetcherDefaults::IGNORE_SSL_ERRORS);
+    $userAgent      = ($fetch_options['user_agent'] ?? FetcherDefaults::USER_AGENT);
+	  $referer        = ($fetch_options['referer'] ?? null);
+	  $ipResolve      = ($fetch_options['ip_resolve'] ?? null);
+
+    $timeouts       = ($fetch_options['timeouts'] ?? []);
     $connectTimeout = ($timeouts['connect_timeout'] ?? FetcherDefaults::TIMEOUT_CONNECT);
     $timeout        = ($timeouts['timeout'] ?? FetcherDefaults::TIMEOUT);
 
@@ -41,7 +45,6 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
     $curl->setConcurrency($concurrency);
     $curl->setConnectTimeout($connectTimeout);
     $curl->setTimeout($timeout);
-
     $curl->success($this->onSuccess());
     $curl->error($this->onError());
     $curl->complete($this->onComplete());
@@ -56,11 +59,22 @@ class FetcherCurl extends FetcherBase implements FetcherInterface
       $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
     }
 
+    if ($referer) {
+      $curl->setOpt(CURLOPT_REFERER, $referer);
+    }
+
     $curl->setOpt(CURLOPT_USERAGENT, $userAgent);
+    $curl->setOpt(CURLOPT_IPRESOLVE, FetcherBase::getCurlIpResolve($ipResolve));
 
     $this->multiCurl = $curl;
 
   }//end init()
+
+
+  public function getCurl() {
+    return $this->multiCurl;
+
+  }//end getCurl()
 
 
   public function addUrl(?string $url)
