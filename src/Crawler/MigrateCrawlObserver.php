@@ -6,7 +6,7 @@ use Consolidation\Comments\Comments;
 use Merlin\Fetcher\Cache;
 use Merlin\Fetcher\ContentHash;
 use Merlin\Reporting\RedirectUtils;
-use Spatie\Crawler\CrawlObserver;
+use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -52,17 +52,6 @@ class MigrateCrawlObserver extends CrawlObserver
 
 
   /**
-   * Called when the crawler will crawl the url.
-   *
-   * @param \Psr\Http\Message\UriInterface   $url
-   */
-  public function willCrawl(UriInterface $url)
-  {
-
-  }//end willCrawl()
-
-
-  /**
    * Called when the crawler has crawled the given url.
    *
    * @param \Psr\Http\Message\UriInterface      $url
@@ -78,7 +67,7 @@ class MigrateCrawlObserver extends CrawlObserver
     ResponseInterface $response,
     ?UriInterface $foundOnUrl=null,
     $crawledFromCache=false
-  ) {
+  ): void {
     $this->count++;
     $url_string = $url->__toString();
     $return_url = $url_string;
@@ -111,7 +100,7 @@ class MigrateCrawlObserver extends CrawlObserver
     foreach ($this->json->getConfig()->get('options')['include'] as $include) {
       if (!preg_match($include, $url_string)) {
         $this->io->writeln("<comment>Ignoring URL:</comment> ${url_string} -- Does not match include pattern: ${include}");
-        return FALSE;
+        return;
       }
     }
 
@@ -239,7 +228,7 @@ class MigrateCrawlObserver extends CrawlObserver
     UriInterface $url,
     RequestException $requestException,
     ?UriInterface $foundOnUrl=null
-  ) {
+  ): void {
     $entity_type = $this->json->getConfig()->get('entity_type');
     $this->json->mergeRow("crawl-error-{$entity_type}", $url->__toString(), [$requestException->getMessage()], true);
     $this->io->error("Error: ${url} -- {$requestException->getCode()} -- {$requestException->getMessage()} -- Found on url: ${foundOnUrl}");
@@ -250,7 +239,7 @@ class MigrateCrawlObserver extends CrawlObserver
   /**
    * Called when the crawl has ended.
    */
-  public function finishedCrawling()
+  public function finishedCrawling(): void
   {
 
     $this->mergeUrlsIntoConfigFiles();

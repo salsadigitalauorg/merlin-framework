@@ -14,7 +14,7 @@ class UrlsFileTest extends TestCase
   /**
    * Set up the tests.
    */
-  public function setUp()
+  public function setUp(): void
   {
     $this->source = __DIR__.'/config_base.yml';
     $this->source_urls_only = __DIR__.'/config_base_urls_only.yml';

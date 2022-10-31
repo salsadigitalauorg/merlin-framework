@@ -68,7 +68,7 @@ class LocalPhpServerTestCase extends TestCase
   /**
    * {@inheritdoc}
    */
-  public static function tearDownAfterClass()
+  public static function tearDownAfterClass(): void
   {
     self::stopServer();
   }

@@ -33,7 +33,7 @@ class ElementTest extends TestCase
     /**
      * Set up the tests.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()

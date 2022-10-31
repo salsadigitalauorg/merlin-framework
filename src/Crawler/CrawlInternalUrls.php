@@ -4,7 +4,7 @@ namespace Merlin\Crawler;
 
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
-use Spatie\Crawler\CrawlProfile;
+use Spatie\Crawler\CrawlProfiles\CrawlProfile;
 
 class CrawlInternalUrls extends CrawlProfile
 {
