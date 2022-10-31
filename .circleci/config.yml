@@ -8,7 +8,7 @@ jobs:
   build:
     docker:
       # Specify the version you desire here
-      - image: circleci/php:8-node-browsers
+      - image: cimg/php:8.1-browsers
     steps:
       - checkout
       - run:
@@ -57,7 +57,7 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/php:8-node-browsers
+      - image: cimg/php:8.1-browsers
     steps:
       - checkout
 
@@ -97,7 +97,7 @@ jobs:
               --file /tmp/merlin-framework.phar
   deploy_docs:
     docker:
-      - image: circleci/php:8-node-browsers
+      - image: cimg/php:8.1-browsers
     steps:
       - checkout
       - checkout:
