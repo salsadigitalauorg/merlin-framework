@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "3845879cbf8df6c943c2b11e2435c003",
-=======
-    "content-hash": "3d586defdac8c0a3a3e34dd6c6cc5d8f",
->>>>>>> f273055 (PHP 8.1 support.)
+    "content-hash": "12f62186c1a26575e356b0cfbc2492f8",
     "packages": [
         {
             "name": "chuyskywalker/rolling-curl",
