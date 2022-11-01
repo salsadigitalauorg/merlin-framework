@@ -49,8 +49,17 @@ class LocalPhpServerTestCase extends TestCase
     ];
 
     self::$server = new Process($cmd);
+    self::$server->setTimeout(15);
     self::$server->start();
-    sleep(5);
+
+    // Process will timeout in 15s if the server cannot be started.
+    foreach (self::$server as $type => $data) {
+      if (self::$server::ERR === $type) {
+        if (strpos($data, "started") !== FALSE) {
+          break;
+        }
+      }
+    }
   }
 
 
@@ -60,7 +69,7 @@ class LocalPhpServerTestCase extends TestCase
   public static function stopServer() {
     if (self::$server instanceof Process) {
       self::$server->stop();
-      sleep(5);
+      sleep(10);
     }
   }
 
