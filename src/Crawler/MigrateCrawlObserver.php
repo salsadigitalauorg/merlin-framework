@@ -120,7 +120,7 @@ class MigrateCrawlObserver extends CrawlObserver
 
         $cacheUrl = $url_string;
         // $url instanceof UriInterface ? $url->__toString() : null;
-        $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : null;
+        $cacheFoundOnUrl = $foundOnUrl instanceof UriInterface ? $foundOnUrl->__toString() : $url_string;
 
         // Check for malformed UTF-8 encoding.
         // NOTE: Only checking content, not $cacheUrl or $cacheFoundOnUrl which assuming are OK (!).

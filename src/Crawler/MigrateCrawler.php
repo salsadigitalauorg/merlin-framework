@@ -35,7 +35,7 @@ class MigrateCrawler extends Crawler
                 $foundOnUrl = $cacheData['foundOnUrl'];
 
                 if (empty($foundOnUrl)) {
-                  continue;
+                  continue 2;
                 }
 
                 $foundOnUrl = new \GuzzleHttp\Psr7\Uri($foundOnUrl);

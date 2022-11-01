@@ -52,14 +52,9 @@ class LocalPhpServerTestCase extends TestCase
     self::$server->setTimeout(15);
     self::$server->start();
 
-    // Process will timeout in 15s if the server cannot be started.
-    foreach (self::$server as $type => $data) {
-      if (self::$server::ERR === $type) {
-        if (strpos($data, "started") !== FALSE) {
-          break;
-        }
-      }
-    }
+    self::$server->waitUntil(function ($type, $output) {
+      return strpos($output, "started") !== FALSE;
+    });
   }
 
 

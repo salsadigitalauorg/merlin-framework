@@ -239,7 +239,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $this->assertEquals(8, count($redirects['redirects']));
     $this->assertEquals(14, count($effective['urls']));
 
-    // Remove our output files, stop local server and test again.  The files should magically come from the cache.
+    // Remove our output files, stop local server and test again. The files should magically come from the cache.
     $this->tearDown();
     self::stopServer();
 
