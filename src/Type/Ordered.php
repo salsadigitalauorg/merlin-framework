@@ -45,7 +45,7 @@ class Ordered extends TypeBase implements TypeInterface {
     if (!$list) {
       throw new \Exception('"available_items" key missing.');
     }
-    
+
     $this->crawler->each(
         function(Crawler $node) use ($list, &$results) {
           foreach ($list as $item) {
