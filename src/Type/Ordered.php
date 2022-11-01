@@ -22,7 +22,6 @@ class Ordered extends TypeBase implements TypeInterface {
     $children = isset($item['fields']) ? $item['fields'] : [];
     foreach ($children as $child) {
       $type = GenerateCommand::TypeFactory($child['type'], $crawler, $this->output, $row, $child);
-      var_dump(get_class($type));
       try {
         $type->process();
       } catch (\Exception $e) {
@@ -46,16 +45,13 @@ class Ordered extends TypeBase implements TypeInterface {
     if (!$list) {
       throw new \Exception('"available_items" key missing.');
     }
-
-    var_dump('starting the loop');
-
+    
     $this->crawler->each(
         function(Crawler $node) use ($list, &$results) {
           foreach ($list as $item) {
             if (isset($item['by']['selector'])) {
               $result = $node->evaluate($item['by']['selector']);
               if ($result->count() == 0) {
-                var_dump('selector element not found');
                 continue;
               } else {
                 $node = $result;
@@ -63,7 +59,6 @@ class Ordered extends TypeBase implements TypeInterface {
             } else {
               $attr = $node->attr($item['by']['attr']);
               if (empty($attr) || strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
-                var_dump('attr element not found');
                 continue;
               }
             }
