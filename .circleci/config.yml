@@ -32,9 +32,6 @@ jobs:
           command: |
             npm i puppeteer
 
-      - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install exif && sudo docker-php-ext-enable exif
-
       # Download and cache dependencies
 
       # composer cache
@@ -63,9 +60,6 @@ jobs:
 
       - run: sudo apt update
       - run: sudo apt-get install golang-go
-      - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install bcmath && sudo docker-php-ext-enable bcmath
-      - run: sudo docker-php-ext-install exif && sudo docker-php-ext-enable exif
 
       - run: composer install -n --no-dev --prefer-dist
 
