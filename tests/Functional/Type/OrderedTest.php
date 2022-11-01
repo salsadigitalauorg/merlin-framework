@@ -21,7 +21,7 @@ class OrderedTest extends CrawlerTestCase {
         'fields' => [
           [
             'field' => 'field_body',
-            'type' => 'longtext',
+            'type' => 'long_text',
           ]
         ],
       ]
