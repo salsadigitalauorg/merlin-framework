@@ -137,14 +137,17 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
 
     return null;
 
-  }//end getFirstPendingUrl()
+  }//end getPendingUrl()
+
 
   /**
    * @return int
    */
   public function getProcessedUrlCount(): int
   {
-    return count($this->urls) - count($this->pendingUrls);
+    return (count($this->urls) - count($this->pendingUrls));
+
   }//end getProcessedUrlCount()
+
 
 }//end class
