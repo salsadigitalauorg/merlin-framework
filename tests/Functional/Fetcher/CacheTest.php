@@ -14,7 +14,7 @@ class CacheTest  extends TestCase
   private $content = null;
   private $contentHash = null;
 
-  public function setUp() {
+  public function setUp(): void {
     $this->cache = new Cache($this->domain, $this->cacheDir);
     $this->content = '<html><body><h1>SOME MARKUP</h1></body></html>';
   }//end setUp()
@@ -29,7 +29,7 @@ class CacheTest  extends TestCase
       $filename = $this->cache->getFilename($url);
       $this->assertFileExists($filename);
       $this->cache->unlink($url);
-      $this->assertFileNotExists($filename);
+      $this->assertFileDoesNotExist($filename);
   }//end testBasicCacheWrite()
 
 
@@ -44,7 +44,7 @@ class CacheTest  extends TestCase
     $filename = $this->cache->getFilename($url);
     $this->assertEquals($this->content, $contents);
     $this->cache->unlink($url);
-    $this->assertFileNotExists($filename);
+    $this->assertFileDoesNotExist($filename);
   }//end testBasicCacheRead()
 
 

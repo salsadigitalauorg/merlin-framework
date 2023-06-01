@@ -58,9 +58,9 @@ class Ordered extends TypeBase implements TypeInterface {
               }
             } else {
               $attr = $node->attr($item['by']['attr']);
-                if (strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
-                  continue;
-                }
+              if (empty($attr) || strpos($attr, $item['by']['text']) === FALSE && count($list) > 1) {
+                continue;
+              }
             }
 
             $row = new \stdClass();

@@ -140,7 +140,7 @@ class CrawlCommand extends Command
     if (!empty($input->getOption('limit')) || @$this->config['options']['maximum_total']) {
       $max = $input->getOption('limit') ? $input->getOption('limit') : @$this->config['options']['maximum_total'];
       $io->writeln("Setting maximum crawl count to {$max}");
-      $crawler->setMaximumCrawlCount($max);
+      $crawler->setTotalCrawlLimit($max);
     }
 
     // Optionally override depth (default is unlimited).
@@ -170,6 +170,8 @@ class CrawlCommand extends Command
     $io->success('Done!');
 
     $output->writeln("<comment>Completed in ".(microtime(true) - $start)."</comment>");
+
+    return 0;
 
   }//end execute()
 

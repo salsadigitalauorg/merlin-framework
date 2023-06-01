@@ -20,12 +20,15 @@ class FetcherTest extends LocalPhpServerTestCase
    * Start up the local PHP server with the www dir required for these tests.
    * @throws \Exception
    */
-  public static function setUpBeforeClass()
+  public static function setUpBeforeClass(): void
   {
     self::stopServer();
     self::startServer();
   }
 
+  /**
+   * Prepare the input mock.
+   */
   public function getInputMock()
   {
 
@@ -35,7 +38,7 @@ class FetcherTest extends LocalPhpServerTestCase
       ->disableOriginalClone()
       ->getMock();
 
-    $input->expects($this->at(0))
+    $input->expects($this->any())
       ->method('getOption')
       ->with($this->equalTo('config'))
       ->willReturn(__DIR__ . DIRECTORY_SEPARATOR . 'fetcher_config_test.yml');
@@ -118,6 +121,7 @@ class FetcherTest extends LocalPhpServerTestCase
     foreach ($urls as $url) {
       $fetcher->addUrl($config->get('domain') . $url);
     }
+
     $fetcher->start();
     $fetcher->complete();
 
@@ -142,7 +146,7 @@ class FetcherTest extends LocalPhpServerTestCase
   public function testPhpServerRunning()
   {
     $running = $this->isServerRunning();
-    $this->assertNotFalse($running);
+    $this->assertTrue($running);
   }
 
 

@@ -6,7 +6,7 @@ use GuzzleHttp\Exception\RequestException;
 use Merlin\Reporting\RedirectUtils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Spatie\Crawler\CrawlObserver;
+use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Merlin\Fetcher\FetcherBase;
 
 class FetcherSpatieCrawlerObserver  extends CrawlObserver
@@ -34,17 +34,6 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
 
 
   /**
-   * Called when the crawler will crawl the url.
-   *
-   * @param \Psr\Http\Message\UriInterface   $url
-   */
-  public function willCrawl(UriInterface $url)
-  {
-
-  }//end willCrawl()
-
-
-  /**
    * Called when the crawler has crawled the given url.
    *
    * @param \Psr\Http\Message\UriInterface      $url
@@ -57,7 +46,7 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
     UriInterface $url,
     ResponseInterface $response,
     ?UriInterface $foundOnUrl=null
-  ) {
+  ): void {
     $urlString = $url->__toString();
     $status = $response->getStatusCode();
     $html = $response->getBody()->__toString();
@@ -88,7 +77,7 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
     UriInterface $url,
     RequestException $requestException,
     ?UriInterface $foundOnUrl=null
-  ) {
+  ): void {
 
     $urlString = $url->__toString();
 
@@ -99,15 +88,6 @@ class FetcherSpatieCrawlerObserver  extends CrawlObserver
     $this->fetcher->incrementCount('failed');
 
   }//end crawlFailed()
-
-
-  /**
-   * Called when the crawl has ended.
-   */
-  public function finishedCrawling()
-  {
-
-  }//end finishedCrawling()
 
 
 }//end class
