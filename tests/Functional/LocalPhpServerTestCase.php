@@ -49,8 +49,12 @@ class LocalPhpServerTestCase extends TestCase
     ];
 
     self::$server = new Process($cmd);
+    self::$server->setTimeout(15);
     self::$server->start();
-    sleep(5);
+
+    self::$server->waitUntil(function ($type, $output) {
+      return strpos($output, "started") !== FALSE;
+    });
   }
 
 
@@ -60,7 +64,7 @@ class LocalPhpServerTestCase extends TestCase
   public static function stopServer() {
     if (self::$server instanceof Process) {
       self::$server->stop();
-      sleep(5);
+      sleep(10);
     }
   }
 
@@ -68,7 +72,7 @@ class LocalPhpServerTestCase extends TestCase
   /**
    * {@inheritdoc}
    */
-  public static function tearDownAfterClass()
+  public static function tearDownAfterClass(): void
   {
     self::stopServer();
   }

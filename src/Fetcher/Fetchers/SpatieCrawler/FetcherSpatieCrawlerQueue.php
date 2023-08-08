@@ -3,10 +3,10 @@
 namespace Merlin\Fetcher\Fetchers\SpatieCrawler;
 
 use Spatie\Crawler\CrawlUrl;
-use Spatie\Crawler\CrawlQueue\CrawlQueue;
+use Spatie\Crawler\CrawlQueues\CrawlQueue;
 use Psr\Http\Message\UriInterface;
-use Spatie\Crawler\Exception\InvalidUrl;
-use Spatie\Crawler\Exception\UrlNotFoundByIndex;
+use Spatie\Crawler\Exceptions\InvalidUrl;
+use Spatie\Crawler\Exceptions\UrlNotFoundByIndex;
 
 class FetcherSpatieCrawlerQueue implements CrawlQueue
 {
@@ -29,7 +29,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
   /**
    * @param \Spatie\Crawler\CrawlUrl $url
    *
-   * @return \Merlin\Fetcher\Fetchers\SpatieCrawler\CrawlQueue
+   * @return \Merlin\Fetcher\Fetchers\SpatieCrawler\CrawlQueues
    */
   public function add(CrawlUrl $url): CrawlQueue
   {
@@ -96,7 +96,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
   /**
    * @param \Spatie\Crawler\CrawlUrl $crawlUrl
    */
-  public function markAsProcessed(CrawlUrl $crawlUrl)
+  public function markAsProcessed(CrawlUrl $crawlUrl): void
   {
     $url = (string) $crawlUrl->url;
     unset($this->pendingUrls[$url]);
@@ -108,7 +108,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
    * @param CrawlUrl|UriInterface $crawlUrl
    *
    * @return bool
-   * @throws \Spatie\Crawler\Exception\InvalidUrl
+   * @throws \Spatie\Crawler\Exceptions\InvalidUrl
    */
   public function has($crawlUrl): bool
   {
@@ -117,6 +117,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
     } else if ($crawlUrl instanceof UriInterface) {
       $url = (string) $crawlUrl;
     } else {
+      // $exception = CrawlUrl($crawlUrl->url);
       throw InvalidUrl::unexpectedType($crawlUrl);
     }
 
@@ -128,7 +129,7 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
   /**
    * @return \Spatie\Crawler\CrawlUrl|null
    */
-  public function getFirstPendingUrl(): ?CrawlUrl
+  public function getPendingUrl(): ?CrawlUrl
   {
     foreach ($this->pendingUrls as $pendingUrl) {
       return $pendingUrl;
@@ -136,7 +137,17 @@ class FetcherSpatieCrawlerQueue implements CrawlQueue
 
     return null;
 
-  }//end getFirstPendingUrl()
+  }//end getPendingUrl()
+
+
+  /**
+   * @return int
+   */
+  public function getProcessedUrlCount(): int
+  {
+    return (count($this->urls) - count($this->pendingUrls));
+
+  }//end getProcessedUrlCount()
 
 
 }//end class

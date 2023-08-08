@@ -26,7 +26,7 @@ class CrawlerTest extends LocalPhpServerTestCase
    * Start up the local PHP server with the www dir required for theses tests.
    * @throws \Exception
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     self::stopServer();
     self::startServer(__DIR__ . "/../www/crawler_tests");
   }
@@ -39,7 +39,7 @@ class CrawlerTest extends LocalPhpServerTestCase
    * once like the static setUpBeforeClass method.
    * @throws \Exception
    */
-  protected function setUp() {
+  protected function setUp(): void {
 
     $this->clearOutputDir();
 
@@ -67,7 +67,7 @@ class CrawlerTest extends LocalPhpServerTestCase
    * Removes expected output files to make sure no false-positives in subsequent tests.
    * Called after every test.
    */
-  public function tearDown()
+  public function tearDown(): void
   {
     $this->clearOutputDir();
   }
@@ -239,7 +239,7 @@ class CrawlerTest extends LocalPhpServerTestCase
     $this->assertEquals(8, count($redirects['redirects']));
     $this->assertEquals(14, count($effective['urls']));
 
-    // Remove our output files, stop local server and test again.  The files should magically come from the cache.
+    // Remove our output files, stop local server and test again. The files should magically come from the cache.
     $this->tearDown();
     self::stopServer();
 

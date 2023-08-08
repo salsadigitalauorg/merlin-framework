@@ -4,9 +4,9 @@ namespace Merlin\Crawler;
 
 use Spatie\Crawler\CrawlUrl;
 use Psr\Http\Message\UriInterface;
-use Spatie\Crawler\Exception\InvalidUrl;
-use Spatie\Crawler\Exception\UrlNotFoundByIndex;
-use Spatie\Crawler\CrawlQueue\CrawlQueue;
+use Spatie\Crawler\Exceptions\InvalidUrl;
+use Spatie\Crawler\Exceptions\UrlNotFoundByIndex;
+use Spatie\Crawler\CrawlQueues\CrawlQueue;
 
 
 class MigrateCrawlQueue implements CrawlQueue
@@ -45,7 +45,7 @@ class MigrateCrawlQueue implements CrawlQueue
   /**
    * @param \Spatie\Crawler\CrawlUrl $url
    *
-   * @return \Spatie\Crawler\CrawlQueue\CrawlQueue
+   * @return \Spatie\Crawler\CrawlQueues\CrawlQueues
    */
   public function add(CrawlUrl $url): CrawlQueue
   {
@@ -125,7 +125,7 @@ class MigrateCrawlQueue implements CrawlQueue
   /**
    * @param \Spatie\Crawler\CrawlUrl $crawlUrl
    */
-  public function markAsProcessed(CrawlUrl $crawlUrl)
+  public function markAsProcessed(CrawlUrl $crawlUrl): void
   {
     $url = (string) $crawlUrl->url;
     unset($this->pendingUrls[$url]);
@@ -137,7 +137,7 @@ class MigrateCrawlQueue implements CrawlQueue
    * @param $crawlUrl
    *
    * @return bool
-   * @throws \Spatie\Crawler\Exception\InvalidUrl
+   * @throws \Spatie\Crawler\Exceptions\InvalidUrl
    */
   public function has($crawlUrl): bool
   {
@@ -157,7 +157,7 @@ class MigrateCrawlQueue implements CrawlQueue
   /**
    * @return \Spatie\Crawler\CrawlUrl|null
    */
-  public function getFirstPendingUrl(): ?CrawlUrl
+  public function getPendingUrl(): ?CrawlUrl
   {
     foreach ($this->pendingUrls as $pendingUrl) {
       return $pendingUrl;
@@ -165,7 +165,17 @@ class MigrateCrawlQueue implements CrawlQueue
 
     return null;
 
-  }//end getFirstPendingUrl()
+  }//end getPendingUrl()
+
+
+  /**
+   * @return int
+   */
+  public function getProcessedUrlCount(): int
+  {
+    return (count($this->urls) - count($this->pendingUrls));
+
+  }//end getProcessedUrlCount()
 
 
 }//end class

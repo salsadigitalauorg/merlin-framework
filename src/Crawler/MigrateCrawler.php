@@ -20,7 +20,7 @@ class MigrateCrawler extends Crawler
    */
   protected function getCrawlRequests(): Generator
   {
-    while ($crawlUrl = $this->crawlQueue->getFirstPendingUrl()) {
+    while ($crawlUrl = $this->crawlQueue->getPendingUrl()) {
       foreach ($this->getCrawlObservers() as $observer) {
         if ($observer instanceof MigrateCrawlObserver) {
           $cache = $observer->getCache();
@@ -33,6 +33,11 @@ class MigrateCrawler extends Crawler
               if (is_array($cacheData) && key_exists('contents', $cacheData) && !empty($cacheData['contents'])) {
                 $contents = $cacheData['contents'];
                 $foundOnUrl = $cacheData['foundOnUrl'];
+
+                if (empty($foundOnUrl)) {
+                  continue 2;
+                }
+
                 $foundOnUrl = new \GuzzleHttp\Psr7\Uri($foundOnUrl);
                 $redirect = ($cacheData['redirect'] ?? []);
 

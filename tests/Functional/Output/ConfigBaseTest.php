@@ -40,7 +40,7 @@ class ConfigBaseTest extends TestCase
    *
    * @see https://www.php.net/manual/en/function.tmpfile.php
    */
-  public function setUp()
+  public function setUp(): void
   {
     $this->fh = tmpfile();
     $meta_data = stream_get_meta_data($this->fh);
@@ -52,7 +52,7 @@ class ConfigBaseTest extends TestCase
    *
    * @see https://www.php.net/manual/en/function.tmpfile.php
    */
-  public function tearDown()
+  public function tearDown(): void
   {
     fclose($this->fh);
   }
