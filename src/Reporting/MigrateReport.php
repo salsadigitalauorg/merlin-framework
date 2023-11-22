@@ -974,6 +974,10 @@ class MigrateReport
         return new MigrateReportMedia($io, $dstDomain, $srcDomain, $options);
         break;
       default:
+        $class = 'Merlin\\Reporting\\MigrateReport'.str_replace('_', '', ucwords($type, '_'));
+        if (class_exists($class)) {
+          return new $class($io, $dstDomain, $srcDomain, $options);
+        }
         throw new \Exception("Unknown report type: '{$type}'  Aborting.");
         exit(1);
     }
