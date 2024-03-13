@@ -128,6 +128,8 @@ class GenerateCommand extends Command
 
         $output->writeln("<comment>Completed in ".(microtime(true) - $start)."</comment>");
 
+        return 0;
+
     }//end execute()
 
 
